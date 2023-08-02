@@ -1,0 +1,219 @@
+schema {
+  query: QueryRoot
+  mutation: MutationRoot
+}
+
+# The `Char` scalar type represents a unicode char.
+# The input and output values are a string, and there can only be one unicode
+# character in this string.
+scalar Char
+
+scalar I128Scalar
+
+type MutationRoot {
+  boolInsert(key: String!, value: Boolean!): UnitValue!
+  boolUpdate(key: String!, value: Boolean!): UnitValue!
+  boolUpsert(key: String!, value: Boolean!): UnitValue!
+  boolRemove(key: String!): UnitValue!
+  boolClear: Int!
+  boolBitAndUpdateFnParam(key: String!, value: Boolean!): Boolean!
+  boolBitOrUpdateFnParam(key: String!, value: Boolean!): Boolean!
+  boolBitXorUpdateFnParam(key: String!, value: Boolean!): Boolean!
+  boolBitAndSelfUpdateFn(key: String!): Boolean!
+  boolBitOrSelfUpdateFn(key: String!): Boolean!
+  boolBitXorSelfUpdateFn(key: String!): Boolean!
+  charInsert(key: String!, value: Char!): UnitValue!
+  charUpdate(key: String!, value: Char!): UnitValue!
+  charUpsert(key: String!, value: Char!): UnitValue!
+  charRemove(key: String!): UnitValue!
+  charClear: Int!
+  f32Insert(key: String!, value: Float!): UnitValue!
+  f32Update(key: String!, value: Float!): UnitValue!
+  f32Upsert(key: String!, value: Float!): UnitValue!
+  f32Remove(key: String!): UnitValue!
+  f32Clear: Int!
+  f64Insert(key: String!, value: Float!): UnitValue!
+  f64Update(key: String!, value: Float!): UnitValue!
+  f64Upsert(key: String!, value: Float!): UnitValue!
+  f64Remove(key: String!): UnitValue!
+  f64Clear: Int!
+  i8Insert(key: String!, value: Int!): UnitValue!
+  i8Update(key: String!, value: Int!): UnitValue!
+  i8Upsert(key: String!, value: Int!): UnitValue!
+  i8Remove(key: String!): UnitValue!
+  i8Clear: Int!
+  i16Insert(key: String!, value: Int!): UnitValue!
+  i16Update(key: String!, value: Int!): UnitValue!
+  i16Upsert(key: String!, value: Int!): UnitValue!
+  i16Remove(key: String!): UnitValue!
+  i16Clear: Int!
+  i32Insert(key: String!, value: Int!): UnitValue!
+  i32Update(key: String!, value: Int!): UnitValue!
+  i32Upsert(key: String!, value: Int!): UnitValue!
+  i32Remove(key: String!): UnitValue!
+  i32Clear: Int!
+  i64Insert(key: String!, value: Int!): UnitValue!
+  i64Update(key: String!, value: Int!): UnitValue!
+  i64Upsert(key: String!, value: Int!): UnitValue!
+  i64Remove(key: String!): UnitValue!
+  i64Clear: Int!
+  i128Insert(key: String!, value: I128Scalar!): UnitValue!
+  i128Update(key: String!, value: I128Scalar!): UnitValue!
+  i128Upsert(key: String!, value: I128Scalar!): UnitValue!
+  i128Remove(key: String!): UnitValue!
+  i128Clear: Int!
+  isizeInsert(key: String!, value: Int!): UnitValue!
+  isizeUpdate(key: String!, value: Int!): UnitValue!
+  isizeUpsert(key: String!, value: Int!): UnitValue!
+  isizeRemove(key: String!): UnitValue!
+  isizeClear: Int!
+  u8Insert(key: String!, value: Int!): UnitValue!
+  u8Update(key: String!, value: Int!): UnitValue!
+  u8Upsert(key: String!, value: Int!): UnitValue!
+  u8Remove(key: String!): UnitValue!
+  u8Clear: Int!
+  u16Insert(key: String!, value: Int!): UnitValue!
+  u16Update(key: String!, value: Int!): UnitValue!
+  u16Upsert(key: String!, value: Int!): UnitValue!
+  u16Remove(key: String!): UnitValue!
+  u16Clear: Int!
+  u32Insert(key: String!, value: Int!): UnitValue!
+  u32Update(key: String!, value: Int!): UnitValue!
+  u32Upsert(key: String!, value: Int!): UnitValue!
+  u32Remove(key: String!): UnitValue!
+  u32Clear: Int!
+  u64Insert(key: String!, value: Int!): UnitValue!
+  u64Update(key: String!, value: Int!): UnitValue!
+  u64Upsert(key: String!, value: Int!): UnitValue!
+  u64Remove(key: String!): UnitValue!
+  u64Clear: Int!
+  u128Insert(key: String!, value: U128Scalar!): UnitValue!
+  u128Update(key: String!, value: U128Scalar!): UnitValue!
+  u128Upsert(key: String!, value: U128Scalar!): UnitValue!
+  u128Remove(key: String!): UnitValue!
+  u128Clear: Int!
+  usizeInsert(key: String!, value: Int!): UnitValue!
+  usizeUpdate(key: String!, value: Int!): UnitValue!
+  usizeUpsert(key: String!, value: Int!): UnitValue!
+  usizeRemove(key: String!): UnitValue!
+  usizeClear: Int!
+  stringInsert(key: String!, value: String!): UnitValue!
+  stringUpdate(key: String!, value: String!): UnitValue!
+  stringUpsert(key: String!, value: String!): UnitValue!
+  stringRemove(key: String!): UnitValue!
+  stringClear: Int!
+}
+
+type QueryRoot {
+  test: UnitValue!
+  sizeOfBool: Int!
+  sizeOfChar: Int!
+  sizeOfF32: Int!
+  sizeOfF64: Int!
+  sizeOfI8: Int!
+  sizeOfI16: Int!
+  sizeOfI32: Int!
+  sizeOfI64: Int!
+  sizeOfI128: Int!
+  sizeOfIsize: Int!
+  sizeOfU6: Int!
+  sizeOfU16: Int!
+  sizeOfU32: Int!
+  sizeOfU64: Int!
+  sizeOfU128: Int!
+  sizeOfUnitValue: Int!
+  sizeOfUnitValueCombined: Int!
+  sizeOfUsize: Int!
+  sizeOfString: Int!
+  boolRead(key: String!): Boolean!
+  boolContains(key: String!): Boolean!
+  boolLen: Int!
+  boolIsEmpty: Boolean!
+  boolGetAllKeys: [String!]!
+  charRead(key: String!): Char!
+  charContains(key: String!): Boolean!
+  charLen: Int!
+  charIsEmpty: Boolean!
+  charGetAllKeys: [String!]!
+  f32Read(key: String!): Float!
+  f32Contains(key: String!): Boolean!
+  f32Len: Int!
+  f32IsEmpty: Boolean!
+  f32GetAllKeys: [String!]!
+  f64Read(key: String!): Float!
+  f64Contains(key: String!): Boolean!
+  f64Len: Int!
+  f64IsEmpty: Boolean!
+  f64GetAllKeys: [String!]!
+  i8Read(key: String!): Int!
+  i8Contains(key: String!): Boolean!
+  i8Len: Int!
+  i8IsEmpty: Boolean!
+  i8GetAllKeys: [String!]!
+  i16Read(key: String!): Int!
+  i16Contains(key: String!): Boolean!
+  i16Len: Int!
+  i16IsEmpty: Boolean!
+  i16GetAllKeys: [String!]!
+  i32Read(key: String!): Int!
+  i32Contains(key: String!): Boolean!
+  i32Len: Int!
+  i32IsEmpty: Boolean!
+  i32GetAllKeys: [String!]!
+  i64Read(key: String!): Int!
+  i64Contains(key: String!): Boolean!
+  i64Len: Int!
+  i64IsEmpty: Boolean!
+  i64GetAllKeys: [String!]!
+  i128Read(key: String!): I128Scalar!
+  i128Contains(key: String!): Boolean!
+  i128Len: Int!
+  i128IsEmpty: Boolean!
+  i128GetAllKeys: [String!]!
+  isizeRead(key: String!): Int!
+  isizeContains(key: String!): Boolean!
+  isizeLen: Int!
+  isizeIsEmpty: Boolean!
+  isizeGetAllKeys: [String!]!
+  u8Read(key: String!): Int!
+  u8Contains(key: String!): Boolean!
+  u8Len: Int!
+  u8IsEmpty: Boolean!
+  u8GetAllKeys: [String!]!
+  u16Read(key: String!): Int!
+  u16Contains(key: String!): Boolean!
+  u16Len: Int!
+  u16IsEmpty: Boolean!
+  u16GetAllKeys: [String!]!
+  u32Read(key: String!): Int!
+  u32Contains(key: String!): Boolean!
+  u32Len: Int!
+  u32IsEmpty: Boolean!
+  u32GetAllKeys: [String!]!
+  u64Read(key: String!): Int!
+  u64Contains(key: String!): Boolean!
+  u64Len: Int!
+  u64IsEmpty: Boolean!
+  u64GetAllKeys: [String!]!
+  u128Read(key: String!): U128Scalar!
+  u128Contains(key: String!): Boolean!
+  u128Len: Int!
+  u128IsEmpty: Boolean!
+  u128GetAllKeys: [String!]!
+  usizeRead(key: String!): Int!
+  usizeContains(key: String!): Boolean!
+  usizeLen: Int!
+  usizeIsEmpty: Boolean!
+  usizeGetAllKeys: [String!]!
+  stringRead(key: String!): String!
+  stringContains(key: String!): Boolean!
+  stringLen: Int!
+  stringIsEmpty: Boolean!
+  stringGetAllKeys: [String!]!
+}
+
+scalar U128Scalar
+
+type UnitValue {
+  value: String!
+}

@@ -1,0 +1,366 @@
+
+
+mutation BoolInsert($k: String!, $v: Boolean!) {
+  boolInsert(key: $k, value: $v) {
+    value
+  }
+}
+
+mutation BoolInsert($k: String!, $v: Boolean!) {
+  boolInsert(key: $k, value: $v)
+}
+
+{
+  "k": "test",
+  "v": true
+}
+
+{
+  "k": "test",
+  "v": false
+}
+
+{
+  "k": "test2",
+  "v": false
+}
+
+{
+   boolRead(key: "test")
+}
+
+{
+   boolTryRead(key: "test")
+}
+
+{
+    boolLen
+}
+
+mutation BoolRemove($k: String!) {
+  boolRemove(key: $k) {
+    value
+  }
+}
+
+mutation BoolRemove($k: String!) {
+  boolRemove(key: $k)
+}
+
+{
+  "k": "test"
+}
+
+mutation BoolClear {
+  boolClear
+}
+
+
+Multiple Keys And Getting Names - bool
+
+{
+  "k": "test1",
+  "v": true
+}
+
+{
+  "k": "test2",
+  "v": false
+}
+
+{
+  "k": "test3",
+  "v": true
+}
+
+{
+  "k": "test4",
+  "v": true
+}
+
+{
+  boolGetAllKeys
+}
+
+
+{
+  test
+  {
+    value    
+  }
+}
+
+{
+ boolLen
+}
+
+{
+  test
+}
+
+query boolContains($k: String!) 
+{
+  boolContains(key: $k)
+}
+
+{
+  "k": "test"
+}
+
+{
+  boolContains(key: "test")
+}
+
+{
+ boolIsEmpty
+}
+
+{
+ sizeOfBool
+}
+
+{
+ boolCapacity
+}
+
+
+//
+
+{
+  sizeOfChar
+}
+
+{
+  sizeOfF32
+}
+
+{
+  sizeOfF64
+}
+
+{
+  sizeOfI8
+}
+
+{
+  sizeOfI16
+}
+
+{
+  sizeOfI32
+}
+
+{
+  sizeOfI64
+}
+
+{
+  sizeOfI128
+}
+
+{
+  sizeOfIsize
+}
+
+{
+  sizeOfString
+}
+
+{
+  sizeOfU8
+}
+
+{
+  sizeOfU16
+}
+
+{
+  sizeOfU32
+}
+
+{
+  sizeOfU64
+}
+
+{
+  sizeOfU128
+}
+
+{
+  sizeOfUsize
+}
+
+{
+  sizeOfWhatever
+}
+
+Results:
+
+{
+  "data": {
+    "sizeOfBool": 1
+  }
+}
+
+{
+  "data": {
+    "sizeOfChar": 4
+  }
+}
+
+{
+  "data": {
+    "sizeOfF32": 4
+  }
+}
+
+{
+  "data": {
+    "sizeOfF64": 8
+  }
+}
+
+{
+  "data": {
+    "sizeOfI8": 1
+  }
+}
+
+{
+  "data": {
+    "sizeOfI16": 2
+  }
+}
+
+{
+  "data": {
+    "sizeOfI32": 4
+  }
+}
+
+{
+  "data": {
+    "sizeOfI64": 8
+  }
+}
+
+{
+  "data": {
+    "sizeOfI128": 16
+  }
+}
+
+{
+  "data": {
+    "sizeOfIsize": 8
+  }
+}
+
+{
+  "data": {
+    "sizeOfString": 24
+  }
+}
+
+{
+  "data": {
+    "sizeOfU8": 1
+  }
+}
+
+{
+  "data": {
+    "sizeOfU16": 2
+  }
+}
+
+{
+  "data": {
+    "sizeOfU32": 4
+  }
+}
+
+{
+  "data": {
+    "sizeOfU64": 8
+  }
+}
+
+{
+  "data": {
+    "sizeOfU128": 16
+  }
+}
+
+{
+  "data": {
+    "sizeOfUsize": 8
+  }
+}
+
+{
+  "data": {
+    "sizeOfWhatever": 32
+  }
+}
+
+i8
+
+i8Insert(key: String!, value: Int!): String!
+
+mutation I8Insert($k: String!, $v: Int!) {
+  i8Insert(key: $k, value: $v)
+}
+
+{
+  "k": "test",
+  "v": 1
+}
+
+{
+   i8Read(key: "test")
+}
+
+{
+   i8TryRead(key: "test")
+}
+
+{
+    i8Len
+}
+
+mutation i8Remove($k: String!) {
+  i8Remove(key: $k)
+}
+
+{
+  "k": "test"
+}
+
+mutation i8Clear {
+  i8Clear
+}
+
+inc
+
+mutation i8IncUpdateFn($k: String!)
+{
+
+  i8IncUpdateFn(key: $k)
+
+}
+
+dec
+
+mutation i8DecUpdateFn($k: String!)
+{
+
+  i8DecUpdateFn(key: $k)
+
+}
+
+{
+  "k": "test"
+}
+
+

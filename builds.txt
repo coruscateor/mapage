@@ -1,0 +1,6 @@
+
+cargo build --features=sub_store_aml,dashmap_string,all_types
+
+cargo build --features=sub_store_aml,scc_hashmap_namespaces,all_types
+
+

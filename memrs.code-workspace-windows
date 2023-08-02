@@ -1,0 +1,18 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "..\\act-rusty"
+		},
+		{
+			"path": "..\\corlib"
+		}
+	],
+	"settings": {
+		"rust-analyzer.checkOnSave.extraArgs": [
+			"--features=sub_store_aml"
+		]
+	}
+}

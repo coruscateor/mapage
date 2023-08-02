@@ -1,0 +1,98 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'mapage'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=mapage",
+                    "--package=mapage",
+                    //"--features=sub_store_aml,dashmap_string,bool,char,i32,Whatever" //,all_types
+                    //"--features=sub_store_aml,scc_hashmap_string,all_types"
+                    //"--features=sub_store_aml,dashmap_string,all_types" 
+                    "--features=sub_store_aml,scc_hashmap_namespaces,all_types"
+                ],
+                "filter": {
+                    "name": "mapage",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'mapage'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=mapage",
+                    "--package=mapage"
+                ],
+                "filter": {
+                    "name": "mapage",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
+
+/*
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'memrs'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=memrs",
+                    "--package=memrs",
+                    "--features=sub_store_aml,dashmap_string,bool,char,i32,Whatever" //,all_types
+                ],
+                "filter": {
+                    "name": "memrs",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'memrs'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=memrs",
+                    "--package=memrs"
+                ],
+                "filter": {
+                    "name": "memrs",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
+*/

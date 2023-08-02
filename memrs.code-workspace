@@ -1,0 +1,38 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			//"path": "..\\act-rusty"
+			"path": "..//act-rusty"
+		},
+		{
+			//"path": "..\\corlib"
+			"path": "..//corlib"
+		}
+	],
+	"settings": {
+		"rust-analyzer.cargo.features": [
+			
+			"sub_store_aml"
+		]
+
+		/*
+
+		rust-analyzer failed to load workspace: Failed to read Cargo metadata from Cargo.toml file /run/media/paul/Main Stuff/SoftwareProjects/Rust/act-rusty/Cargo.toml, Some(Version { major: 1, minor: 66, patch: 0 }): Failed to run `"cargo" "metadata" "--format-version" "1" "--features" "memrs/sub_store_aml" "--manifest-path" "/run/media/paul/Main Stuff/SoftwareProjects/Rust/act-rusty/Cargo.toml" "--filter-platform" "x86_64-unknown-linux-gnu"`: `cargo metadata` exited with an error: error: package `act-rusty v0.1.0 (/run/media/paul/Main Stuff/SoftwareProjects/Rust/act-rusty)` does not have a dependency named `memrs` rust-analyzer failed to load workspace: Failed to read Cargo metadata from Cargo.toml file /run/media/paul/Main Stuff/SoftwareProjects/Rust/corlib/Cargo.toml, Some(Version { major: 1, minor: 66, patch: 0 }): Failed to run `"cargo" "metadata" "--format-version" "1" "--features" "memrs/sub_store_aml" "--manifest-path" "/run/media/paul/Main Stuff/SoftwareProjects/Rust/corlib/Cargo.to...
+
+		*/
+
+		//rust-analyzer.cargo.features with multiple folders seems boken 
+		
+		//memrs/
+
+		/*
+		"rust-analyzer.checkOnSave.extraArgs": [
+			"--features=sub_store_aml"
+		],
+		*/
+
+	}
+}
