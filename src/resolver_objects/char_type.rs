@@ -1,6 +1,6 @@
 use async_graphql::{Object, Context};
 
-use crate::{types::{sizes::size_of_char}};
+use crate::types::sizes::size_of_char;
 
 use super::StoreType;
 

@@ -1,12 +1,12 @@
 use async_graphql::{MergedObject, types::EmptyMutation};
 
 use super::{BoolQuery, CharQuery, F32Query, F64Query, I8Query, I16Query, I32Query, I64Query, I128Query, ISizeQuery, MiscellaneousQuery, StringQuery, U8Query, U16Query, U32Query, U64Query, U128Query, /*UnitValueQuery,*/ USizeQuery, WhateverQuery,
-    BoolMutation, CharMutation, F32Mutation, F64Mutation, I8Mutation, I16Mutation, I32Mutation, I64Mutation, I128Mutation, ISizeMutation, StringMutation, U8Mutation, U16Mutation, U32Mutation, U64Mutation, U128Mutation, /*UnitValueMutation,*/ USizeMutation, WhateverMutation, SelectedTypeQuery, SelectedTypeMutation, SelectedTypeQueryMisc, SelectedTypeIOQuery};
+    BoolMutation, CharMutation, F32Mutation, F64Mutation, I8Mutation, I16Mutation, I32Mutation, I64Mutation, I128Mutation, ISizeMutation, StringMutation, U8Mutation, U16Mutation, U32Mutation, U64Mutation, U128Mutation, /*UnitValueMutation,*/ USizeMutation, WhateverMutation, SelectedTypeQuery, SelectedTypeMutation, SelectedTypeQueryMisc, SelectedTypeIOQuery, Cfgs};
 
 //MiscellaneousMutation,
 
 #[derive(MergedObject, Default)]
-pub struct QueryRoot(BoolQuery, CharQuery, F32Query, F64Query, I8Query, I16Query, I32Query, I64Query, I128Query, ISizeQuery, MiscellaneousQuery, StringQuery, U8Query, U16Query, U32Query, U64Query, U128Query, /*UnitValueQuery,*/ USizeQuery, WhateverQuery, SelectedTypeQuery, SelectedTypeQueryMisc, SelectedTypeIOQuery);
+pub struct QueryRoot(BoolQuery, CharQuery, F32Query, F64Query, I8Query, I16Query, I32Query, I64Query, I128Query, ISizeQuery, MiscellaneousQuery, StringQuery, U8Query, U16Query, U32Query, U64Query, U128Query, /*UnitValueQuery,*/ USizeQuery, WhateverQuery, SelectedTypeQuery, SelectedTypeQueryMisc, SelectedTypeIOQuery, Cfgs);
 
 #[cfg(any(feature = "store_aml", feature = "sub_store_aml"))]
 #[derive(MergedObject, Default)]

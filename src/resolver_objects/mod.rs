@@ -93,6 +93,10 @@ pub use selected_type_type::*;
 
 pub mod resolver_object_macros;
 
+pub mod cfgs;
+
+pub use cfgs::*;
+
 
 cfg_if::cfg_if! 
 {

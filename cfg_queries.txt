@@ -1,0 +1,34 @@
+{
+	getAllCfgs
+    {
+
+        storeAml,
+        subStoreAml,
+        sccHashmapNamespaces,
+        dashmapNamespaces,
+        allTypes,
+        boolType,
+        charType,
+        f32Type,
+        f64Type,
+        i8Type,
+        i16Type,
+        i32Type,
+        i64Type,
+        i128Type,
+        isizeType,
+        stringType,
+        u8Type,
+        u16Type,
+        u32Type,
+        u64Type,
+        u128Type,
+        usizeType,
+        whateverType,
+        selectedTypeType,
+        selectedTypeIoType
+        
+    }   
+}
+
+
