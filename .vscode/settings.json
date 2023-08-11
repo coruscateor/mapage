@@ -9,7 +9,8 @@
     //"Whatever"
     //"dashmap_namespaces",
     "scc_hashmap_namespaces",
-    "all_types"
+    "all_types",
+    "all_key_types_String"
     ],
     "rust-analyzer.linkedProjects": [
         "./Cargo.toml",

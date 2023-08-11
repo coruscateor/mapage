@@ -31,4 +31,103 @@
     }   
 }
 
+{
+    getStoreAmlCfg
+}
+
+{
+    getSubStoreAmlCfg
+}
+
+{
+    getSccHashmapNamespacesCfg
+}
+
+{
+    getDashmapNamespacesCfg
+}
+
+{
+    getAllTypesCfg
+}
+
+{
+    getBoolTypeCfg
+}
+
+{
+    getCharTypeCfg
+}
+
+{
+    getF32TypeCfg
+}
+
+{
+    getF64TypeCfg
+}
+  
+{
+    getI8TypeCfg
+}
+  
+{
+    getI16TypeCfg
+}
+
+{
+    getI32TypeCfg
+}
+  
+{
+    getI64TypeCfg
+}
+  
+{
+    getI128TypeCfg
+}
+
+{
+    getIsizeTypeCfg
+}
+  
+{
+    getStringTypeCfg
+}
+
+{
+    getU8TypeCfg
+}
+
+{
+    getU16TypeCfg
+}
+  
+{
+    getU32TypeCfg
+}
+
+{
+    getU64TypeCfg
+}
+  
+{
+    getU128TypeCfg
+}
+  
+{
+    getUsizeTypeCfg
+}
+  
+{
+    getWhateverTypeCfg
+}
+
+{
+    getSelectedTypeTypeCfg
+}
+  
+{
+    getSelectedTypeIoTypeCfg
+}
 

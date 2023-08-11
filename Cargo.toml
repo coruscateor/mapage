@@ -84,6 +84,113 @@ SelectedType = []
 #SelectedType_OI_Only = []
 SelectedTypeIO = []
 
+#Keys:
+
+all_key_types_String = []
+all_key_types_Arc_String = []
+
+#types/keys
+
+#[<$for_type _key_type_String>]
+#[<$for_type _key_type_Arc_String>]
+
+#bool keys
+
+bool_key_type_String = []
+bool_key_type_Arc_String = []
+
+#char keys
+
+char_key_type_String = []
+char_key_type_Arc_String = []
+
+#f32 keys
+
+f32_key_type_String = []
+f32_key_type_Arc_String = []
+
+#f64 keys
+
+f64_key_type_String = []
+f64_key_type_Arc_String = []
+
+#i8 keys
+
+i8_key_type_String = []
+i8_key_type_Arc_String = []
+
+#i16 keys
+
+i16_key_type_String = []
+i16_key_type_Arc_String = []
+
+#i32 keys
+
+i32_key_type_String = []
+i32_key_type_Arc_String = []
+
+#i64 keys
+
+i64_key_type_String = []
+i64_key_type_Arc_String = []
+
+#i128 keys
+
+i128_key_type_String = []
+i128_key_type_Arc_String = []
+
+#isize keys
+
+isize_key_type_String = []
+isize_key_type_Arc_String = []
+
+#SelectedType keys
+
+SelectedType_key_type_String = []
+SelectedType_key_type_Arc_String = []
+
+#String keys
+
+String_key_type_String = []
+String_key_type_Arc_String = []
+
+#u8 keys
+
+u8_key_type_String = []
+u8_key_type_Arc_String = []
+
+#u16 keys
+
+u16_key_type_String = []
+u16_key_type_Arc_String = []
+
+#u32 keys
+
+u32_key_type_String = []
+u32_key_type_Arc_String = []
+
+#u64 keys
+
+u64_key_type_String = []
+u64_key_type_Arc_String = []
+
+#u128 keys
+
+u128_key_type_String = []
+u128_key_type_Arc_String = []
+
+#usize keys
+
+usize_key_type_String = []
+usize_key_type_Arc_String = []
+
+#Whatever keys
+
+Whatever_key_type_String = []
+Whatever_key_type_Arc_String = []
+
+#
+
 #Arc:
 
 #std_sync_arc
