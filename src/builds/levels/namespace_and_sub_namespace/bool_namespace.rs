@@ -6,7 +6,7 @@ use crate::{types::ops::*, impl_update_fn_op_method};
 
 use paste::paste;
 
-type KeyType = String;
+type KeyType = crate::types::keys::BoolKeyType;
 
 #[cfg(feature = "scc_hashmap_namespaces")]
 use super::scc_crate::hashmap_namespace::HashMapNamespace as SCC_HashMapNamespace;

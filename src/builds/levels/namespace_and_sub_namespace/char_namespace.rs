@@ -2,7 +2,7 @@ use std::collections::HashSet;
 
 use delegate::delegate;
 
-type KeyType = String;
+type KeyType = crate::types::keys::CharKeyType;
 
 #[cfg(feature = "scc_hashmap_namespaces")]
 use super::scc_crate::hashmap_namespace::HashMapNamespace as SCC_HashMapNamespace;

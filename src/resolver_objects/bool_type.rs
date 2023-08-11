@@ -9,7 +9,7 @@ use crate::{call_store_method, call_store_method_no_key, call_store_method_only_
 use super::StoreType;
 
 #[cfg(any(feature = "all_key_types_String", feature = "bool_key_type_String"))]
-type KeyType = crate::types::keys::bool_key_type; //boolkey_type_String;
+type KeyType = crate::types::keys::BoolKeyType; //boolkey_type_String;
 
 #[derive(Default)]
 pub struct BoolQuery;
@@ -28,21 +28,21 @@ impl BoolQuery
 
     //
 
-    pub async fn bool_read(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<bool>
+    pub async fn bool_read(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<bool>
     {
 
         call_store_method!(ctx, get_bool_namespace_ref, read, key)
 
     }
 
-    pub async fn bool_try_read(&self, ctx: &Context<'_>, key: String) -> Option<bool>
+    pub async fn bool_try_read(&self, ctx: &Context<'_>, key: KeyType) -> Option<bool>
     {
 
         call_store_method!(ctx, get_bool_namespace_ref, try_read, key)
 
     }
 
-    pub async fn bool_contains(&self, ctx: &Context<'_>, key: String) -> bool
+    pub async fn bool_contains(&self, ctx: &Context<'_>, key: KeyType) -> bool
     {
 
         call_store_method!(ctx, get_bool_namespace_ref, contains, key)
@@ -103,42 +103,42 @@ pub struct BoolMutation;
 impl BoolMutation
 {
     
-    pub async fn bool_insert(&self, ctx: &Context<'_>, key: String, value: bool) -> async_graphql::Result<&'static str>
+    pub async fn bool_insert(&self, ctx: &Context<'_>, key: KeyType, value: bool) -> async_graphql::Result<&'static str>
     {
 
         call_store_method_only_move_key!(ctx, get_bool_namespace_ref, insert, key, value)
 
     }
 
-    pub async fn bool_update(&self, ctx: &Context<'_>, key: String, value: bool) -> async_graphql::Result<&'static str>
+    pub async fn bool_update(&self, ctx: &Context<'_>, key: KeyType, value: bool) -> async_graphql::Result<&'static str>
     {
 
         call_store_method!(ctx, get_bool_namespace_ref, update, key, value)
 
     }
 
-    pub async fn bool_try_replace(&self, ctx: &Context<'_>, key: String, value: bool) -> Option<bool>
+    pub async fn bool_try_replace(&self, ctx: &Context<'_>, key: KeyType, value: bool) -> Option<bool>
     {
 
         call_store_method!(ctx, get_bool_namespace_ref, try_replace, key, value)
 
     }
 
-    pub async fn bool_upsert(&self, ctx: &Context<'_>, key: String, value: bool) -> async_graphql::Result<&'static str>
+    pub async fn bool_upsert(&self, ctx: &Context<'_>, key: KeyType, value: bool) -> async_graphql::Result<&'static str>
     {
 
         call_store_method_only_move_key!(ctx, get_bool_namespace_ref, upsert, key, value)
 
     }
 
-    pub async fn bool_remove(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<&'static str>
+    pub async fn bool_remove(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<&'static str>
     {
 
         call_store_method!(ctx, get_bool_namespace_ref, remove, key)
 
     }
 
-    pub async fn bool_try_retrieve(&self, ctx: &Context<'_>, key: String) -> Option<bool>
+    pub async fn bool_try_retrieve(&self, ctx: &Context<'_>, key: KeyType) -> Option<bool>
     {
 
         call_store_method!(ctx, get_bool_namespace_ref, try_retrieve, key)
@@ -164,28 +164,28 @@ impl BoolMutation
 
     //with param
 
-    pub async fn bool_not_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<bool>
+    pub async fn bool_not_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<bool>
     {
         
         call_store_method!(ctx, get_bool_namespace_ref, not_op, key)
 
     }
 
-    pub async fn bool_bit_and_op(&self, ctx: &Context<'_>, key: String, value: bool) -> async_graphql::Result<bool>
+    pub async fn bool_bit_and_op(&self, ctx: &Context<'_>, key: KeyType, value: bool) -> async_graphql::Result<bool>
     {
 
         call_store_method!(ctx, get_bool_namespace_ref, bit_and_op, key, value)
 
     }
 
-    pub async fn bool_bit_or_op(&self, ctx: &Context<'_>, key: String, value: bool) -> async_graphql::Result<bool>
+    pub async fn bool_bit_or_op(&self, ctx: &Context<'_>, key: KeyType, value: bool) -> async_graphql::Result<bool>
     {
 
         call_store_method!(ctx, get_bool_namespace_ref, bit_or_op, key, value)
 
     }
 
-    pub async fn bool_bit_xor_op(&self, ctx: &Context<'_>, key: String, value: bool) -> async_graphql::Result<bool>
+    pub async fn bool_bit_xor_op(&self, ctx: &Context<'_>, key: KeyType, value: bool) -> async_graphql::Result<bool>
     {
 
         call_store_method!(ctx, get_bool_namespace_ref, bit_xor_op, key, value)
@@ -194,21 +194,21 @@ impl BoolMutation
 
     //on self
 
-    pub async fn bool_bit_and_self_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<bool>
+    pub async fn bool_bit_and_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<bool>
     {
 
         call_store_method!(ctx, get_bool_namespace_ref, bit_and_self_op, key)
 
     }
 
-    pub async fn bool_bit_or_self_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<bool>
+    pub async fn bool_bit_or_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<bool>
     {
 
         call_store_method!(ctx, get_bool_namespace_ref, bit_or_self_op, key)
 
     }
 
-    pub async fn bool_bit_xor_self_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<bool>
+    pub async fn bool_bit_xor_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<bool>
     {
 
         call_store_method!(ctx, get_bool_namespace_ref, bit_xor_self_op, key)

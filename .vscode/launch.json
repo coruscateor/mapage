@@ -16,7 +16,7 @@
                     //"--features=sub_store_aml,dashmap_string,bool,char,i32,Whatever" //,all_types
                     //"--features=sub_store_aml,scc_hashmap_string,all_types"
                     //"--features=sub_store_aml,dashmap_string,all_types" 
-                    "--features=sub_store_aml,scc_hashmap_namespaces,all_types"
+                    "--features=sub_store_aml,scc_hashmap_namespaces,all_types,all_key_types_String"
                 ],
                 "filter": {
                     "name": "mapage",
