@@ -8,6 +8,8 @@ use std::collections::HashSet;
 
 use crate::{call_store_method, call_store_method_no_key, call_store_method_only_move_key};
 
+type KeyType = crate::types::keys::IsizeKeyType;
+
 #[derive(Default)]
 pub struct ISizeQuery;
 
@@ -25,21 +27,21 @@ impl ISizeQuery
 
     //
 
-    pub async fn isize_read(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<isize>
+    pub async fn isize_read(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<isize>
     {
 
         call_store_method!(ctx, get_isize_namespace_ref, read, key)
 
     }
 
-    pub async fn isize_try_read(&self, ctx: &Context<'_>, key: String) -> Option<isize>
+    pub async fn isize_try_read(&self, ctx: &Context<'_>, key: KeyType) -> Option<isize>
     {
 
         call_store_method!(ctx, get_isize_namespace_ref, try_read, key)
 
     }
 
-    pub async fn isize_contains(&self, ctx: &Context<'_>, key: String) -> bool
+    pub async fn isize_contains(&self, ctx: &Context<'_>, key: KeyType) -> bool
     {
 
         call_store_method!(ctx, get_isize_namespace_ref, contains, key)
@@ -99,42 +101,42 @@ pub struct ISizeMutation;
 impl ISizeMutation
 {
 
-    pub async fn isize_insert(&self, ctx: &Context<'_>, key: String, value: isize) -> async_graphql::Result<&'static str>
+    pub async fn isize_insert(&self, ctx: &Context<'_>, key: KeyType, value: isize) -> async_graphql::Result<&'static str>
     {
 
         call_store_method_only_move_key!(ctx, get_isize_namespace_ref, insert, key, value)
 
     }
 
-    pub async fn isize_update(&self, ctx: &Context<'_>, key: String, value: isize) -> async_graphql::Result<&'static str>
+    pub async fn isize_update(&self, ctx: &Context<'_>, key: KeyType, value: isize) -> async_graphql::Result<&'static str>
     {
 
         call_store_method!(ctx, get_isize_namespace_ref, update, key, value)
 
     }
 
-    pub async fn isize_try_replace(&self, ctx: &Context<'_>, key: String, value: isize) -> Option<isize>
+    pub async fn isize_try_replace(&self, ctx: &Context<'_>, key: KeyType, value: isize) -> Option<isize>
     {
 
         call_store_method!(ctx, get_isize_namespace_ref, try_replace, key, value)
 
     }
 
-    pub async fn isize_upsert(&self, ctx: &Context<'_>, key: String, value: isize) -> async_graphql::Result<&'static str>
+    pub async fn isize_upsert(&self, ctx: &Context<'_>, key: KeyType, value: isize) -> async_graphql::Result<&'static str>
     {
 
         call_store_method_only_move_key!(ctx, get_isize_namespace_ref, upsert, key, value)
 
     }
 
-    pub async fn isize_remove(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<&'static str>
+    pub async fn isize_remove(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<&'static str>
     {
 
         call_store_method!(ctx, get_isize_namespace_ref, remove, key)
 
     }
 
-    pub async fn isize_try_retrieve(&self, ctx: &Context<'_>, key: String) -> Option<isize>
+    pub async fn isize_try_retrieve(&self, ctx: &Context<'_>, key: KeyType) -> Option<isize>
     {
 
         call_store_method!(ctx, get_isize_namespace_ref, try_retrieve, key)
@@ -159,14 +161,14 @@ impl ISizeMutation
 
     //add
 
-    pub async fn isize_add_op(&self, ctx: &Context<'_>, key: String, value: isize) -> async_graphql::Result<isize>
+    pub async fn isize_add_op(&self, ctx: &Context<'_>, key: KeyType, value: isize) -> async_graphql::Result<isize>
     {
 
         call_store_method!(ctx, get_isize_namespace_ref, add_op, key, value)
 
     }
 
-    pub async fn isize_add_self_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<isize>
+    pub async fn isize_add_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<isize>
     {
 
         call_store_method!(ctx, get_isize_namespace_ref, add_self_op, key)
@@ -175,14 +177,14 @@ impl ISizeMutation
 
     //bit_and
 
-    pub async fn isize_bit_and_op(&self, ctx: &Context<'_>, key: String, value: isize) -> async_graphql::Result<isize>
+    pub async fn isize_bit_and_op(&self, ctx: &Context<'_>, key: KeyType, value: isize) -> async_graphql::Result<isize>
     {
 
         call_store_method!(ctx, get_isize_namespace_ref, bit_and_op, key, value)
 
     }
 
-    pub async fn isize_bit_and_self_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<isize>
+    pub async fn isize_bit_and_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<isize>
     {
 
         call_store_method!(ctx, get_isize_namespace_ref, bit_and_self_op, key)
@@ -191,14 +193,14 @@ impl ISizeMutation
 
     //bit_or
 
-    pub async fn isize_bit_bit_or_op(&self, ctx: &Context<'_>, key: String, value: isize) -> async_graphql::Result<isize>
+    pub async fn isize_bit_bit_or_op(&self, ctx: &Context<'_>, key: KeyType, value: isize) -> async_graphql::Result<isize>
     {
 
         call_store_method!(ctx, get_isize_namespace_ref, bit_or_op, key, value)
 
     }
 
-    pub async fn isize_bit_bit_or_self_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<isize>
+    pub async fn isize_bit_bit_or_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<isize>
     {
 
         call_store_method!(ctx, get_isize_namespace_ref, bit_or_self_op, key)
@@ -207,14 +209,14 @@ impl ISizeMutation
 
     //bit_xor
 
-    pub async fn isize_bit_bit_xor_op(&self, ctx: &Context<'_>, key: String, value: isize) -> async_graphql::Result<isize>
+    pub async fn isize_bit_bit_xor_op(&self, ctx: &Context<'_>, key: KeyType, value: isize) -> async_graphql::Result<isize>
     {
 
         call_store_method!(ctx, get_isize_namespace_ref, bit_xor_op, key, value)
 
     }
 
-    pub async fn isize_bit_bit_xor_self_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<isize>
+    pub async fn isize_bit_bit_xor_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<isize>
     {
 
         call_store_method!(ctx, get_isize_namespace_ref, bit_xor_self_op, key)
@@ -223,14 +225,14 @@ impl ISizeMutation
 
     //div
 
-    pub async fn isize_div_op(&self, ctx: &Context<'_>, key: String, value: isize) -> async_graphql::Result<isize>
+    pub async fn isize_div_op(&self, ctx: &Context<'_>, key: KeyType, value: isize) -> async_graphql::Result<isize>
     {
 
         call_store_method!(ctx, get_isize_namespace_ref, div_op, key, value)
 
     }
 
-    pub async fn isize_div_self_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<isize>
+    pub async fn isize_div_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<isize>
     {
 
         call_store_method!(ctx, get_isize_namespace_ref, div_self_op, key)
@@ -239,14 +241,14 @@ impl ISizeMutation
 
     //mul
 
-    pub async fn isize_mul_op(&self, ctx: &Context<'_>, key: String, value: isize) -> async_graphql::Result<isize>
+    pub async fn isize_mul_op(&self, ctx: &Context<'_>, key: KeyType, value: isize) -> async_graphql::Result<isize>
     {
 
         call_store_method!(ctx, get_isize_namespace_ref, mul_op, key, value)
 
     }
 
-    pub async fn isize_mul_self_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<isize>
+    pub async fn isize_mul_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<isize>
     {
 
         call_store_method!(ctx, get_isize_namespace_ref, mul_self_op, key)
@@ -255,7 +257,7 @@ impl ISizeMutation
 
     //neg
 
-    pub async fn isize_neg_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<isize>
+    pub async fn isize_neg_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<isize>
     {
 
         call_store_method!(ctx, get_isize_namespace_ref, neg_op, key)
@@ -264,7 +266,7 @@ impl ISizeMutation
 
     //not
 
-    pub async fn isize_not_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<isize>
+    pub async fn isize_not_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<isize>
     {
 
         call_store_method!(ctx, get_isize_namespace_ref, not_op, key)
@@ -273,14 +275,14 @@ impl ISizeMutation
 
     //rem
 
-    pub async fn isize_rem_op(&self, ctx: &Context<'_>, key: String, value: isize) -> async_graphql::Result<isize>
+    pub async fn isize_rem_op(&self, ctx: &Context<'_>, key: KeyType, value: isize) -> async_graphql::Result<isize>
     {
 
         call_store_method!(ctx, get_isize_namespace_ref, rem_op, key, value)
 
     }
 
-    pub async fn isize_rem_self_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<isize>
+    pub async fn isize_rem_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<isize>
     {
 
         call_store_method!(ctx, get_isize_namespace_ref, rem_self_op, key)
@@ -289,14 +291,14 @@ impl ISizeMutation
 
     //shl
 
-    pub async fn isize_shl_op(&self, ctx: &Context<'_>, key: String, value: isize) -> async_graphql::Result<isize>
+    pub async fn isize_shl_op(&self, ctx: &Context<'_>, key: KeyType, value: isize) -> async_graphql::Result<isize>
     {
 
         call_store_method!(ctx, get_isize_namespace_ref, shl_op, key, value)
 
     }
 
-    pub async fn isize_shl_self_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<isize>
+    pub async fn isize_shl_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<isize>
     {
 
         call_store_method!(ctx, get_isize_namespace_ref, shl_self_op, key)
@@ -305,14 +307,14 @@ impl ISizeMutation
 
     //shr
 
-    pub async fn isize_shr_op(&self, ctx: &Context<'_>, key: String, value: isize) -> async_graphql::Result<isize>
+    pub async fn isize_shr_op(&self, ctx: &Context<'_>, key: KeyType, value: isize) -> async_graphql::Result<isize>
     {
 
         call_store_method!(ctx, get_isize_namespace_ref, shr_op, key, value)
 
     }
 
-    pub async fn isize_shr_self_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<isize>
+    pub async fn isize_shr_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<isize>
     {
 
         call_store_method!(ctx, get_isize_namespace_ref, shr_self_op, key)
@@ -321,14 +323,14 @@ impl ISizeMutation
 
     //sub
 
-    pub async fn isize_sub_op(&self, ctx: &Context<'_>, key: String, value: isize) -> async_graphql::Result<isize>
+    pub async fn isize_sub_op(&self, ctx: &Context<'_>, key: KeyType, value: isize) -> async_graphql::Result<isize>
     {
 
         call_store_method!(ctx, get_isize_namespace_ref, sub_op, key, value)
 
     }
 
-    pub async fn isize_sub_self_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<isize>
+    pub async fn isize_sub_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<isize>
     {
 
         call_store_method!(ctx, get_isize_namespace_ref, sub_self_op, key)
@@ -337,7 +339,7 @@ impl ISizeMutation
 
     //inc
 
-    pub async fn isize_inc_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<isize>
+    pub async fn isize_inc_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<isize>
     {
 
         call_store_method!(ctx, get_isize_namespace_ref, inc_op, key)
@@ -346,7 +348,7 @@ impl ISizeMutation
 
     //dec
 
-    pub async fn isize_dec_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<isize>
+    pub async fn isize_dec_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<isize>
     {
 
         call_store_method!(ctx, get_isize_namespace_ref, dec_op, key)

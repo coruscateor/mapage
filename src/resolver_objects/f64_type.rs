@@ -8,6 +8,8 @@ use std::collections::HashSet;
 
 use crate::{call_store_method, call_store_method_no_key, call_store_method_only_move_key};
 
+type KeyType = crate::types::keys::F64KeyType;
+
 #[derive(Default)]
 pub struct F64Query;
 
@@ -25,21 +27,21 @@ impl F64Query
 
     //
 
-    pub async fn f64_read(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<f64>
+    pub async fn f64_read(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<f64>
     {
 
         call_store_method!(ctx, get_f64_namespace_ref, read, key)
 
     }
 
-    pub async fn f64_try_read(&self, ctx: &Context<'_>, key: String) -> Option<f64>
+    pub async fn f64_try_read(&self, ctx: &Context<'_>, key: KeyType) -> Option<f64>
     {
 
         call_store_method!(ctx, get_f64_namespace_ref, try_read, key)
 
     }
 
-    pub async fn f64_contains(&self, ctx: &Context<'_>, key: String) -> bool
+    pub async fn f64_contains(&self, ctx: &Context<'_>, key: KeyType) -> bool
     {
 
         call_store_method!(ctx, get_f64_namespace_ref, contains, key)
@@ -99,42 +101,42 @@ pub struct F64Mutation;
 impl F64Mutation
 {
 
-    pub async fn f64_insert(&self, ctx: &Context<'_>, key: String, value: f64) -> async_graphql::Result<&'static str>
+    pub async fn f64_insert(&self, ctx: &Context<'_>, key: KeyType, value: f64) -> async_graphql::Result<&'static str>
     {
 
         call_store_method_only_move_key!(ctx, get_f64_namespace_ref, insert, key, value)
 
     }
 
-    pub async fn f64_update(&self, ctx: &Context<'_>, key: String, value: f64) -> async_graphql::Result<&'static str>
+    pub async fn f64_update(&self, ctx: &Context<'_>, key: KeyType, value: f64) -> async_graphql::Result<&'static str>
     {
 
         call_store_method!(ctx, get_f64_namespace_ref, update, key, value)
 
     }
 
-    pub async fn f64_try_replace(&self, ctx: &Context<'_>, key: String, value: f64) -> Option<f64>
+    pub async fn f64_try_replace(&self, ctx: &Context<'_>, key: KeyType, value: f64) -> Option<f64>
     {
 
         call_store_method!(ctx, get_f64_namespace_ref, try_replace, key, value)
 
     }
 
-    pub async fn f64_upsert(&self, ctx: &Context<'_>, key: String, value: f64) -> async_graphql::Result<&'static str>
+    pub async fn f64_upsert(&self, ctx: &Context<'_>, key: KeyType, value: f64) -> async_graphql::Result<&'static str>
     {
 
         call_store_method_only_move_key!(ctx, get_f64_namespace_ref, upsert, key, value)
 
     }
 
-    pub async fn f64_remove(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<&'static str>
+    pub async fn f64_remove(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<&'static str>
     {
 
         call_store_method!(ctx, get_f64_namespace_ref, remove, key)
 
     }
 
-    pub async fn f64_try_retrieve(&self, ctx: &Context<'_>, key: String) -> Option<f64>
+    pub async fn f64_try_retrieve(&self, ctx: &Context<'_>, key: KeyType) -> Option<f64>
     {
 
         call_store_method!(ctx, get_f64_namespace_ref, try_retrieve, key)
@@ -159,14 +161,14 @@ impl F64Mutation
 
     //add
 
-    pub async fn f64_add_op(&self, ctx: &Context<'_>, key: String, value: f64) -> async_graphql::Result<f64>
+    pub async fn f64_add_op(&self, ctx: &Context<'_>, key: KeyType, value: f64) -> async_graphql::Result<f64>
     {
 
         call_store_method!(ctx, get_f64_namespace_ref, add_op, key, value)
 
     }
 
-    pub async fn f64_add_self_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<f64>
+    pub async fn f64_add_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<f64>
     {
 
         call_store_method!(ctx, get_f64_namespace_ref, add_self_op, key)
@@ -175,14 +177,14 @@ impl F64Mutation
 
     //div
 
-    pub async fn f64_div_op(&self, ctx: &Context<'_>, key: String, value: f64) -> async_graphql::Result<f64>
+    pub async fn f64_div_op(&self, ctx: &Context<'_>, key: KeyType, value: f64) -> async_graphql::Result<f64>
     {
 
         call_store_method!(ctx, get_f64_namespace_ref, div_op, key, value)
 
     }
 
-    pub async fn f64_div_self_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<f64>
+    pub async fn f64_div_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<f64>
     {
 
         call_store_method!(ctx, get_f64_namespace_ref, div_self_op, key)
@@ -191,14 +193,14 @@ impl F64Mutation
 
     //mul
 
-    pub async fn f64_mul_op(&self, ctx: &Context<'_>, key: String, value: f64) -> async_graphql::Result<f64>
+    pub async fn f64_mul_op(&self, ctx: &Context<'_>, key: KeyType, value: f64) -> async_graphql::Result<f64>
     {
 
         call_store_method!(ctx, get_f64_namespace_ref, mul_op, key, value)
 
     }
 
-    pub async fn f64_mul_self_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<f64>
+    pub async fn f64_mul_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<f64>
     {
 
         call_store_method!(ctx, get_f64_namespace_ref, mul_self_op, key)
@@ -207,7 +209,7 @@ impl F64Mutation
 
     //neg
 
-    pub async fn f64_neg_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<f64>
+    pub async fn f64_neg_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<f64>
     {
 
         call_store_method!(ctx, get_f64_namespace_ref, neg_op, key)
@@ -216,14 +218,14 @@ impl F64Mutation
 
     //rem
 
-    pub async fn f64_rem_op(&self, ctx: &Context<'_>, key: String, value: f64) -> async_graphql::Result<f64>
+    pub async fn f64_rem_op(&self, ctx: &Context<'_>, key: KeyType, value: f64) -> async_graphql::Result<f64>
     {
 
         call_store_method!(ctx, get_f64_namespace_ref, rem_op, key, value)
 
     }
 
-    pub async fn f64_rem_self_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<f64>
+    pub async fn f64_rem_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<f64>
     {
 
         call_store_method!(ctx, get_f64_namespace_ref, rem_self_op, key)
@@ -232,14 +234,14 @@ impl F64Mutation
 
     //sub
 
-    pub async fn f64_sub_op(&self, ctx: &Context<'_>, key: String, value: f64) -> async_graphql::Result<f64>
+    pub async fn f64_sub_op(&self, ctx: &Context<'_>, key: KeyType, value: f64) -> async_graphql::Result<f64>
     {
 
         call_store_method!(ctx, get_f64_namespace_ref, sub_op, key, value)
 
     }
 
-    pub async fn f64_sub_self_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<f64>
+    pub async fn f64_sub_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<f64>
     {
 
         call_store_method!(ctx, get_f64_namespace_ref, sub_self_op, key)
@@ -248,7 +250,7 @@ impl F64Mutation
 
     //inc
 
-    pub async fn f64_inc_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<f64>
+    pub async fn f64_inc_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<f64>
     {
 
         call_store_method!(ctx, get_f64_namespace_ref, inc_op, key)
@@ -257,7 +259,7 @@ impl F64Mutation
 
     //dec
 
-    pub async fn f64_dec_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<f64>
+    pub async fn f64_dec_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<f64>
     {
 
         call_store_method!(ctx, get_f64_namespace_ref, dec_op, key)

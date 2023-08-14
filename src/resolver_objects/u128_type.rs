@@ -8,6 +8,8 @@ use std::collections::HashSet;
 
 use crate::{call_store_method, call_store_method_no_key, call_store_method_only_move_key};
 
+type KeyType = crate::types::keys::U128KeyType;
+
 #[derive(Default)]
 pub struct U128Query;
 
@@ -25,21 +27,21 @@ impl U128Query
 
     //
 
-    pub async fn u128_read(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<U128Scalar>
+    pub async fn u128_read(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<U128Scalar>
     {
 
         call_store_method!(ctx, get_u128_namespace_ref, read, key)
 
     }
 
-    pub async fn u128_try_read(&self, ctx: &Context<'_>, key: String) -> Option<U128Scalar>
+    pub async fn u128_try_read(&self, ctx: &Context<'_>, key: KeyType) -> Option<U128Scalar>
     {
 
         call_store_method!(ctx, get_u128_namespace_ref, try_read, key)
 
     }
 
-    pub async fn u128_contains(&self, ctx: &Context<'_>, key: String) -> bool
+    pub async fn u128_contains(&self, ctx: &Context<'_>, key: KeyType) -> bool
     {
 
         call_store_method!(ctx, get_u128_namespace_ref, contains, key)
@@ -99,42 +101,42 @@ pub struct U128Mutation;
 impl U128Mutation
 {
 
-    pub async fn u128_insert(&self, ctx: &Context<'_>, key: String, value: U128Scalar) -> async_graphql::Result<&'static str>
+    pub async fn u128_insert(&self, ctx: &Context<'_>, key: KeyType, value: U128Scalar) -> async_graphql::Result<&'static str>
     {
 
         call_store_method_only_move_key!(ctx, get_u128_namespace_ref, insert, key, value)
 
     }
 
-    pub async fn u128_update(&self, ctx: &Context<'_>, key: String, value: U128Scalar) -> async_graphql::Result<&'static str>
+    pub async fn u128_update(&self, ctx: &Context<'_>, key: KeyType, value: U128Scalar) -> async_graphql::Result<&'static str>
     {
 
         call_store_method!(ctx, get_u128_namespace_ref, update, key, value)
 
     }
 
-    pub async fn u128_try_replace(&self, ctx: &Context<'_>, key: String, value: U128Scalar) -> Option<U128Scalar>
+    pub async fn u128_try_replace(&self, ctx: &Context<'_>, key: KeyType, value: U128Scalar) -> Option<U128Scalar>
     {
 
         call_store_method!(ctx, get_u128_namespace_ref, try_replace, key, value)
 
     }
 
-    pub async fn u128_upsert(&self, ctx: &Context<'_>, key: String, value: U128Scalar) -> async_graphql::Result<&'static str>
+    pub async fn u128_upsert(&self, ctx: &Context<'_>, key: KeyType, value: U128Scalar) -> async_graphql::Result<&'static str>
     {
 
         call_store_method_only_move_key!(ctx, get_u128_namespace_ref, upsert, key, value)
 
     }
 
-    pub async fn u128_remove(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<&'static str>
+    pub async fn u128_remove(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<&'static str>
     {
 
         call_store_method!(ctx, get_u128_namespace_ref, remove, key)
 
     }
 
-    pub async fn u128_try_retrieve(&self, ctx: &Context<'_>, key: String) -> Option<U128Scalar>
+    pub async fn u128_try_retrieve(&self, ctx: &Context<'_>, key: KeyType) -> Option<U128Scalar>
     {
 
         call_store_method!(ctx, get_u128_namespace_ref, try_retrieve, key)

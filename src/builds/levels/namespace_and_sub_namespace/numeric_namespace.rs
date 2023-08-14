@@ -24,6 +24,8 @@ type Namespace<T> = SCC_HashMapNamespace<KeyType, T>;
 #[cfg(feature = "dashmap_namespaces")]
 type Namespace<T> = DashMapNamespace<KeyType, T>;
 
+//K: 'static + Clone + Eq + Hash + Ord + Sync
+
 //Floats - Neg
 
 pub struct NumericNamespace<T>

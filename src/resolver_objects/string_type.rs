@@ -8,6 +8,8 @@ use std::collections::HashSet;
 
 use crate::{call_store_method, call_store_method_no_key, call_store_method_only_move_key};
 
+type KeyType = crate::types::keys::StringKeyType;
+
 #[derive(Default)]
 pub struct StringQuery;
 
@@ -25,21 +27,21 @@ impl StringQuery
 
     //
 
-    pub async fn string_read(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<String>
+    pub async fn string_read(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<String>
     {
 
         call_store_method!(ctx, get_string_namespace_ref, read, key)
 
     }
 
-    pub async fn string_try_read(&self, ctx: &Context<'_>, key: String) -> Option<String>
+    pub async fn string_try_read(&self, ctx: &Context<'_>, key: KeyType) -> Option<String>
     {
 
         call_store_method!(ctx, get_string_namespace_ref, try_read, key)
 
     }
 
-    pub async fn string_contains(&self, ctx: &Context<'_>, key: String) -> bool
+    pub async fn string_contains(&self, ctx: &Context<'_>, key: KeyType) -> bool
     {
 
         call_store_method!(ctx, get_string_namespace_ref, contains, key)
@@ -100,42 +102,42 @@ pub struct StringMutation;
 impl StringMutation
 {
 
-    pub async fn string_insert(&self, ctx: &Context<'_>, key: String, value: String) -> async_graphql::Result<&'static str>
+    pub async fn string_insert(&self, ctx: &Context<'_>, key: KeyType, value: String) -> async_graphql::Result<&'static str>
     {
 
         call_store_method_only_move_key!(ctx, get_string_namespace_ref, insert, key, value)
 
     }
 
-    pub async fn string_update(&self, ctx: &Context<'_>, key: String, value: String) -> async_graphql::Result<&'static str>
+    pub async fn string_update(&self, ctx: &Context<'_>, key: KeyType, value: String) -> async_graphql::Result<&'static str>
     {
 
         call_store_method!(ctx, get_string_namespace_ref, update, key, value)
 
     }
 
-    pub async fn string_try_replace(&self, ctx: &Context<'_>, key: String, value: String) -> Option<String>
+    pub async fn string_try_replace(&self, ctx: &Context<'_>, key: KeyType, value: String) -> Option<String>
     {
 
         call_store_method!(ctx, get_string_namespace_ref, try_replace, key, value)
 
     }
 
-    pub async fn string_upsert(&self, ctx: &Context<'_>, key: String, value: String) -> async_graphql::Result<&'static str>
+    pub async fn string_upsert(&self, ctx: &Context<'_>, key: KeyType, value: String) -> async_graphql::Result<&'static str>
     {
 
         call_store_method_only_move_key!(ctx, get_string_namespace_ref, upsert, key, value)
 
     }
 
-    pub async fn string_remove(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<&'static str>
+    pub async fn string_remove(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<&'static str>
     {
 
         call_store_method!(ctx, get_string_namespace_ref, remove, key)
 
     }
 
-    pub async fn string_try_retrieve(&self, ctx: &Context<'_>, key: String) -> Option<String>
+    pub async fn string_try_retrieve(&self, ctx: &Context<'_>, key: KeyType) -> Option<String>
     {
 
         call_store_method!(ctx, get_string_namespace_ref, try_retrieve, key)

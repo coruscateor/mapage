@@ -20,6 +20,8 @@ type Namespace = SCC_HashMapNamespace<KeyType, bool>;
 #[cfg(feature = "dashmap_namespaces")]
 type Namespace = DashMapNamespace<KeyType, bool>;
 
+//K: 'static + Clone + Eq + Hash + Ord + Sync
+
 pub struct BoolNamespace
 {
 

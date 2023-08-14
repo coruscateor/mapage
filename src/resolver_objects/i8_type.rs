@@ -8,6 +8,7 @@ use std::collections::HashSet;
 
 use crate::{call_store_method, call_store_method_no_key, call_store_method_only_move_key};
 
+type KeyType = crate::types::keys::I8KeyType;
 
 #[derive(Default)]
 pub struct I8Query;
@@ -26,21 +27,21 @@ impl I8Query
 
     //
 
-    pub async fn i8_read(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<i8>
+    pub async fn i8_read(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<i8>
     {
 
         call_store_method!(ctx, get_i8_namespace_ref, read, key)
 
     }
 
-    pub async fn i8_try_read(&self, ctx: &Context<'_>, key: String) -> Option<i8>
+    pub async fn i8_try_read(&self, ctx: &Context<'_>, key: KeyType) -> Option<i8>
     {
 
         call_store_method!(ctx, get_i8_namespace_ref, try_read, key)
 
     }
 
-    pub async fn i8_contains(&self, ctx: &Context<'_>, key: String) -> bool
+    pub async fn i8_contains(&self, ctx: &Context<'_>, key: KeyType) -> bool
     {
 
         call_store_method!(ctx, get_i8_namespace_ref, contains, key)
@@ -100,42 +101,42 @@ pub struct I8Mutation;
 impl I8Mutation
 {
     
-    pub async fn i8_insert(&self, ctx: &Context<'_>, key: String, value: i8) -> async_graphql::Result<&'static str>
+    pub async fn i8_insert(&self, ctx: &Context<'_>, key: KeyType, value: i8) -> async_graphql::Result<&'static str>
     {
 
         call_store_method_only_move_key!(ctx, get_i8_namespace_ref, insert, key, value)
 
     }
 
-    pub async fn i8_update(&self, ctx: &Context<'_>, key: String, value: i8) -> async_graphql::Result<&'static str>
+    pub async fn i8_update(&self, ctx: &Context<'_>, key: KeyType, value: i8) -> async_graphql::Result<&'static str>
     {
 
         call_store_method!(ctx, get_i8_namespace_ref, update, key, value)
 
     }
 
-    pub async fn i8_try_replace(&self, ctx: &Context<'_>, key: String, value: i8) -> Option<i8>
+    pub async fn i8_try_replace(&self, ctx: &Context<'_>, key: KeyType, value: i8) -> Option<i8>
     {
 
         call_store_method!(ctx, get_i8_namespace_ref, try_replace, key, value)
 
     }
 
-    pub async fn i8_upsert(&self, ctx: &Context<'_>, key: String, value: i8) -> async_graphql::Result<&'static str>
+    pub async fn i8_upsert(&self, ctx: &Context<'_>, key: KeyType, value: i8) -> async_graphql::Result<&'static str>
     {
 
         call_store_method_only_move_key!(ctx, get_i8_namespace_ref, upsert, key, value)
 
     }
 
-    pub async fn i8_remove(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<&'static str>
+    pub async fn i8_remove(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<&'static str>
     {
 
         call_store_method!(ctx, get_i8_namespace_ref, remove, key)
 
     }
 
-    pub async fn i8_try_retrieve(&self, ctx: &Context<'_>, key: String) -> Option<i8>
+    pub async fn i8_try_retrieve(&self, ctx: &Context<'_>, key: KeyType) -> Option<i8>
     {
 
         call_store_method!(ctx, get_i8_namespace_ref, try_retrieve, key)
@@ -160,14 +161,14 @@ impl I8Mutation
 
     //add
 
-    pub async fn i8_add_op(&self, ctx: &Context<'_>, key: String, value: i8) -> async_graphql::Result<i8>
+    pub async fn i8_add_op(&self, ctx: &Context<'_>, key: KeyType, value: i8) -> async_graphql::Result<i8>
     {
 
         call_store_method!(ctx, get_i8_namespace_ref, add_op, key, value)
 
     }
 
-    pub async fn i8_add_self_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<i8>
+    pub async fn i8_add_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<i8>
     {
 
         call_store_method!(ctx, get_i8_namespace_ref, add_self_op, key)
@@ -176,14 +177,14 @@ impl I8Mutation
 
     //bit_and
 
-    pub async fn i8_bit_and_op(&self, ctx: &Context<'_>, key: String, value: i8) -> async_graphql::Result<i8>
+    pub async fn i8_bit_and_op(&self, ctx: &Context<'_>, key: KeyType, value: i8) -> async_graphql::Result<i8>
     {
 
         call_store_method!(ctx, get_i8_namespace_ref, bit_and_op, key, value)
 
     }
 
-    pub async fn i8_bit_and_self_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<i8>
+    pub async fn i8_bit_and_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<i8>
     {
 
         call_store_method!(ctx, get_i8_namespace_ref, bit_and_self_op, key)
@@ -192,14 +193,14 @@ impl I8Mutation
 
     //bit_or
 
-    pub async fn i8_bit_or_op(&self, ctx: &Context<'_>, key: String, value: i8) -> async_graphql::Result<i8>
+    pub async fn i8_bit_or_op(&self, ctx: &Context<'_>, key: KeyType, value: i8) -> async_graphql::Result<i8>
     {
 
         call_store_method!(ctx, get_i8_namespace_ref, bit_or_op, key, value)
 
     }
 
-    pub async fn i8_bit_or_self_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<i8>
+    pub async fn i8_bit_or_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<i8>
     {
 
         call_store_method!(ctx, get_i8_namespace_ref, bit_or_self_op, key)
@@ -208,14 +209,14 @@ impl I8Mutation
 
     //bit_xor
 
-    pub async fn i8_bit_xor_op(&self, ctx: &Context<'_>, key: String, value: i8) -> async_graphql::Result<i8>
+    pub async fn i8_bit_xor_op(&self, ctx: &Context<'_>, key: KeyType, value: i8) -> async_graphql::Result<i8>
     {
 
         call_store_method!(ctx, get_i8_namespace_ref, bit_xor_op, key, value)
 
     }
 
-    pub async fn i8_bit_xor_self_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<i8>
+    pub async fn i8_bit_xor_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<i8>
     {
 
         call_store_method!(ctx, get_i8_namespace_ref, bit_xor_self_op, key)
@@ -224,14 +225,14 @@ impl I8Mutation
 
     //div
 
-    pub async fn i8_div_op(&self, ctx: &Context<'_>, key: String, value: i8) -> async_graphql::Result<i8>
+    pub async fn i8_div_op(&self, ctx: &Context<'_>, key: KeyType, value: i8) -> async_graphql::Result<i8>
     {
 
         call_store_method!(ctx, get_i8_namespace_ref, div_op, key, value)
 
     }
 
-    pub async fn i8_div_self_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<i8>
+    pub async fn i8_div_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<i8>
     {
 
         call_store_method!(ctx, get_i8_namespace_ref, div_self_op, key)
@@ -240,14 +241,14 @@ impl I8Mutation
 
     //mul
 
-    pub async fn i8_mul_op(&self, ctx: &Context<'_>, key: String, value: i8) -> async_graphql::Result<i8>
+    pub async fn i8_mul_op(&self, ctx: &Context<'_>, key: KeyType, value: i8) -> async_graphql::Result<i8>
     {
 
         call_store_method!(ctx, get_i8_namespace_ref, mul_op, key, value)
 
     }
 
-    pub async fn i8_mul_self_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<i8>
+    pub async fn i8_mul_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<i8>
     {
 
         call_store_method!(ctx, get_i8_namespace_ref, mul_self_op, key)
@@ -256,7 +257,7 @@ impl I8Mutation
 
     //neg
 
-    pub async fn i8_neg_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<i8>
+    pub async fn i8_neg_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<i8>
     {
 
         call_store_method!(ctx, get_i8_namespace_ref, neg_op, key)
@@ -265,7 +266,7 @@ impl I8Mutation
 
     //not
 
-    pub async fn i8_not_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<i8>
+    pub async fn i8_not_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<i8>
     {
 
         call_store_method!(ctx, get_i8_namespace_ref, not_op, key)
@@ -274,14 +275,14 @@ impl I8Mutation
 
     //rem
 
-    pub async fn i8_rem_op(&self, ctx: &Context<'_>, key: String, value: i8) -> async_graphql::Result<i8>
+    pub async fn i8_rem_op(&self, ctx: &Context<'_>, key: KeyType, value: i8) -> async_graphql::Result<i8>
     {
 
         call_store_method!(ctx, get_i8_namespace_ref, rem_op, key, value)
 
     }
 
-    pub async fn i8_rem_self_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<i8>
+    pub async fn i8_rem_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<i8>
     {
 
         call_store_method!(ctx, get_i8_namespace_ref, rem_self_op, key)
@@ -290,14 +291,14 @@ impl I8Mutation
 
     //shl
 
-    pub async fn i8_shl_op(&self, ctx: &Context<'_>, key: String, value: i8) -> async_graphql::Result<i8>
+    pub async fn i8_shl_op(&self, ctx: &Context<'_>, key: KeyType, value: i8) -> async_graphql::Result<i8>
     {
 
         call_store_method!(ctx, get_i8_namespace_ref, shl_op, key, value)
 
     }
 
-    pub async fn i8_shl_self_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<i8>
+    pub async fn i8_shl_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<i8>
     {
 
         call_store_method!(ctx, get_i8_namespace_ref, shl_self_op, key)
@@ -306,14 +307,14 @@ impl I8Mutation
 
     //shr
 
-    pub async fn i8_shr_op(&self, ctx: &Context<'_>, key: String, value: i8) -> async_graphql::Result<i8>
+    pub async fn i8_shr_op(&self, ctx: &Context<'_>, key: KeyType, value: i8) -> async_graphql::Result<i8>
     {
 
         call_store_method!(ctx, get_i8_namespace_ref, shr_op, key, value)
 
     }
 
-    pub async fn i8_shr_self_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<i8>
+    pub async fn i8_shr_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<i8>
     {
 
         call_store_method!(ctx, get_i8_namespace_ref, shr_self_op, key)
@@ -322,14 +323,14 @@ impl I8Mutation
 
     //sub
 
-    pub async fn i8_sub_op(&self, ctx: &Context<'_>, key: String, value: i8) -> async_graphql::Result<i8>
+    pub async fn i8_sub_op(&self, ctx: &Context<'_>, key: KeyType, value: i8) -> async_graphql::Result<i8>
     {
 
         call_store_method!(ctx, get_i8_namespace_ref, sub_op, key, value)
 
     }
 
-    pub async fn i8_sub_self_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<i8>
+    pub async fn i8_sub_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<i8>
     {
 
         call_store_method!(ctx, get_i8_namespace_ref, sub_self_op, key)
@@ -338,7 +339,7 @@ impl I8Mutation
 
     //inc
 
-    pub async fn i8_inc_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<i8>
+    pub async fn i8_inc_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<i8>
     {
 
         call_store_method!(ctx, get_i8_namespace_ref, inc_op, key)
@@ -347,7 +348,7 @@ impl I8Mutation
 
     //dec
 
-    pub async fn i8_dec_op(&self, ctx: &Context<'_>, key: String) -> async_graphql::Result<i8>
+    pub async fn i8_dec_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<i8>
     {
 
         call_store_method!(ctx, get_i8_namespace_ref, dec_op, key)

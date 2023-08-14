@@ -18,6 +18,8 @@ type Namespace = SCC_HashMapNamespace<KeyType, Whatever>;
 #[cfg(feature = "dashmap_namespaces")]
 type Namespace = DashMapNamespace<KeyType, Whatever>;
 
+//K: 'static + Clone + Eq + Hash + Ord + Sync
+
 pub struct WhateverNamespace
 {
 
