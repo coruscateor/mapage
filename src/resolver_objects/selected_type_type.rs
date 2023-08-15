@@ -828,7 +828,7 @@ impl SelectedTypeIOQuery
 
         }
 
-        for item in res_vec.iter_mut() //.rev()
+        for item in res_vec.iter_mut()
         {
 
             item.try_set_result_from_jh().await;
@@ -838,7 +838,7 @@ impl SelectedTypeIOQuery
         res_vec
 
     }
-    
+
 }
 
 #[cfg(not(any(feature = "all_types", feature = "SelectedTypeIO")))]
@@ -856,37 +856,3 @@ impl SelectedTypeIOQuery
 
 }
 
-/*
-#[derive(Default)]
-pub struct SelectedTypeIOMutation;
-
-#[cfg(any(feature = "all_types", feature = "SelectedTypeOI"))]
-#[Object]
-impl SelectedTypeIOMutation
-{
-
-    #[graphql(visible = false)]
-    async fn selected_type_temporary(&self) -> async_graphql::Result<&'static str>
-    {
-
-        Ok("Ok")
-
-    }
-
-}
-
-#[cfg(not(any(feature = "all_types", feature = "SelectedTypeIO")))]
-#[Object]
-impl SelectedTypeIOMutation
-{
-
-    #[graphql(visible = false)]
-    pub async fn selected_type_io_type_is_not_avalible(&self) -> Option<bool>
-    {
-
-        None
-
-    }
-
-}
-*/

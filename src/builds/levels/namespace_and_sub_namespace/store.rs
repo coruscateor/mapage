@@ -49,6 +49,12 @@ use super::whatever_namespace::WhateverNamespace;
 #[cfg(any(feature = "all_types", feature = "SelectedType"))]
 use super::selected_type_namespace::SelectedTypeNamespace;
 
+//Key Types
+
+use crate::types::keys::{F32KeyType, F64KeyType, I8KeyType, I16KeyType, I32KeyType, I64KeyType, I128KeyType, IsizeKeyType, U8KeyType, U16KeyType, U32KeyType, U64KeyType, U128KeyType, UsizeKeyType};
+
+//
+
 pub struct Store 
 {
 
@@ -59,46 +65,46 @@ pub struct Store
     char_namespace: CharNamespace,
 
     #[cfg(any(feature = "all_types", feature = "f32"))]
-    f32_namespace: NumericNamespace<f32>, //FloatNamespace<f32>,
+    f32_namespace: NumericNamespace<F32KeyType, f32>, //FloatNamespace<f32>,
 
     #[cfg(any(feature = "all_types", feature = "f64"))]
-    f64_namespace: NumericNamespace<f64>, //FloatNamespace<f64>,
+    f64_namespace: NumericNamespace<F64KeyType, f64>, //FloatNamespace<f64>,
 
     #[cfg(any(feature = "all_types", feature = "i8"))]
-    i8_namespace: NumericNamespace<i8>, //IntNamespace<i8>,
+    i8_namespace: NumericNamespace<I8KeyType, i8>, //IntNamespace<i8>,
 
     #[cfg(any(feature = "all_types", feature = "i16"))]
-    i16_namespace: NumericNamespace<i16>, ///IntNamespace<i16>,
+    i16_namespace: NumericNamespace<I16KeyType, i16>, ///IntNamespace<i16>,
 
     #[cfg(any(feature = "all_types", feature = "i32"))]
-    i32_namespace: NumericNamespace<i32>, ///IntNamespace<i32>,
+    i32_namespace: NumericNamespace<I32KeyType, i32>, ///IntNamespace<i32>,
 
     #[cfg(any(feature = "all_types", feature = "i64"))]
-    i64_namespace: NumericNamespace<i64>, ///IntNamespace<i64>,
+    i64_namespace: NumericNamespace<I64KeyType, i64>, ///IntNamespace<i64>,
 
     #[cfg(any(feature = "all_types", feature = "i128"))]
-    i128_namespace: NumericNamespace<I128Scalar>, //IntNamespace<I128Scalar>,
+    i128_namespace: NumericNamespace<I128KeyType, I128Scalar>, //IntNamespace<I128Scalar>,
 
     #[cfg(any(feature = "all_types", feature = "isize"))]
-    isize_namespace: NumericNamespace<isize>, //IntNamespace<isize>,
+    isize_namespace: NumericNamespace<IsizeKeyType, isize>, //IntNamespace<isize>,
 
     #[cfg(any(feature = "all_types", feature = "u8"))]
-    u8_namespace: NumericNamespace<u8>, //UintNamespace<u8>,
+    u8_namespace: NumericNamespace<U8KeyType, u8>, //UintNamespace<u8>,
 
     #[cfg(any(feature = "all_types", feature = "u16"))]
-    u16_namespace: NumericNamespace<u16>, //UintNamespace<u16>,
+    u16_namespace: NumericNamespace<U16KeyType, u16>, //UintNamespace<u16>,
 
     #[cfg(any(feature = "all_types", feature = "u32"))]
-    u32_namespace: NumericNamespace<u32>, //UintNamespace<u32>,
+    u32_namespace: NumericNamespace<U32KeyType, u32>, //UintNamespace<u32>,
 
     #[cfg(any(feature = "all_types", feature = "u64"))]
-    u64_namespace: NumericNamespace<u64>, //UintNamespace<u64>,
+    u64_namespace: NumericNamespace<U64KeyType, u64>, //UintNamespace<u64>,
 
     #[cfg(any(feature = "all_types", feature = "u128"))]
-    u128_namespace: NumericNamespace<U128Scalar>, //UintNamespace<U128Scalar>,
+    u128_namespace: NumericNamespace<U128KeyType, U128Scalar>, //UintNamespace<U128Scalar>,
 
     #[cfg(any(feature = "all_types", feature = "usize"))]
-    usize_namespace: NumericNamespace<usize>, //UintNamespace<usize>,
+    usize_namespace: NumericNamespace<UsizeKeyType, usize>, //UintNamespace<usize>,
 
     //vector namespace
     
@@ -196,46 +202,46 @@ impl Store
     impl_get_ref!(char_namespace, CharNamespace);
 
     #[cfg(any(feature = "all_types", feature = "f32"))]
-    impl_get_ref!(f32_namespace, NumericNamespace<f32>); //FloatNamespace<f32>);
+    impl_get_ref!(f32_namespace, NumericNamespace<F32KeyType, f32>); //FloatNamespace<f32>);
 
     #[cfg(any(feature = "all_types", feature = "f64"))]
-    impl_get_ref!(f64_namespace, NumericNamespace<f64>); //FloatNamespace<f64>);
+    impl_get_ref!(f64_namespace, NumericNamespace<F64KeyType, f64>); //FloatNamespace<f64>);
 
     #[cfg(any(feature = "all_types", feature = "i8"))]
-    impl_get_ref!(i8_namespace, NumericNamespace<i8>); //IntNamespace<i8>);
+    impl_get_ref!(i8_namespace, NumericNamespace<I8KeyType, i8>); //IntNamespace<i8>);
 
     #[cfg(any(feature = "all_types", feature = "i16"))]
-    impl_get_ref!(i16_namespace, NumericNamespace<i16>); //IntNamespace<i16>);
+    impl_get_ref!(i16_namespace, NumericNamespace<I16KeyType, i16>); //IntNamespace<i16>);
 
     #[cfg(any(feature = "all_types", feature = "i32"))]
-    impl_get_ref!(i32_namespace, NumericNamespace<i32>); //IntNamespace<i32>);
+    impl_get_ref!(i32_namespace, NumericNamespace<I32KeyType, i32>); //IntNamespace<i32>);
 
     #[cfg(any(feature = "all_types", feature = "i64"))]
-    impl_get_ref!(i64_namespace, NumericNamespace<i64>); //IntNamespace<i64>);
+    impl_get_ref!(i64_namespace, NumericNamespace<I64KeyType, i64>); //IntNamespace<i64>);
 
     #[cfg(any(feature = "all_types", feature = "i128"))]
-    impl_get_ref!(i128_namespace, NumericNamespace<I128Scalar>); //IntNamespace<I128Scalar>);
+    impl_get_ref!(i128_namespace, NumericNamespace<I128KeyType, I128Scalar>); //IntNamespace<I128Scalar>);
 
     #[cfg(any(feature = "all_types", feature = "isize"))]
-    impl_get_ref!(isize_namespace, NumericNamespace<isize>); //IntNamespace<isize>);
+    impl_get_ref!(isize_namespace, NumericNamespace<IsizeKeyType, isize>); //IntNamespace<isize>);
 
     #[cfg(any(feature = "all_types", feature = "u8"))]
-    impl_get_ref!(u8_namespace, NumericNamespace<u8>); //UintNamespace<u8>);
+    impl_get_ref!(u8_namespace, NumericNamespace<U8KeyType, u8>); //UintNamespace<u8>);
 
     #[cfg(any(feature = "all_types", feature = "u16"))]
-    impl_get_ref!(u16_namespace, NumericNamespace<u16>); //UintNamespace<u16>);
+    impl_get_ref!(u16_namespace, NumericNamespace<U16KeyType, u16>); //UintNamespace<u16>);
 
     #[cfg(any(feature = "all_types", feature = "u32"))]
-    impl_get_ref!(u32_namespace, NumericNamespace<u32>); //UintNamespace<u32>);
+    impl_get_ref!(u32_namespace, NumericNamespace<U32KeyType, u32>); //UintNamespace<u32>);
 
     #[cfg(any(feature = "all_types", feature = "u64"))]
-    impl_get_ref!(u64_namespace, NumericNamespace<u64>); //UintNamespace<u64>);
+    impl_get_ref!(u64_namespace, NumericNamespace<U64KeyType, u64>); //UintNamespace<u64>);
 
     #[cfg(any(feature = "all_types", feature = "u128"))]
-    impl_get_ref!(u128_namespace, NumericNamespace<U128Scalar>); //UintNamespace<U128Scalar>);
+    impl_get_ref!(u128_namespace, NumericNamespace<U128KeyType, U128Scalar>); //UintNamespace<U128Scalar>);
 
     #[cfg(any(feature = "all_types", feature = "usize"))]
-    impl_get_ref!(usize_namespace, NumericNamespace<usize>); //UintNamespace<usize>);
+    impl_get_ref!(usize_namespace, NumericNamespace<UsizeKeyType, usize>); //UintNamespace<usize>);
 
     #[cfg(any(feature = "all_types", feature = "string"))]
     impl_get_ref!(string_namespace, StringNamespace);

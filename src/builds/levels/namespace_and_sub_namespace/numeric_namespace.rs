@@ -8,8 +8,6 @@ use paste::paste;
 
 use corlib::has_one::*;
 
-type KeyType = String;
-
 use crate::{types::{ops::*, async_graphql_values::{I128Scalar, U128Scalar}}, impl_update_fn_op_method};
 
 #[cfg(feature = "scc_hashmap_namespaces")]
@@ -19,25 +17,23 @@ use super::scc_crate::hashmap_namespace::HashMapNamespace as SCC_HashMapNamespac
 use super::dashmap_crate::dashmap_namespace::DashMapNamespace; 
 
 #[cfg(feature = "scc_hashmap_namespaces")]
-type Namespace<T> = SCC_HashMapNamespace<KeyType, T>;
+type Namespace<K, T> = SCC_HashMapNamespace<K, T>;
 
 #[cfg(feature = "dashmap_namespaces")]
-type Namespace<T> = DashMapNamespace<KeyType, T>;
+type Namespace<K, T> = DashMapNamespace<K, T>;
 
-//K: 'static + Clone + Eq + Hash + Ord + Sync
-
-//Floats - Neg
-
-pub struct NumericNamespace<T>
-    where T: Send + Sync + Copy + 'static + Add<T> + AddAssign<T> + Clone + Default + Display + Div<T> + DivAssign<T> + FromStr + LowerExp + Mul<T> + MulAssign<T> + PartialEq<T> + PartialOrd<T> + Rem<T> + RemAssign<T> + Sub<T> + SubAssign<T> + UpperExp //+ Neg // + Sum<T> //+ Product<T>
+pub struct NumericNamespace<K, T>
+    where K: 'static + Clone + Eq + Hash + Ord + Sync,
+          T: Send + Sync + Copy + 'static + Add<T> + AddAssign<T> + Clone + Default + Display + Div<T> + DivAssign<T> + FromStr + LowerExp + Mul<T> + MulAssign<T> + PartialEq<T> + PartialOrd<T> + Rem<T> + RemAssign<T> + Sub<T> + SubAssign<T> + UpperExp //+ Neg // + Sum<T> //+ Product<T>
 {
 
-    namespace: Namespace<T>
+    namespace: Namespace<K, T>
 
 }
 
-impl<T> NumericNamespace<T>
-    where T: Send + Sync + Copy + 'static + Add<T> + AddAssign<T> + Clone + Default + Display + Div<T> + DivAssign<T> + FromStr + LowerExp + Mul<T> + MulAssign<T> + PartialEq<T> + PartialOrd<T> + Rem<T> + RemAssign<T> + Sub<T> + SubAssign<T> + UpperExp //+ Neg //Sum<T> + //+ Product<T> 
+impl<K, T> NumericNamespace<K, T>
+    where K: 'static + Clone + Eq + Hash + Ord + Sync,
+          T: Send + Sync + Copy + 'static + Add<T> + AddAssign<T> + Clone + Default + Display + Div<T> + DivAssign<T> + FromStr + LowerExp + Mul<T> + MulAssign<T> + PartialEq<T> + PartialOrd<T> + Rem<T> + RemAssign<T> + Sub<T> + SubAssign<T> + UpperExp //+ Neg //Sum<T> + //+ Product<T> 
 {
 
     pub fn new() -> Self
@@ -52,32 +48,28 @@ impl<T> NumericNamespace<T>
 
     }
 
-    //KeyType keys
-
     delegate! {
         to self.namespace {
 
-            pub async fn insert(&self, key: KeyType, value: T) -> async_graphql::Result<&'static str>;
+            pub async fn insert(&self, key: K, value: T) -> async_graphql::Result<&'static str>;
 
-            pub async fn update(&self, key: &KeyType, value: T) -> async_graphql::Result<&'static str>;
+            pub async fn update(&self, key: &K, value: T) -> async_graphql::Result<&'static str>;
 
-            pub async fn try_replace(&self, key: &KeyType, value: T) -> Option<T>;
+            pub async fn try_replace(&self, key: &K, value: T) -> Option<T>;
 
-            pub async fn update_fn<R, FN: FnMut(&mut T) -> async_graphql::Result<R>>(&self, key: &KeyType, updater: FN) -> async_graphql::Result<R>;
-                //where Fn(&mut T) -> async_graphql::Result<R>;
+            pub async fn update_fn<R, FN: FnMut(&mut T) -> async_graphql::Result<R>>(&self, key: &K, updater: FN) -> async_graphql::Result<R>;
 
-            pub async fn update_kv_fn<R, FN: FnMut(&KeyType, &mut T) -> async_graphql::Result<R>>(&self, key: &KeyType, updater: FN) -> async_graphql::Result<R>;
+            pub async fn update_kv_fn<R, FN: FnMut(&K, &mut T) -> async_graphql::Result<R>>(&self, key: &K, updater: FN) -> async_graphql::Result<R>;
 
-            pub async fn remove(&self, key: &KeyType) -> async_graphql::Result<&'static str>;
+            pub async fn remove(&self, key: &K) -> async_graphql::Result<&'static str>;
 
-            pub async fn try_retrieve(&self, key: &KeyType) -> Option<T>;
+            pub async fn try_retrieve(&self, key: &K) -> Option<T>;
 
-            pub async fn read_fn<R, FN: Fn(&T) -> async_graphql::Result<R>>(&self, key: &KeyType, reader: FN) -> async_graphql::Result<R>;
-                //Fn(&T) -> async_graphql::Result<R
+            pub async fn read_fn<R, FN: Fn(&T) -> async_graphql::Result<R>>(&self, key: &K, reader: FN) -> async_graphql::Result<R>;
             
-            pub async fn read_kv_fn<R, FN: Fn(&KeyType, &T) -> async_graphql::Result<R>>(&self, key: &KeyType, reader: FN) -> async_graphql::Result<R>;
+            pub async fn read_kv_fn<R, FN: Fn(&K, &T) -> async_graphql::Result<R>>(&self, key: &K, reader: FN) -> async_graphql::Result<R>;
 
-            pub async fn contains(&self, key: &KeyType) -> bool;
+            pub async fn contains(&self, key: &K) -> bool;
 
             pub async fn clear(&self) -> &'static str;
 
@@ -92,28 +84,28 @@ impl<T> NumericNamespace<T>
         }
     }
 
-    pub async fn upsert(&self, key: KeyType, value: T) -> async_graphql::Result<&'static str>
+    pub async fn upsert(&self, key: K, value: T) -> async_graphql::Result<&'static str>
     {
 
         self.namespace.upsert_copy(key, value).await
 
     }
 
-    pub async fn read(&self, key: &KeyType) -> async_graphql::Result<T>
+    pub async fn read(&self, key: &K) -> async_graphql::Result<T>
     {
 
         self.namespace.read_copy(key).await
 
     }
 
-    pub async fn try_read(&self, key: &KeyType) -> Option<T>
+    pub async fn try_read(&self, key: &K) -> Option<T>
     {
 
         self.namespace.try_read_copy(key).await
 
     }
 
-    pub async fn get_all_keys(&self) -> HashSet<KeyType>
+    pub async fn get_all_keys(&self) -> HashSet<K>
     {
 
         self.namespace.get_all_keys_clone().await
@@ -124,140 +116,58 @@ impl<T> NumericNamespace<T>
 
     //Ops
 
-    impl_update_fn_op_method!(add, KeyType, T, value: T);
+    impl_update_fn_op_method!(add, K, T, value: T);
 
-    impl_update_fn_op_method!(add_self, KeyType, T);
+    impl_update_fn_op_method!(add_self, K, T);
 
-    impl_update_fn_op_method!(div, KeyType, T, value: T);
+    impl_update_fn_op_method!(div, K, T, value: T);
 
-    impl_update_fn_op_method!(div_self, KeyType, T);
+    impl_update_fn_op_method!(div_self, K, T);
 
-    impl_update_fn_op_method!(mul, KeyType, T, value: T);
+    impl_update_fn_op_method!(mul, K, T, value: T);
 
-    impl_update_fn_op_method!(mul_self, KeyType, T);
+    impl_update_fn_op_method!(mul_self, K, T);
 
-    impl_update_fn_op_method!(rem, KeyType, T, value: T);
+    impl_update_fn_op_method!(rem, K, T, value: T);
 
-    impl_update_fn_op_method!(rem_self, KeyType, T);
+    impl_update_fn_op_method!(rem_self, K, T);
 
-    impl_update_fn_op_method!(sub, KeyType, T, value: T);
+    impl_update_fn_op_method!(sub, K, T, value: T);
 
-    impl_update_fn_op_method!(sub_self, KeyType, T);
-
-    //impl_update_fn_op_method!(inc, KeyType, T);
-
-    //impl_update_fn_op_method!(dec, KeyType, T);
-
-
+    impl_update_fn_op_method!(sub_self, K, T);
 
 }
 
 //Uints and ints - Neg
 
-impl<T> NumericNamespace<T>
-    where T: Send + Sync + Copy + 'static + Add<T> + AddAssign<T> + Binary + BitAnd<T> + BitAndAssign<T> + BitOr<T> + BitOrAssign<T> + BitXor<T> + BitXorAssign<T> + Clone + Default + Display + Div<T> + DivAssign<T> + FromStr + Hash + LowerExp + LowerHex + Mul<T> + MulAssign<T> + Octal + Ord + PartialEq<T> + PartialOrd<T> + Rem<T> + RemAssign<T> + Shl<T> + ShlAssign<T> + Shr<T> + ShrAssign<T> + Sub<T> + SubAssign<T> + ToString + UpperExp
+impl<K, T> NumericNamespace<K, T>
+    where K: 'static + Clone + Eq + Hash + Ord + Sync,
+          T: Send + Sync + Copy + 'static + Add<T> + AddAssign<T> + Binary + BitAnd<T> + BitAndAssign<T> + BitOr<T> + BitOrAssign<T> + BitXor<T> + BitXorAssign<T> + Clone + Default + Display + Div<T> + DivAssign<T> + FromStr + Hash + LowerExp + LowerHex + Mul<T> + MulAssign<T> + Octal + Ord + PartialEq<T> + PartialOrd<T> + Rem<T> + RemAssign<T> + Shl<T> + ShlAssign<T> + Shr<T> + ShrAssign<T> + Sub<T> + SubAssign<T> + ToString + UpperExp
 {
 
-    //_units_and_ints
+    impl_update_fn_op_method!(bit_and, K, T, value: T);
 
-    //impl_update_fn_op_method!(not, KeyType, T);
+    impl_update_fn_op_method!(bit_and_self, K, T);
 
-    impl_update_fn_op_method!(bit_and, KeyType, T, value: T);
+    impl_update_fn_op_method!(bit_or, K, T, value: T);
 
-    impl_update_fn_op_method!(bit_and_self, KeyType, T);
+    impl_update_fn_op_method!(bit_or_self, K, T);
 
-    impl_update_fn_op_method!(bit_or, KeyType, T, value: T);
+    impl_update_fn_op_method!(bit_xor, K, T, value: T);
 
-    impl_update_fn_op_method!(bit_or_self, KeyType, T);
+    impl_update_fn_op_method!(bit_xor_self, K, T);
 
-    impl_update_fn_op_method!(bit_xor, KeyType, T, value: T);
+    impl_update_fn_op_method!(shl, K, T, value: T);
 
-    impl_update_fn_op_method!(bit_xor_self, KeyType, T);
+    impl_update_fn_op_method!(shl_self, K, T);
 
-    impl_update_fn_op_method!(shl, KeyType, T, value: T);
+    impl_update_fn_op_method!(shr, K, T, value: T);
 
-    impl_update_fn_op_method!(shl_self, KeyType, T);
-
-    impl_update_fn_op_method!(shr, KeyType, T, value: T);
-
-    impl_update_fn_op_method!(shr_self, KeyType, T);
-
-    /*
-    impl_update_fn_op_method!(add, KeyType, T, value: T);
-
-    impl_update_fn_op_method!(add_self, KeyType, T);
-
-    impl_update_fn_op_method!(div, KeyType, T, value: T);
-
-    impl_update_fn_op_method!(div_self, KeyType, T);
-
-    impl_update_fn_op_method!(mul, KeyType, T, value: T);
-
-    impl_update_fn_op_method!(mul_self, KeyType, T);
-
-    impl_update_fn_op_method!(rem, KeyType, T, value: T);
-
-    impl_update_fn_op_method!(rem_self, KeyType, T);
-
-    impl_update_fn_op_method!(sub, KeyType, T, value: T);
-
-    impl_update_fn_op_method!(sub_self, KeyType, T);
-
-    impl_update_fn_op_method!(inc, KeyType, T);
-
-    impl_update_fn_op_method!(dec, KeyType, T);
-    */
-
-    /*
-    pub async fn placeholder(&self)
-    {
-
-
-    }
-    */
+    impl_update_fn_op_method!(shr_self, K, T);
 
 }
 
 //Base traits + Neg for floats and ints
-
-/*
-impl<T> NumericNamespace<T>
-    where T: Send + Sync + Copy + 'static + Add<T> + AddAssign<T> + Clone + Default + Display + Div<T> + DivAssign<T> + FromStr + LowerExp + Mul<T> + MulAssign<T> + PartialEq<T> + PartialOrd<T> + Rem<T> + RemAssign<T> + Sub<T> + SubAssign<T> + UpperExp + Neg //+ Not
-{
-
-    //_floars_and_ints
-
-    /*
-        type inside `async fn` body must be known in this context
-        cannot infer typerustcClick for full compiler diagnostic
-        numeric_namespace.rs(143, 5): Error originated from macro call here
-        ops.rs(577, 55): the type is part of the `async fn` body because of this `await`
-        the trait bound `T: std::ops::Not` is not satisfied
-        the trait `std::ops::Not` is not implemented for `T`rustcClick for full compiler diagnostic
-        numeric_namespace.rs(159, 5): Error originated from macro call here
-        ops.rs(342, 18): required by a bound in `types::ops::not_fn`
-        numeric_namespace.rs(154, 441): consider further restricting this bound: ` + std::ops::Not`
-        type mismatch resolving `<T as Neg>::Output == T`
-        expected type parameter `T`
-        found associated type `<T as std::ops::Neg>::Output`rustcClick for full compiler diagnostic
-        numeric_namespace.rs(217, 5): Error originated from macro call here
-        numeric_namespace.rs(211, 6): this type parameter
-        ops.rs(324, 22): required by a bound in `types::ops::neg_fn`
-        numeric_namespace.rs(212, 259): consider further restricting this bound: `<Output = T>`
-     */
-
-    impl_update_fn_op_method!(neg, KeyType, T);
-
-    /*
-    pub async fn placeholder2(&self)
-    {
-
-
-    }
-    */
-
-}
-*/
 
 #[derive(Default)]
 pub struct I128ScalarHasOne();
@@ -287,189 +197,185 @@ impl HasOne<U128Scalar> for U128ScalarHasOne {
 
 }
 
-impl NumericNamespace<f32>
+impl<K> NumericNamespace<K, f32>
+    where K: 'static + Clone + Eq + Hash + Ord + Sync
 {
 
-    impl_update_fn_op_method!(neg, KeyType, f32);
+    impl_update_fn_op_method!(neg, K, f32);
 
-    impl_update_fn_op_method!(inc, KeyType, f32, F32HasOne);
+    impl_update_fn_op_method!(inc, K, f32, F32HasOne);
 
-    impl_update_fn_op_method!(dec, KeyType, f32, F32HasOne);
+    impl_update_fn_op_method!(dec, K, f32, F32HasOne);
 
 }
 
-impl NumericNamespace<f64>
+impl<K> NumericNamespace<K, f64>
+    where K: 'static + Clone + Eq + Hash + Ord + Sync    
 {
 
-    impl_update_fn_op_method!(neg, KeyType, f64);
+    impl_update_fn_op_method!(neg, K, f64);
 
-    impl_update_fn_op_method!(inc, KeyType, f64, F64HasOne);
+    impl_update_fn_op_method!(inc, K, f64, F64HasOne);
 
-    impl_update_fn_op_method!(dec, KeyType, f64, F64HasOne);
+    impl_update_fn_op_method!(dec, K, f64, F64HasOne);
 
 }
 
-impl NumericNamespace<i8>
+impl<K> NumericNamespace<K, i8>
+    where K: 'static + Clone + Eq + Hash + Ord + Sync
 {
 
-    impl_update_fn_op_method!(neg, KeyType, i8);
+    impl_update_fn_op_method!(neg, K, i8);
 
-    impl_update_fn_op_method!(not, KeyType, i8);
+    impl_update_fn_op_method!(not, K, i8);
 
-    impl_update_fn_op_method!(inc, KeyType, i8, I8HasOne);
+    impl_update_fn_op_method!(inc, K, i8, I8HasOne);
 
-    impl_update_fn_op_method!(dec, KeyType, i8, I8HasOne);
+    impl_update_fn_op_method!(dec, K, i8, I8HasOne);
 
 }
 
-impl NumericNamespace<i16>
+impl<K> NumericNamespace<K, i16>
+    where K: 'static + Clone + Eq + Hash + Ord + Sync
 {
 
-    impl_update_fn_op_method!(neg, KeyType, i16);
+    impl_update_fn_op_method!(neg, K, i16);
 
-    impl_update_fn_op_method!(not, KeyType, i16);
+    impl_update_fn_op_method!(not, K, i16);
 
-    impl_update_fn_op_method!(inc, KeyType, i16, I16HasOne);
+    impl_update_fn_op_method!(inc, K, i16, I16HasOne);
 
-    impl_update_fn_op_method!(dec, KeyType, i16, I16HasOne);
+    impl_update_fn_op_method!(dec, K, i16, I16HasOne);
 
 }
 
-impl NumericNamespace<i32>
+impl<K> NumericNamespace<K, i32>
+    where K: 'static + Clone + Eq + Hash + Ord + Sync
 {
 
-    impl_update_fn_op_method!(neg, KeyType, i32);
+    impl_update_fn_op_method!(neg, K, i32);
 
-    impl_update_fn_op_method!(not, KeyType, i32);
+    impl_update_fn_op_method!(not, K, i32);
 
-    impl_update_fn_op_method!(inc, KeyType, i32, I32HasOne);
+    impl_update_fn_op_method!(inc, K, i32, I32HasOne);
 
-    impl_update_fn_op_method!(dec, KeyType, i32, I32HasOne);
+    impl_update_fn_op_method!(dec, K, i32, I32HasOne);
 
 }
 
-impl NumericNamespace<i64>
+impl<K> NumericNamespace<K, i64>
+    where K: 'static + Clone + Eq + Hash + Ord + Sync
 {
 
-    impl_update_fn_op_method!(neg, KeyType, i64);
+    impl_update_fn_op_method!(neg, K, i64);
 
-    impl_update_fn_op_method!(not, KeyType, i64);
+    impl_update_fn_op_method!(not, K, i64);
 
-    impl_update_fn_op_method!(inc, KeyType, i64, I64HasOne);
+    impl_update_fn_op_method!(inc, K, i64, I64HasOne);
 
-    impl_update_fn_op_method!(dec, KeyType, i64, I64HasOne);
+    impl_update_fn_op_method!(dec, K, i64, I64HasOne);
 
 }
 
-impl NumericNamespace<I128Scalar>
+impl<K> NumericNamespace<K, I128Scalar>
+    where K: 'static + Clone + Eq + Hash + Ord + Sync
 {
 
-    impl_update_fn_op_method!(neg, KeyType, I128Scalar);
+    impl_update_fn_op_method!(neg, K, I128Scalar);
 
-    impl_update_fn_op_method!(not, KeyType, I128Scalar);
+    impl_update_fn_op_method!(not, K, I128Scalar);
 
-    impl_update_fn_op_method!(inc, KeyType, I128Scalar, I128ScalarHasOne);
+    impl_update_fn_op_method!(inc, K, I128Scalar, I128ScalarHasOne);
 
-    impl_update_fn_op_method!(dec, KeyType, I128Scalar, I128ScalarHasOne);
+    impl_update_fn_op_method!(dec, K, I128Scalar, I128ScalarHasOne);
 
 }
 
-impl NumericNamespace<isize>
+impl<K> NumericNamespace<K, isize>
+    where K: 'static + Clone + Eq + Hash + Ord + Sync
 {
 
-    impl_update_fn_op_method!(neg, KeyType, isize);
+    impl_update_fn_op_method!(neg, K, isize);
 
-    impl_update_fn_op_method!(not, KeyType, isize);
+    impl_update_fn_op_method!(not, K, isize);
 
-    impl_update_fn_op_method!(inc, KeyType, isize, ISizeHasOne);
+    impl_update_fn_op_method!(inc, K, isize, ISizeHasOne);
 
-    impl_update_fn_op_method!(dec, KeyType, isize, ISizeHasOne);
+    impl_update_fn_op_method!(dec, K, isize, ISizeHasOne);
 
 }
 
 //
 
-impl NumericNamespace<u8>
+impl<K> NumericNamespace<K, u8>
+    where K: 'static + Clone + Eq + Hash + Ord + Sync
 {
 
-    impl_update_fn_op_method!(not, KeyType, u8);
+    impl_update_fn_op_method!(not, K, u8);
 
-    impl_update_fn_op_method!(inc, KeyType, u8, U8HasOne);
+    impl_update_fn_op_method!(inc, K, u8, U8HasOne);
 
-    impl_update_fn_op_method!(dec, KeyType, u8, U8HasOne);
+    impl_update_fn_op_method!(dec, K, u8, U8HasOne);
 
 }
 
-impl NumericNamespace<u16>
+impl<K> NumericNamespace<K, u16>
+    where K: 'static + Clone + Eq + Hash + Ord + Sync
 {
 
-    impl_update_fn_op_method!(not, KeyType, u16);
+    impl_update_fn_op_method!(not, K, u16);
 
-    impl_update_fn_op_method!(inc, KeyType, u16, U16HasOne);
+    impl_update_fn_op_method!(inc, K, u16, U16HasOne);
 
-    impl_update_fn_op_method!(dec, KeyType, u16, U16HasOne);
+    impl_update_fn_op_method!(dec, K, u16, U16HasOne);
 
 }
 
-impl NumericNamespace<u32>
+impl<K> NumericNamespace<K, u32>
+    where K: 'static + Clone + Eq + Hash + Ord + Sync
 {
 
-    impl_update_fn_op_method!(not, KeyType, u32);
+    impl_update_fn_op_method!(not, K, u32);
 
-    impl_update_fn_op_method!(inc, KeyType, u32, U32HasOne);
+    impl_update_fn_op_method!(inc, K, u32, U32HasOne);
 
-    impl_update_fn_op_method!(dec, KeyType, u32, U32HasOne);
+    impl_update_fn_op_method!(dec, K, u32, U32HasOne);
 
 }
 
-impl NumericNamespace<u64>
+impl<K> NumericNamespace<K, u64>
+    where K: 'static + Clone + Eq + Hash + Ord + Sync
 {
 
-    impl_update_fn_op_method!(not, KeyType, u64);
+    impl_update_fn_op_method!(not, K, u64);
 
-    impl_update_fn_op_method!(inc, KeyType, u64, U64HasOne);
+    impl_update_fn_op_method!(inc, K, u64, U64HasOne);
 
-    impl_update_fn_op_method!(dec, KeyType, u64, U64HasOne);
+    impl_update_fn_op_method!(dec, K, u64, U64HasOne);
 
 }
 
-impl NumericNamespace<U128Scalar>
+impl<K> NumericNamespace<K, U128Scalar>
+    where K: 'static + Clone + Eq + Hash + Ord + Sync
 {
 
-    impl_update_fn_op_method!(not, KeyType, U128Scalar);
+    impl_update_fn_op_method!(not, K, U128Scalar);
 
-    impl_update_fn_op_method!(inc, KeyType, U128Scalar, U128ScalarHasOne);
+    impl_update_fn_op_method!(inc, K, U128Scalar, U128ScalarHasOne);
 
-    impl_update_fn_op_method!(dec, KeyType, U128Scalar, U128ScalarHasOne);
+    impl_update_fn_op_method!(dec, K, U128Scalar, U128ScalarHasOne);
 
 }
 
-impl NumericNamespace<usize>
+impl<K> NumericNamespace<K, usize>
+    where K: 'static + Clone + Eq + Hash + Ord + Sync
 {
 
-    impl_update_fn_op_method!(not, KeyType, usize);
+    impl_update_fn_op_method!(not, K, usize);
 
-    impl_update_fn_op_method!(inc, KeyType, usize, USizeHasOne);
+    impl_update_fn_op_method!(inc, K, usize, USizeHasOne);
 
-    impl_update_fn_op_method!(dec, KeyType, usize, USizeHasOne);
+    impl_update_fn_op_method!(dec, K, usize, USizeHasOne);
 
 }
 
-
-//Everything
-
-/*
-impl<T> NumericNamespace<T>
-    where T: Send + Sync + Copy + 'static + Add<T> + AddAssign<T> + Binary + BitAnd<T> + BitAndAssign<T> + BitOr<T> + BitOrAssign<T> + BitXor<T> + BitXorAssign<T> + Clone + Default + Display + Div<T> + DivAssign<T> + FromStr + Hash + LowerExp + LowerHex + Mul<T> + MulAssign<T> + Octal + Ord + PartialEq<T> + PartialOrd<T> + Rem<T> + RemAssign<T> + Shl<T> + ShlAssign<T> + Shr<T> + ShrAssign<T> + Sub<T> + SubAssign<T> + ToString + UpperExp + Not
-{
-
-    //_ints
-
-    pub async fn placeholder(&self)
-    {
-
-
-    }
-
-}
-*/
