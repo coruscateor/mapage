@@ -1,5 +1,5 @@
 
-cargo build --features=sub_store_aml,dashmap_string,all_types,all_key_types_String
+cargo build --features=sub_store_aml,dashmap_namespaces,all_types,all_key_types_String
 
 cargo build --features=sub_store_aml,scc_hashmap_namespaces,all_types,all_key_types_String
 

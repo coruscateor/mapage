@@ -15,14 +15,14 @@ macro_rules! key_type_features
     ($for_type:ident) =>
     {
 
-        //[<$for_type _>]
+        //Support varied key-types per supported type?
 
         paste! {
 
-            #[cfg(any(feature = "all_key_types_String", feature = "[<$for_type _key_type_String>]"))]
+            #[cfg(any(feature = "all_key_types_String"))] //, feature = "[<$for_type _key_type_String>]"))]
             pub type [<$for_type KeyType>] = String; //[<$for_type _key_type>]
 
-            #[cfg(any(feature = "all_key_types_Arc_String", feature = "[<$for_type _key_type_Arc_String>]"))]
+            #[cfg(any(feature = "all_key_types_Arc_String"))] //, feature = "[<$for_type _key_type_Arc_String>]"))]
             pub type [<$for_type KeyType>] = Arc<String>; //[<$for_type _key_type>]
 
         }

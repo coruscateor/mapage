@@ -74,7 +74,7 @@ impl SelectedTypeQuery
 
 }
 
-#[cfg(not(any(feature = "all_types", feature = "SelectedType", feature = "SelectedTypeIO")))]
+#[cfg(not(any(feature = "all_types", feature = "SelectedType")))] //, feature = "SelectedTypeIO"
 #[Object]
 impl SelectedTypeQuery 
 {
@@ -171,6 +171,10 @@ impl SelectedTypeMutation
     }
 
 }
+
+/*
+
+//To be possibly re-implemented:
 
 #[derive(Default)]
 pub struct SelectedTypeQueryMisc;
@@ -855,4 +859,4 @@ impl SelectedTypeIOQuery
     }
 
 }
-
+*/
