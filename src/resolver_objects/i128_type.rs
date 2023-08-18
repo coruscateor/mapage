@@ -157,7 +157,203 @@ impl I128Mutation
 
     }
 
-    //ops...
+    //ops
+
+    //add
+    
+    pub async fn i128_add_op(&self, ctx: &Context<'_>, key: KeyType, value: I128Scalar) -> async_graphql::Result<I128Scalar>
+    {
+
+        call_store_method!(ctx, get_i128_namespace_ref, add_op, key, value)
+
+    }
+
+    pub async fn i128_add_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<I128Scalar>
+    {
+
+        call_store_method!(ctx, get_i128_namespace_ref, add_self_op, key)
+
+    }
+
+    //bit_and
+
+    pub async fn i128_bit_and_op(&self, ctx: &Context<'_>, key: KeyType, value: I128Scalar) -> async_graphql::Result<I128Scalar>
+    {
+
+        call_store_method!(ctx, get_i128_namespace_ref, bit_and_op, key, value)
+
+    }
+
+    pub async fn i128_bit_and_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<I128Scalar>
+    {
+
+        call_store_method!(ctx, get_i128_namespace_ref, bit_and_self_op, key)
+
+    }
+
+    //bit_or
+
+    pub async fn i128_bit_or_op(&self, ctx: &Context<'_>, key: KeyType, value: I128Scalar) -> async_graphql::Result<I128Scalar>
+    {
+
+        call_store_method!(ctx, get_i128_namespace_ref, bit_or_op, key, value)
+
+    }
+
+    pub async fn i128_bit_or_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<I128Scalar>
+    {
+
+        call_store_method!(ctx, get_i128_namespace_ref, bit_or_self_op, key)
+
+    }
+
+    //bit_xor
+
+    pub async fn i128_bit_xor_op(&self, ctx: &Context<'_>, key: KeyType, value: I128Scalar) -> async_graphql::Result<I128Scalar>
+    {
+
+        call_store_method!(ctx, get_i128_namespace_ref, bit_xor_op, key, value)
+
+    }
+
+    pub async fn i128_bit_xor_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<I128Scalar>
+    {
+
+        call_store_method!(ctx, get_i128_namespace_ref, bit_xor_self_op, key)
+
+    }
+
+    //div
+
+    pub async fn i128_div_op(&self, ctx: &Context<'_>, key: KeyType, value: I128Scalar) -> async_graphql::Result<I128Scalar>
+    {
+
+        call_store_method!(ctx, get_i128_namespace_ref, div_op, key, value)
+
+    }
+
+    pub async fn i128_div_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<I128Scalar>
+    {
+
+        call_store_method!(ctx, get_i128_namespace_ref, div_self_op, key)
+
+    }
+
+    //mul
+
+    pub async fn i128_mul_op(&self, ctx: &Context<'_>, key: KeyType, value: I128Scalar) -> async_graphql::Result<I128Scalar>
+    {
+
+        call_store_method!(ctx, get_i128_namespace_ref, mul_op, key, value)
+
+    }
+
+    pub async fn i128_mul_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<I128Scalar>
+    {
+
+        call_store_method!(ctx, get_i128_namespace_ref, mul_self_op, key)
+
+    }
+
+    //neg
+
+    pub async fn i128_neg_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<I128Scalar>
+    {
+
+        call_store_method!(ctx, get_i128_namespace_ref, neg_op, key)
+
+    }
+
+    //not
+
+    pub async fn i128_not_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<I128Scalar>
+    {
+
+        call_store_method!(ctx, get_i128_namespace_ref, not_op, key)
+
+    }
+
+    //rem
+
+    pub async fn i128_rem_op(&self, ctx: &Context<'_>, key: KeyType, value: I128Scalar) -> async_graphql::Result<I128Scalar>
+    {
+
+        call_store_method!(ctx, get_i128_namespace_ref, rem_op, key, value)
+
+    }
+
+    pub async fn i128_rem_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<I128Scalar>
+    {
+
+        call_store_method!(ctx, get_i128_namespace_ref, rem_self_op, key)
+
+    }
+
+    //shl
+
+    pub async fn i128_shl_op(&self, ctx: &Context<'_>, key: KeyType, value: I128Scalar) -> async_graphql::Result<I128Scalar>
+    {
+
+        call_store_method!(ctx, get_i128_namespace_ref, shl_op, key, value)
+
+    }
+
+    pub async fn i128_shl_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<I128Scalar>
+    {
+
+        call_store_method!(ctx, get_i128_namespace_ref, shl_self_op, key)
+
+    }
+
+    //shr
+
+    pub async fn i128_shr_op(&self, ctx: &Context<'_>, key: KeyType, value: I128Scalar) -> async_graphql::Result<I128Scalar>
+    {
+
+        call_store_method!(ctx, get_i128_namespace_ref, shr_op, key, value)
+
+    }
+
+    pub async fn i128_shr_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<I128Scalar>
+    {
+
+        call_store_method!(ctx, get_i128_namespace_ref, shr_self_op, key)
+
+    }
+
+    //sub
+
+    pub async fn i128_sub_op(&self, ctx: &Context<'_>, key: KeyType, value: I128Scalar) -> async_graphql::Result<I128Scalar>
+    {
+
+        call_store_method!(ctx, get_i128_namespace_ref, sub_op, key, value)
+
+    }
+
+    pub async fn i128_sub_self_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<I128Scalar>
+    {
+
+        call_store_method!(ctx, get_i128_namespace_ref, sub_self_op, key)
+
+    }
+
+    //inc
+
+    pub async fn i128_inc_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<I128Scalar>
+    {
+
+        call_store_method!(ctx, get_i128_namespace_ref, inc_op, key)
+
+    }
+
+    //dec
+
+    pub async fn i128_dec_op(&self, ctx: &Context<'_>, key: KeyType) -> async_graphql::Result<I128Scalar>
+    {
+
+        call_store_method!(ctx, get_i128_namespace_ref, dec_op, key)
+
+    }
     
 }
 

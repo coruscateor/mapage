@@ -110,7 +110,7 @@ impl BoolNamespace
 
     }
 
-    impl_update_fn_op_method!(not, KeyType, bool); //, value: bool
+    impl_update_fn_op_method!(not, KeyType, bool);
 
     impl_update_fn_op_method!(bit_and, KeyType, bool, value: bool);
 

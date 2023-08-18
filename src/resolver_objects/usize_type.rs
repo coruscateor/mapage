@@ -255,7 +255,7 @@ impl USizeMutation
 
     }
 
-    //no neg
+    //no neg op
 
     //not
 
