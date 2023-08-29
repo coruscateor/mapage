@@ -2,110 +2,13 @@ use dashmap::DashMap;
 
 use std::{hash::Hash, collections::HashSet};
 
-use crate::{types::{get_ok_value_str}, errors::invalid_operation}; //UnitValue, 
+use crate::{types::{get_ok_value_str}, errors::invalid_operation};
 
 use std::mem::replace;
 
-//use paste::paste;
-
-/*
-#[macro_export]
-macro_rules! impl_dashmap_generic_update_fn_param
-{
-
-    ($parameter_name:ident, $type_param:ty) =>
-    {
-
-        paste! {
-
-            pub async fn update_fn_1_param<$type_param, R>(&self, key: K, updater: fn(&mut V, $type_param) -> async_graphql::Result<R>, $parameter_name: $type_param) -> async_graphql::Result<R>
-            {
-
-                let res = self.map.get_mut(&key);
-
-                if let Some(mut val) = res
-                { 
-                
-                    return updater(val.value_mut(), $parameter_name);
-                
-                }
-                
-                invalid_operation()
-        
-            }
-
-        }
-
-    }
-
-}
-
-#[macro_export]
-macro_rules! impl_dashmap_generic_update_fn_params
-{
-
-    ($param_count:stmt, $($parameter_name:ident: $type_param:ty),*) => //ident
-    {
-
-        paste! {
-
-            pub async fn [<update_fn_ $param_count _params>]<$($type_param),*, R>(&self, key: K, updater: fn(&mut V, $($type_param),*) -> async_graphql::Result<R>, $($parameter_name: $type_param),*) -> async_graphql::Result<R>
-            {
-                
-                let res = self.map.get_mut(&key);
-
-                if let Some(mut val) = res
-                { 
-                
-                    return updater(val.value_mut(), $($parameter_name),*);
-                
-                }
-                
-                invalid_operation()
-        
-            }
-
-        }
-
-    }
-
-}
-
-#[macro_export]
-macro_rules! impl_dashmap_generic_read_fn_params
-{
-
-    ($param_count:stmt, $($parameter_name:ident: $type_param:ty),*) => //$key_type:ty, //ident
-    {
-
-        paste! {
-
-            pub async fn [<read_fn_ $param_count _params>]<$($type_param),*, R>(&self, key: K, reader: fn(&V, $($type_param),*) -> async_graphql::Result<R>, $($parameter_name: $type_param),*) -> async_graphql::Result<R>
-            {
-                
-                let res = self.map.get(&key);
-
-                if let Some(val) = res
-                {
-                
-                    return reader(val.value(), $($parameter_name),*);
-                
-                }
-                
-                invalid_operation()
-        
-            }
-
-        }
-
-    }
-
-}
-*/
-
 pub struct DashMapNamespace<K, V>
-    where K: 'static + Eq + Hash + Sync,
-          V: 'static + Sync + Default
+    where K: 'static + Eq + Hash + Sync + Clone,
+          V: 'static + Sync + Default + Clone
 {
 
     map: DashMap<K, V>
@@ -113,8 +16,8 @@ pub struct DashMapNamespace<K, V>
 }
 
 impl<K, V> DashMapNamespace<K, V>
-    where K: 'static + Eq + Hash + Sync,
-          V: 'static + Sync + Default
+    where K: 'static + Eq + Hash + Sync + Clone,
+          V: 'static + Sync + Default + Clone
 {
 
     pub fn new() -> Self
@@ -129,18 +32,16 @@ impl<K, V> DashMapNamespace<K, V>
 
     }
 
-    pub async fn insert(&self, key: K, value: V) -> async_graphql::Result<&'static str> //<UnitValue>
+    pub async fn insert(&self, key: K, value: V) -> async_graphql::Result<&'static str>
     {
         
-        let res = self.map.insert(key, value);
-
-        //Ok(UnitValue::new())
+        let _res = self.map.insert(key, value);
 
         Ok(get_ok_value_str())
 
     }
 
-    pub async fn update(&self, key: &K, value: V) -> async_graphql::Result<&'static str> //<UnitValue>
+    pub async fn update(&self, key: &K, value: V) -> async_graphql::Result<&'static str>
     {
 
         let res = self.map.get_mut(&key);
@@ -149,8 +50,6 @@ impl<K, V> DashMapNamespace<K, V>
         {
 
             *val = value;
-
-            //return Ok(UnitValue::new());
 
             return Ok(get_ok_value_str());
 
@@ -184,7 +83,7 @@ impl<K, V> DashMapNamespace<K, V>
         where FN: FnMut(&mut V) -> async_graphql::Result<R>
     {
 
-        let res = self.map.get_mut(&key); //.update_async(&key, |_, v| { updater(v) });
+        let res = self.map.get_mut(&key);
 
         if let Some(mut val) = res
         {
@@ -214,26 +113,10 @@ impl<K, V> DashMapNamespace<K, V>
 
     }
 
-    //param
-
-    /*
-    crate::impl_dashmap_generic_update_fn_param!(param, P);
-
-    crate::impl_dashmap_generic_update_fn_params!(2, param1: P1, param2: P2);
-
-    crate::impl_dashmap_generic_update_fn_params!(3, param1: P1, param2: P2, param3: P3);
-
-    crate::impl_dashmap_generic_update_fn_params!(4, param1: P1, param2: P2, param3: P3, param4: P4);
-    */
-
-    //
-
     pub async fn upsert(&self, key: K, value: V) -> async_graphql::Result<&'static str>
     {
-
-        let value_ref = &value; 
         
-        let res = self.map.get_mut(&key);  //upsert_async(key, || *value_ref, |_, v| { *v = *value_ref; }).await;
+        let res = self.map.get_mut(&key);
 
         if let Some(mut ref_mut) = res
         {
@@ -254,15 +137,13 @@ impl<K, V> DashMapNamespace<K, V>
 
     //
 
-    pub async fn remove(&self, key: &K) -> async_graphql::Result<&'static str> //<UnitValue>
+    pub async fn remove(&self, key: &K) -> async_graphql::Result<&'static str>
     {
 
         let res = self.map.remove(key);
 
         if let Some(_) = res
         {
-
-            //return Ok(UnitValue::new());
 
             return Ok(get_ok_value_str());
 
@@ -296,7 +177,7 @@ impl<K, V> DashMapNamespace<K, V>
         where FN: Fn(&V) -> async_graphql::Result<R>
     {
 
-        let res = self.map.get(&key); //, |_, v| { reader(v) });
+        let res = self.map.get(&key);
 
         if let Some(val) = res
         {
@@ -355,16 +236,6 @@ impl<K, V> DashMapNamespace<K, V>
 
     }
 
-
-    /*
-    pub async fn clear(&self)
-    {
-
-        self.map.clear()
-
-    }
-    */
-
     pub async fn len(&self) -> usize
     {
 
@@ -386,13 +257,75 @@ impl<K, V> DashMapNamespace<K, V>
 
     }
 
+    //
+    
+    pub async fn read(&self, key: &K) -> async_graphql::Result<V>
+    {
+
+        let res = self.map.get(key);
+
+        if let Some(val) = res
+        {
+
+            return Ok(val.value().clone());
+
+        }
+        
+        invalid_operation()
+
+
+    }
+
+    pub async fn try_read(&self, key: &K) -> Option<V>
+    {
+
+        let res = self.map.get(key);
+
+        if let Some(val) = res
+        {
+
+            return Some(val.value().clone());
+
+        }
+
+        None
+
+    }
+
+    pub async fn get_all_keys(&self) -> HashSet<K>
+    {
+
+        let mut keys = HashSet::with_capacity(self.map.len());
+
+        {
+            let keys_ref = &mut keys;
+
+            //May need to check for duplicates
+
+            let iter = self.map.iter();
+
+            for item in iter
+            {
+
+                keys_ref.insert(item.key().clone());
+
+            }
+
+        }
+
+        keys
+
+    }
+
 }
+
+//Deprecated
 
 //Copy - retriving values only
 
 impl<K, V> DashMapNamespace<K, V>
-    where K: 'static + Eq + Hash + Sync,
-          V: 'static + Sync + Default + Copy
+    where K: 'static + Eq + Hash + Sync + Clone,
+          V: 'static + Sync + Default + Copy + Clone
 {
 
     pub async fn upsert_copy(&self, key: K, value: V) -> async_graphql::Result<&'static str>
@@ -439,7 +372,7 @@ impl<K, V> DashMapNamespace<K, V>
 //Clone - retriving values only
 
 impl<K, V> DashMapNamespace<K, V>
-    where K: 'static + Eq + Hash + Sync,
+    where K: 'static + Eq + Hash + Sync + Clone,
           V: 'static + Sync + Default + Clone
 {
 
@@ -488,8 +421,8 @@ impl<K, V> DashMapNamespace<K, V>
 //Copy keys
 
 impl<K, V> DashMapNamespace<K, V>
-    where K: 'static + Eq + Hash + Sync + Copy,
-          V: 'static + Sync + Default //+ Copy
+    where K: 'static + Eq + Hash + Sync + Copy + Clone,
+          V: 'static + Sync + Default + Clone //+ Copy
 {
 
     pub async fn get_all_keys_copy(&self) -> Vec<K>
@@ -528,41 +461,8 @@ impl<K, V> DashMapNamespace<K, V>
 
 impl<K, V> DashMapNamespace<K, V>
     where K: 'static + Eq + Hash + Sync + Clone,
-          V: 'static + Sync + Default //+ Clone
+          V: 'static + Sync + Default + Clone //+ Clone
 {
-
-    /*
-    pub async fn get_all_keys_clone(&self) -> Vec<K>
-    {
-
-        let mut keys = Vec::with_capacity(self.map.len());
-
-        {
-
-            let keys_ref = &mut keys;
-
-            //May need to check for duplicates
-
-            let iter = self.map.iter();
-
-            for item in iter
-            {
-
-                if !keys_ref.contains(item.key())
-                {
-    
-                    keys_ref.push(item.key().clone());
-    
-                }
-
-            }
-
-        }
-
-        keys
-
-    }
-    */
 
     pub async fn get_all_keys_clone(&self) -> HashSet<K>
     {
@@ -576,10 +476,8 @@ impl<K, V> DashMapNamespace<K, V>
 
             let iter = self.map.iter();
 
-            for item in iter //self.map 
+            for item in iter
             {
-
-                //keys_ref.insert(k.clone());
 
                 keys_ref.insert(item.key().clone());
 

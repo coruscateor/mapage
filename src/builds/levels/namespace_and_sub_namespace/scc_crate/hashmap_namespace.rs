@@ -11,8 +11,8 @@ use std::mem::replace;
 //Non-async methods are appended with "_non_async" - features will probably be used actually
 
 pub struct HashMapNamespace<K, V>
-    where K: 'static + Eq + Hash + Sync,
-          V: 'static + Sync + Default
+    where K: 'static + Eq + Hash + Sync + Clone,
+          V: 'static + Sync + Default + Clone
 {
 
     map: HashMap<K, V>
@@ -20,8 +20,8 @@ pub struct HashMapNamespace<K, V>
 }
 
 impl<K, V> HashMapNamespace<K, V>
-    where K: 'static + Eq + Hash + Sync,
-          V: 'static + Sync + Default
+    where K: 'static + Eq + Hash + Sync + Clone,
+          V: 'static + Sync + Default + Clone
 {
 
     pub fn new() -> Self
@@ -236,13 +236,73 @@ impl<K, V> HashMapNamespace<K, V>
 
     }
 
+    //
+
+    pub async fn upsert(&self, key: K, value: V) -> async_graphql::Result<&'static str>
+    {
+
+        let value_ref = &value; 
+
+        self.map.entry(key).and_modify(|v| { *v = value_ref.clone(); }).or_insert(value);
+
+        Ok(get_ok_value_str())
+
+    }
+
+    pub async fn read(&self, key: &K) -> async_graphql::Result<V>
+    {
+
+        let res = self.map.read_async(key, |_, v| v.clone());
+
+        if let Some(val) = res.await
+        {
+
+            return Ok(val);
+
+        }
+        
+        invalid_operation()
+
+    }
+
+    pub async fn try_read(&self, key: &K) -> Option<V>
+    {
+
+        self.map.read_async(key, |_, v| v.clone()).await
+
+    }
+
+    pub async fn get_all_keys(&self) -> HashSet<K>
+    {
+
+        let mut keys = HashSet::with_capacity(self.map.len());
+
+        {
+            let keys_ref = &mut keys;
+
+            //May need to check for duplicates
+    
+            self.map.scan_async(|k, _| { 
+                
+                keys_ref.insert(k.clone());
+
+            }).await;
+
+        }
+
+        keys
+
+    }
+    
 }
+
+//Deprecated
 
 //Copy - retriving values only
 
 impl<K, V> HashMapNamespace<K, V>
-    where K: 'static + Eq + Hash + Sync,
-          V: 'static + Sync + Default + Copy
+    where K: 'static + Eq + Hash + Sync + Clone,
+          V: 'static + Sync + Default + Copy + Clone
 {
 
     pub async fn upsert_copy(&self, key: K, value: V) -> async_graphql::Result<&'static str>
@@ -284,7 +344,7 @@ impl<K, V> HashMapNamespace<K, V>
 //Clone - retriving values only
 
 impl<K, V> HashMapNamespace<K, V>
-    where K: 'static + Eq + Hash + Sync,
+    where K: 'static + Eq + Hash + Sync + Clone,
           V: 'static + Sync + Default + Clone
 {
 
@@ -327,8 +387,8 @@ impl<K, V> HashMapNamespace<K, V>
 //Copy keys
 
 impl<K, V> HashMapNamespace<K, V>
-    where K: 'static + Eq + Hash + Sync + Copy,
-          V: 'static + Sync + Default
+    where K: 'static + Eq + Hash + Sync + Copy + Clone,
+          V: 'static + Sync + Default + Clone
 {
 
     pub async fn get_all_keys_copy(&self) -> HashSet<K>
@@ -360,7 +420,7 @@ impl<K, V> HashMapNamespace<K, V>
 
 impl<K, V> HashMapNamespace<K, V>
     where K: 'static + Eq + Hash + Sync + Clone,
-          V: 'static + Sync + Default
+          V: 'static + Sync + Default + Clone
 {
 
     pub async fn get_all_keys_clone(&self) -> HashSet<K>

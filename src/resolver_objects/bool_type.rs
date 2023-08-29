@@ -8,8 +8,7 @@ use crate::{call_store_method, call_store_method_no_key, call_store_method_only_
 
 use super::StoreType;
 
-//#[cfg(any(feature = "all_key_types_String", feature = "bool_key_type_String"))]
-type KeyType = crate::types::keys::BoolKeyType; //boolkey_type_String;
+type KeyType = crate::types::keys::BoolKeyType;
 
 #[derive(Default)]
 pub struct BoolQuery;
