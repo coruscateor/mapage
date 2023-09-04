@@ -88,3 +88,62 @@ key_type_features!(Usize);
 #[cfg(any(feature = "all_types", feature = "Whatever"))]
 key_type_features!(Whatever);
 
+//Collections
+
+#[cfg(any(feature = "all_types", feature = "Vec_bool"))]
+key_type_features!(VecBool);
+
+#[cfg(any(feature = "all_types", feature = "Vec_char"))]
+key_type_features!(VecChar);
+
+#[cfg(any(feature = "all_types", feature = "Vec_f32"))]
+key_type_features!(VecF32);
+
+#[cfg(any(feature = "all_types", feature = "Vec_f64"))]
+key_type_features!(VecF64);
+
+#[cfg(any(feature = "all_types", feature = "Vec_i8"))]
+key_type_features!(VecI8);
+
+#[cfg(any(feature = "all_types", feature = "Vec_i16"))]
+key_type_features!(VecI16);
+
+#[cfg(any(feature = "all_types", feature = "Vec_i32"))]
+key_type_features!(VecI32);
+
+#[cfg(any(feature = "all_types", feature = "Vec_i64"))]
+key_type_features!(VecI64);
+
+#[cfg(any(feature = "all_types", feature = "Vec_i128"))]
+key_type_features!(VecI128);
+
+#[cfg(any(feature = "all_types", feature = "Vec_isize"))]
+key_type_features!(VecIsize);
+
+#[cfg(any(feature = "all_types", feature = "Vec_SelectedType"))]
+key_type_features!(VecSelectedType);
+
+#[cfg(any(feature = "all_types", feature = "Vec_String"))]
+key_type_features!(VecString);
+
+#[cfg(any(feature = "all_types", feature = "Vec_u8"))]
+key_type_features!(VecU8);
+
+#[cfg(any(feature = "all_types", feature = "Vec_u16"))]
+key_type_features!(VecU16);
+
+#[cfg(any(feature = "all_types", feature = "Vec_u32"))]
+key_type_features!(VecU32);
+
+#[cfg(any(feature = "all_types", feature = "Vec_u64"))]
+key_type_features!(VecU64);
+
+#[cfg(any(feature = "all_types", feature = "Vec_u128"))]
+key_type_features!(VecU128);
+
+#[cfg(any(feature = "all_types", feature = "Vec_usize"))]
+key_type_features!(VecUsize);
+
+#[cfg(any(feature = "all_types", feature = "Vec_Whatever"))]
+key_type_features!(VecWhatever);
+
