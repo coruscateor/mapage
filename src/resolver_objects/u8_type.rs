@@ -70,7 +70,7 @@ impl U8Query
 
     }
 
-    pub async fn u8_get_all_keys(&self, ctx: &Context<'_>) -> HashSet<String>
+    pub async fn u8_get_all_keys(&self, ctx: &Context<'_>) -> HashSet<KeyType>
     {
 
         call_store_method_no_key!(ctx, get_u8_namespace_ref, get_all_keys)

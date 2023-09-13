@@ -2,15 +2,11 @@ use std::{ops::*, str::FromStr, fmt::{Binary, Display, LowerExp, Octal, UpperExp
 
 use async_graphql::*;
 use serde::{Serialize, Deserialize};
-use tokio::io::copy;
-
-//use crate::{identifier::*, consts::*};
-
-//use super::unit_value::*;
+//use tokio::io::copy;
 
 use paste::paste;
 
-#[macro_export]
+//#[macro_export]
 macro_rules! impl_from_trait_value
 {
 
@@ -37,6 +33,53 @@ macro_rules! impl_from_trait_value
 
 }
 
+//
+
+//#[macro_export]
+macro_rules! impl_union_value
+{
+
+    ($type_label:ident, $value_type:ty) =>
+    {
+
+        paste! {
+
+            #[derive(InputObject, SimpleObject, Default, Clone)]
+            #[graphql(input_name = "[<$type_label ValueInput>]")]
+            pub struct [<$type_label Value>]
+            {
+
+                pub value: $value_type
+
+            }
+
+            impl [<$type_label Value>]
+            {
+                
+                pub fn new(value: $value_type) -> Self
+                {
+
+                    Self
+                    {
+
+                        value
+
+                    }
+
+                }
+
+            }
+
+            impl_from_trait_value!($value_type, $type_label);
+
+        }
+
+    }
+
+}
+
+//
+
 #[derive(InputObject, SimpleObject, Default, Clone, Copy)]
 #[graphql(input_name = "BoolValueInput")]
 pub struct BoolValue
@@ -62,20 +105,6 @@ impl BoolValue
     }
 
 }
-
-/*
-impl From<bool> for BoolValue
-{
-
-    fn from(value: bool) -> Self
-    {
-
-        BoolValue::new(value)
-        
-    }
-
-}
-*/
 
 impl_from_trait_value!(bool, Bool);
 
@@ -104,20 +133,6 @@ impl CharValue
     }
 
 }
-
-/*
-impl From<char> for CharValue
-{
-
-    fn from(value: char) -> Self
-    {
-
-        CharValue::new(value)
-        
-    }
-
-}
-*/
 
 impl_from_trait_value!(char, Char);
 
@@ -149,20 +164,6 @@ impl F32Value
 
 }
 
-/*
-impl From<f32> for F32Value
-{
-
-    fn from(value: f32) -> Self
-    {
-
-        F32Value::new(value)
-        
-    }
-
-}
-*/
-
 impl_from_trait_value!(f32, F32);
 
 #[derive(InputObject, SimpleObject, Default, Clone, Copy)]
@@ -190,20 +191,6 @@ impl F64Value
     }
 
 }
-
-/*
-impl From<f64> for F64Value
-{
-
-    fn from(value: f64) -> Self
-    {
-
-        F64Value::new(value)
-        
-    }
-
-}
-*/
 
 impl_from_trait_value!(f64, F64);
 
@@ -235,20 +222,6 @@ impl I8Value
 
 }
 
-/*
-impl From<i8> for I8Value
-{
-
-    fn from(value: i8) -> Self
-    {
-
-        I8Value::new(value)
-        
-    }
-
-}
-*/
-
 impl_from_trait_value!(i8, I8);
 
 #[derive(InputObject, SimpleObject, Default, Clone, Copy)]
@@ -276,20 +249,6 @@ impl I16Value
     }
 
 }
-
-/*
-impl From<i16> for I16Value
-{
-
-    fn from(value: i16) -> Self
-    {
-
-        I16Value::new(value)
-        
-    }
-
-}
-*/
 
 impl_from_trait_value!(i16, I16);
 
@@ -319,20 +278,6 @@ impl I32Value
 
 }
 
-/*
-impl From<i32> for I32Value
-{
-
-    fn from(value: i32) -> Self
-    {
-
-        I32Value::new(value)
-        
-    }
-
-}
-*/
-
 impl_from_trait_value!(i32, I32);
 
 #[derive(InputObject, SimpleObject, Default, Clone, Copy)]
@@ -361,33 +306,7 @@ impl I64Value
 
 }
 
-/*
-impl From<i64> for I64Value
-{
-
-    fn from(value: i64) -> Self
-    {
-
-        I64Value::new(value)
-        
-    }
-
-}
-*/
-
 impl_from_trait_value!(i64, I64);
-
-
-
-//Send + Sync + Copy + 'static + Add<T> + AddAssign<T> + Binary + BitAnd<T> + BitAndAssign<T> + BitOr<T> + BitOrAssign<T> + BitXor<T> + BitXorAssign<T> + Clone + Default + Display + Div<T> + DivAssign<T> + FromStr + Hash + LowerExp + LowerHex + Mul<T> + MulAssign<T> + Neg + Not + Octal + Ord + PartialEq<T> + PartialOrd<T> + Product<T> + Rem<T> + RemAssign<T> + Shl<T> + ShlAssign<T> + Shr<T> + ShrAssign<T> + Sub<T> + SubAssign<T> + Sum<T> + ToString + UpperExp
-
-//+ Not
-
-//Add<T>, AddAssign<T>, BitAnd<T> + BitAndAssign<T> + BitOr<T> + BitOrAssign<T> + BitXor<T> + BitXorAssign<T> + Div<T> + DivAssign<T> + Mul<T> + MulAssign<T> PartialEq<T> + PartialOrd<T> + Product<T> + Rem<T> + RemAssign<T> + Shl<T> + ShlAssign<T> + Shr<T> + ShrAssign<T> + Sub<T> + SubAssign<T> + Sum<T> +
-
-//Clone + Default 
-
-//Binary, Display, FromStr, LowerExp, LowerHex, Neg, Not,  Octal, Ord, ToString, UpperExp
 
 //https://async-graphql.github.io/async-graphql/en/custom_scalars.html
 
@@ -642,22 +561,6 @@ macro_rules! impl_int_traits
 
         }
 
-        //
-
-        /*
-        impl Product<$scalar_type> for $scalar_type
-        {
-
-            fn product<I: Iterator<Item = $value_type>>(iter: I) -> Self
-            {
-                
-                <$scalar_type>::new(<$value_type>::product(iter))
-
-            }
-
-        }
-        */
-
         impl Rem<$scalar_type> for $scalar_type
         {
 
@@ -780,10 +683,9 @@ macro_rules! impl_int_traits
 
 }
 
-
 //Custom Scalar
 
-#[derive(Serialize, Deserialize, Default, Clone, Copy, Hash, Ord, PartialOrd, Eq, PartialEq)] //InputObject, 
+#[derive(Serialize, Deserialize, Default, Clone, Copy, Hash, Ord, PartialOrd, Eq, PartialEq)]
 pub struct I128Scalar(pub i128);
 
 scalar!(I128Scalar);
@@ -796,243 +698,11 @@ impl I128Scalar
 
         Self(value)
 
-        /*
-        Self
-        {
-
-            let mut val = I128Scalar();
-
-            I128Scalar(pvalue)
-
-        }
-        */
-
     }
 
 }
 
 impl_int_traits!(I128Scalar, i128);
-
-/*
-impl Add<I128Scalar> for I128Scalar
-{
-
-    type Output = Self;
-
-    fn add(self, rhs: I128Scalar) -> Self::Output
-    {
-        
-        I128Scalar::new(self.0.add(rhs.0))
-
-    }
-
-}
-
-impl AddAssign<I128Scalar> for I128Scalar
-{
-
-    fn add_assign(&mut self, rhs: I128Scalar)
-    {
-        
-        self.0.add_assign(rhs.0);
-
-    }
-
-}
-
-impl Binary for I128Scalar
-{
-
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result
-    {
-
-        std::fmt::Binary::fmt(&self.0, f)
-        
-    }
-
-}
-
-impl BitAnd<I128Scalar> for I128Scalar
-{
-
-    type Output = Self;
-
-    fn bitand(self, rhs: I128Scalar) -> Self::Output
-    {
-        
-        I128Scalar::new(self.0.bitand(rhs.0))
-
-    }
-
-}
-
-impl BitAndAssign<I128Scalar> for I128Scalar
-{
-
-    fn bitand_assign(&mut self, rhs: I128Scalar)
-    {
-
-        self.0.bitand_assign(rhs.0)
-        
-    }
-
-}
-
-impl BitOr<I128Scalar> for I128Scalar
-{
-
-    type Output = Self;
-
-    fn bitor(self, rhs: I128Scalar) -> Self::Output
-    {
-
-        I128Scalar::new(self.0.bitor(rhs.0))
-       
-    }
-
-}
-
-impl BitOrAssign<I128Scalar> for I128Scalar
-{
-
-    fn bitor_assign(&mut self, rhs: I128Scalar)
-    {
-
-        self.0.bitor_assign(rhs.0)
-       
-    }
-
-}
-
-impl BitXor<I128Scalar> for I128Scalar
-{
-    type Output = Self;
-
-    fn bitxor(self, rhs: I128Scalar) -> Self::Output
-    {
-        
-        I128Scalar::new(self.0.bitxor(rhs.0))
-
-    }
-
-}
-
-impl BitXorAssign<I128Scalar> for I128Scalar
-{
-
-    fn bitxor_assign(&mut self, rhs: I128Scalar)
-    {
-
-        self.0.bitxor_assign(rhs.0)
-
-    }
-
-}
-
-impl Display for I128Scalar
-{
-
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result
-    {
-
-        std::fmt::Display::fmt(&self.0, f)
-        
-    }
-
-}
-
-impl Div<I128Scalar> for I128Scalar
-{
-
-    type Output = Self;
-
-    fn div(self, rhs: I128Scalar) -> Self::Output
-    {
-
-        I128Scalar::new(self.0.div(rhs.0))      
-        
-    }
-
-}
-
-impl DivAssign<I128Scalar> for I128Scalar
-{
-
-    fn div_assign(&mut self, rhs: I128Scalar)
-    {
-        
-        self.0.div_assign(rhs.0)
-
-    }
-
-}
-
-impl FromStr for I128Scalar
-{
-
-    type Err = ParseIntError;
-
-    fn from_str(s: &str) -> std::result::Result<Self, Self::Err>
-    {
-        
-        Ok(I128Scalar::new(i128::from_str(s)?))
-
-    }
-
-}
-
-impl LowerExp for I128Scalar
-{
-
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result
-    {
-
-        LowerExp::fmt(&self.0, f)
-        
-    }
-
-}
-
-impl LowerHex for I128Scalar
-{
-
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result
-    {
-
-        LowerHex::fmt(&self, f)
-
-    }
-
-}
-
-impl Mul<I128Scalar> for I128Scalar
-{
-
-    type Output = Self;
-
-    fn mul(self, rhs: I128Scalar) -> Self::Output
-    {
-
-        I128Scalar::new(self.0.mul(rhs.0))
-
-    }
-
-}
-
-impl MulAssign<I128Scalar> for I128Scalar
-{
-
-    fn mul_assign(&mut self, rhs: I128Scalar)
-    {
-        
-        self.0.mul_assign(rhs.0)
-
-    }
-
-}
-*/
-
-////
 
 impl Neg for I128Scalar
 {
@@ -1048,299 +718,17 @@ impl Neg for I128Scalar
 
 }
 
-////
 
-/*
-impl Not for I128Scalar
-{
-
-    type Output = Self;
-
-    fn not(self) -> Self::Output
-    {
-
-        I128Scalar::new(self.0.not())  
-
-    }
-
-}
-
-impl Octal for I128Scalar
-{
-
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result
-    {
-
-        Octal::fmt(&self.0, f)
-
-    }
-
-}
-*/
-
-/*
-impl Ord for I128Scalar
-{
-
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering
-    {
-
-        self.0.cmp(other)
-        
-    }
-
-    fn max(self, other: Self) -> Self
-    where
-        Self: Sized,
-        Self: ~const std::marker::Destruct,
-    {
-        match self.cmp(&other) {
-            std::cmp::Ordering::Less | std::cmp::Ordering::Equal => other,
-            std::cmp::Ordering::Greater => self,
-        }
-    }
-
-    fn min(self, other: Self) -> Self
-    where
-        Self: Sized,
-        Self: ~const std::marker::Destruct,
-    {
-        match self.cmp(&other) {
-            std::cmp::Ordering::Less | std::cmp::Ordering::Equal => self,
-            std::cmp::Ordering::Greater => other,
-        }
-    }
-
-    fn clamp(self, min: Self, max: Self) -> Self
-    where
-        Self: Sized,
-        Self: ~const std::marker::Destruct,
-        Self: ~const PartialOrd,
-    {
-        assert!(min <= max);
-        if self < std::cmp::min {
-            std::cmp::min
-        } else if self > std::cmp::max {
-            std::cmp::max
-        } else {
-            self
-        }
-    }
-
-}
-*/
-
-//PartialEq<T>
-
-//PartialOrd<T>
-
-//
-
-/*
-impl Product<I128Scalar> for I128Scalar
-{
-
-    fn product<I: Iterator<Item = i128>>(iter: I) -> Self
-    {
-        
-        I128Scalar::new(i128::product(iter))
-
-    }
-
-}
-*/
-
-/*
-impl Rem<I128Scalar> for I128Scalar
-{
-
-    type Output = Self;
-
-    fn rem(self, rhs: I128Scalar) -> Self::Output
-    {
-
-        I128Scalar::new(self.0.rem(rhs.0))
-        
-    }
-
-}
-
-impl RemAssign<I128Scalar> for I128Scalar
-{
-
-    fn rem_assign(&mut self, rhs: I128Scalar)
-    {
-
-        self.0.rem_assign(rhs.0)
-        
-    }
-
-}
-
-impl Shl<I128Scalar> for I128Scalar
-{
-
-    type Output = Self;
-
-    fn shl(self, rhs: I128Scalar) -> Self::Output
-    {
-
-        I128Scalar::new(self.0.shl(rhs.0))
-        
-    }
-
-}
-
-impl ShlAssign<I128Scalar> for I128Scalar
-{
-
-    fn shl_assign(&mut self, rhs: I128Scalar)
-    {
-        
-        self.0.shl_assign(rhs.0)
-
-    }
-
-}
-
-impl Shr<I128Scalar> for I128Scalar
-{
-
-    type Output = Self;
-
-    fn shr(self, rhs: I128Scalar) -> Self::Output
-    {
-        
-        I128Scalar::new(self.0.shr(rhs.0))
-
-    }
-
-}
-
-impl ShrAssign<I128Scalar> for I128Scalar
-{
-
-    fn shr_assign(&mut self, rhs: I128Scalar)
-    {
-
-        self.0.shr_assign(rhs.0)
-
-    }
-
-}
-
-impl Sub<I128Scalar> for I128Scalar
-{
-
-    type Output = Self;
-
-    fn sub(self, rhs: I128Scalar) -> Self::Output
-    {
-
-        I128Scalar::new(self.0.sub(rhs.0))
-        
-    }
-
-}
-
-impl SubAssign<I128Scalar> for I128Scalar
-{
-
-    fn sub_assign(&mut self, rhs: I128Scalar)
-    {
-
-        self.0.sub_assign(rhs.0)
-
-    }
-
-}
-*/
-
-/*
-impl Sum<I128Scalar> for I128Scalar
-{
-
-    fn sum<I: Iterator<Item = I128Scalar>>(iter: I) -> Self
-    {
-        
-        i128::sum(iter)
-
-    }
-
-}
-*/
-
-/*
-impl ToString for I128Scalar
-{
-
-    fn to_string(&self) -> String
-    {
-
-        self.0.to_string()
-        
-    }
-
-}
-*/
-
-/*
-impl UpperExp for I128Scalar
-{
-
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result
-    {
-        
-        fmt::UpperExp::fmt(&self.0, f)
-
-    }
-
-}
-*/
-
-
-//impl op traits
-
-/*
-#[Scalar]
-impl ScalarType for I128Scalar
-{
-    fn parse(value: Value) -> InputValueResult<Self> {
-        
-        if let Value::String(value) = &value {
-            // Parse the integer value
-            Ok(value.parse().map(I128Scalar)?)
-        } else {
-            // If the type does not match
-            Err(InputValueError::expected_type(value))
-        }
-        
-    }
-
-    fn to_value(&self) -> Value {
-
-        Value::String(self.0.to_string())
-
-    }
-
-}
-*/
-
-//#[derive(InputObject, SimpleObject, Default, Clone, Copy)]
 #[derive(InputObject, SimpleObject, Default, Clone, Copy, Hash)]
-#[graphql(input_name = "I28ValueInput")] //"I28ScalarValueInput")]
-pub struct I128Value //I128ScalarValue
+#[graphql(input_name = "I28ValueInput")]
+pub struct I128Value
 {
-
-    //pub value: i128
-
-    //pub value: String
 
     pub value: I128Scalar
 
 }
 
-impl I128Value //I128ScalarValue
+impl I128Value
 {
     
     pub fn new(value: I128Scalar) -> Self
@@ -1369,28 +757,7 @@ impl I128Value //I128ScalarValue
 
 }
 
-impl_from_trait_value!(I128Scalar, I128); //I128Scalar); //I128Value
-
-/*
-impl Default for I128
-{
-
-    fn default() -> Self
-    {
-
-        Self
-        {
-            
-            value: i128::default().to_string()
-        
-        }
-
-    }
-
-}
-*/
-
-//
+impl_from_trait_value!(I128Scalar, I128);
 
 #[derive(InputObject, SimpleObject, Default, Clone, Copy)]
 #[graphql(input_name = "ISizeValueInput")]
@@ -1555,52 +922,16 @@ impl U128Scalar
 
 impl_int_traits!(U128Scalar, u128);
 
-//impl op traits
-
-/*
-#[Scalar]
-impl ScalarType for U128Scalar
-{
-    
-    fn parse(value: Value) -> InputValueResult<Self>
-    {
-        
-        if let Value::String(value) = &value {
-            // Parse the integer value
-            Ok(value.parse().map(U128Scalar)?)
-        }
-        else
-        {
-            // If the type does not match
-            Err(InputValueError::expected_type(value))
-        }
-        
-    }
-
-    fn to_value(&self) -> Value {
-
-        Value::String(self.0.to_string())
-
-    }
-    
-}
-*/
-
-
 #[derive(InputObject, SimpleObject, Default, Clone, Copy, Hash)]
-#[graphql(input_name = "U128ValueInput")] //"U128ScalarValueInput")]
-pub struct U128Value //U128ScalarValue
+#[graphql(input_name = "U128ValueInput")]
+pub struct U128Value
 {
-
-    //pub value: i128
-
-    //pub value: String
 
     pub value: U128Scalar
 
 }
 
-impl U128Value //U128ScalarValue
+impl U128Value
 {
     
     pub fn new(value: U128Scalar) -> Self
@@ -1628,8 +959,6 @@ impl U128Value //U128ScalarValue
     }
 
 }
-
-//impl_from_trait_value!(U128Scalar, U128Scalar);
 
 impl_from_trait_value!(U128Scalar, U128);
 
@@ -1661,55 +990,6 @@ impl USizeValue
 
 impl_from_trait_value!(usize, USize);
 
-/*
-#[derive(Union, Clone, Copy)]
-pub enum Numeric
-{
-
-    
-    F32(F32Value),
-    F64(F64Value),
-    I8(I8Value),
-    I16(I16Value),
-    I32(I32Value),
-    I64(I64Value),
-
-    I128(I128Value),
-    Isize(ISizeValue),
-    U8(U8Value),
-    U16(U16Value),
-    U32(U32Value),
-    U64(U64Value),
-
-    U128(U128Value),
-    Usize(USizeValue),
-
-    
-}
-
-#[derive(Union)] //Copy, Clone)
-pub enum NumericOrIdentifier
-{
-
-    #[graphql(flatten)]
-    Numeric(Numeric),
-    //Identifier(Identifier)
-
-}
-
-#[derive(Union, Clone, Copy)]
-pub enum NumericOrBool
-{
-
-    #[graphql(flatten)]
-    Numeric(Numeric),
-    Bool(BoolValue)
-
-}
-*/
-
-//
-
 #[derive(InputObject, SimpleObject, Default, Clone)]
 #[graphql(input_name = "StringValueInput")]
 pub struct StringValue
@@ -1738,17 +1018,50 @@ impl StringValue
 
 impl_from_trait_value!(String, String);
 
+//
+
+impl_union_value!(VecBool, Vec<bool>);
+
+impl_union_value!(VecChar, Vec<char>);
+
+impl_union_value!(VecF32, Vec<f32>);
+
+impl_union_value!(VecF64, Vec<f64>);
+
+impl_union_value!(VecI8, Vec<i8>);
+
+impl_union_value!(VecI16, Vec<i16>);
+
+impl_union_value!(VecI32, Vec<i32>);
+
+impl_union_value!(VecI64, Vec<i64>);
+
+impl_union_value!(VecI128, Vec<I128Scalar>);
+
+impl_union_value!(VecISize, Vec<isize>);
+
+impl_union_value!(VecU8, Vec<u8>);
+
+impl_union_value!(VecU16, Vec<u16>);
+
+impl_union_value!(VecU32, Vec<u32>);
+
+impl_union_value!(VecU64, Vec<u64>);
+
+impl_union_value!(VecU128, Vec<U128Scalar>);
+
+impl_union_value!(VecUSize, Vec<usize>);
+
+impl_union_value!(VecString, Vec<String>);
+
 //Output
 
-#[derive(Union, Clone)] //, Default)]
-pub enum Whatever //AnyObject
+#[derive(Union, Clone)]
+pub enum Whatever
 {
 
-    //#[default]
     Bool(BoolValue),
     Char(CharValue),
-    //#[graphql(flatten)]
-    //Numeric(Numeric),
     F32(F32Value),
     F64(F64Value),
     I8(I8Value),
@@ -1756,19 +1069,43 @@ pub enum Whatever //AnyObject
     I32(I32Value),
     I64(I64Value),
 
-    I128(I128Value), //(I128ScalarValue),
+    I128(I128Value),
     Isize(ISizeValue),
     U8(U8Value),
     U16(U16Value),
     U32(U32Value),
     U64(U64Value),
 
-    U128(U128Value), //(U128ScalarValue),
-    Usize(USizeValue),
+    U128(U128Value),
+    USize(USizeValue),
 
     //Collections
 
     String(StringValue),
+
+    //Vecs
+
+    VecBool(VecBoolValue),
+    VecChar(VecCharValue),
+
+    VecF32(VecF32Value),
+    VecF64(VecF64Value),
+    VecI8(VecI8Value),
+    VecI16(VecI16Value),
+    VecI32(VecI32Value),
+    VecI64(VecI64Value),
+
+    VecI128(VecI128Value),
+    VecISize(VecISizeValue),
+    VecU8(VecU8Value),
+    VecU16(VecU16Value),
+    VecU32(VecU32Value),
+    VecU64(VecU64Value),
+
+    VecU128(VecU128Value),
+    VecUSize(VecUSizeValue),
+
+    VecString(VecStringValue)
 
 }
 
@@ -1784,64 +1121,62 @@ impl Default for Whatever
 
 }
 
-impl From<InputOneofWhatever> for Whatever
+impl From<InputOneOfWhatever> for Whatever
 {
 
-    fn from(from_value: InputOneofWhatever) -> Self {
+    fn from(from_value: InputOneOfWhatever) -> Self {
 
         match from_value
         {
-            InputOneofWhatever::Bool(val) => Whatever::Bool(val.into()),
-            InputOneofWhatever::Char(val) => Whatever::Char(val.into()),
-            InputOneofWhatever::F32(val) => Whatever::F32(val.into()),
-            InputOneofWhatever::F64(val) => Whatever::F64(val.into()),
-            InputOneofWhatever::I8(val) => Whatever::I8(val.into()),
-            InputOneofWhatever::I16(val) => Whatever::I16(val.into()),
-            InputOneofWhatever::I32(val) => Whatever::I32(val.into()),
-            InputOneofWhatever::I64(val) => Whatever::I64(val.into()),
-            InputOneofWhatever::I128(val) => Whatever::I128(val.into()),
-            InputOneofWhatever::Isize(val) => Whatever::Isize(val.into()),
-            InputOneofWhatever::U8(val) => Whatever::U8(val.into()),
-            InputOneofWhatever::U16(val) => Whatever::U16(val.into()),
-            InputOneofWhatever::U32(val) => Whatever::U32(val.into()),
-            InputOneofWhatever::U64(val) => Whatever::U64(val.into()),
-            InputOneofWhatever::U128(val) => Whatever::U128(val.into()),
-            InputOneofWhatever::Usize(val) => Whatever::Usize(val.into()),
-            InputOneofWhatever::String(val) => Whatever::String(val.into()),
+            InputOneOfWhatever::Bool(val) => Whatever::Bool(val.into()),
+            InputOneOfWhatever::Char(val) => Whatever::Char(val.into()),
+            InputOneOfWhatever::F32(val) => Whatever::F32(val.into()),
+            InputOneOfWhatever::F64(val) => Whatever::F64(val.into()),
+            InputOneOfWhatever::I8(val) => Whatever::I8(val.into()),
+            InputOneOfWhatever::I16(val) => Whatever::I16(val.into()),
+            InputOneOfWhatever::I32(val) => Whatever::I32(val.into()),
+            InputOneOfWhatever::I64(val) => Whatever::I64(val.into()),
+            InputOneOfWhatever::I128(val) => Whatever::I128(val.into()),
+            InputOneOfWhatever::Isize(val) => Whatever::Isize(val.into()),
+            InputOneOfWhatever::U8(val) => Whatever::U8(val.into()),
+            InputOneOfWhatever::U16(val) => Whatever::U16(val.into()),
+            InputOneOfWhatever::U32(val) => Whatever::U32(val.into()),
+            InputOneOfWhatever::U64(val) => Whatever::U64(val.into()),
+            InputOneOfWhatever::U128(val) => Whatever::U128(val.into()),
+            InputOneOfWhatever::USize(val) => Whatever::USize(val.into()),
+
+            //Collections
+
+            InputOneOfWhatever::String(val) => Whatever::String(val.into()),
+
+            //Vecs
+
+            InputOneOfWhatever::VecBool(val) => Whatever::VecBool(val.into()),
+            InputOneOfWhatever::VecChar(val) => Whatever::VecChar(val.into()),
+            InputOneOfWhatever::VecF32(val) => Whatever::VecF32(val.into()),
+            InputOneOfWhatever::VecF64(val) => Whatever::VecF64(val.into()),
+            InputOneOfWhatever::VecI8(val) => Whatever::VecI8(val.into()),
+            InputOneOfWhatever::VecI16(val) => Whatever::VecI16(val.into()),
+            InputOneOfWhatever::VecI32(val) => Whatever::VecI32(val.into()),
+            InputOneOfWhatever::VecI64(val) => Whatever::VecI64(val.into()),
+            InputOneOfWhatever::VecI128(val) => Whatever::VecI128(val.into()),
+            InputOneOfWhatever::VecISize(val) => Whatever::VecISize(val.into()),
+            InputOneOfWhatever::VecU8(val) => Whatever::VecU8(val.into()),
+            InputOneOfWhatever::VecU16(val) => Whatever::VecU16(val.into()),
+            InputOneOfWhatever::VecU32(val) => Whatever::VecU32(val.into()),
+            InputOneOfWhatever::VecU64(val) => Whatever::VecU64(val.into()),
+            InputOneOfWhatever::VecU128(val) => Whatever::VecU128(val.into()),
+            InputOneOfWhatever::VecUSize(val) => Whatever::VecUSize(val.into()),
+            InputOneOfWhatever::VecString(val) => Whatever::VecString(val.into()),
         }
 
     }
 
 }
 
-/*
-#[derive(Enum, Copy, Clone, Eq, PartialEq)]
-pub enum UnitEnum
+#[derive(OneofObject, Clone)]
+pub enum InputOneOfWhatever
 {
-
-    Unit
-
-}
-*/
-
-//Input
-
-//InputObject can only be applied to an struct.rustc
-
-//#[derive(Union)] //, InputObject)]
-
-#[derive(OneofObject, Clone)] //, Hash
-pub enum InputOneofWhatever //VariousObject
-{
-
-    //Bool(Bool),
-    //Char(Char),
-    //#[graphql(flatten)]
-    //Numeric(Numeric),
-    //String(StringValue),
-    //Unit(UnitValue),
-    //Identifier(Identifier),
-    //Serial(SerialData)
 
     //time - https://doc.rust-lang.org/std/time/index.html,
 
@@ -1849,7 +1184,6 @@ pub enum InputOneofWhatever //VariousObject
 
     Bool(bool),
     Char(char),
-    //Numeric(Numeric),
 
     F32(f32),
     F64(f64),
@@ -1866,94 +1200,100 @@ pub enum InputOneofWhatever //VariousObject
     U64(u64),
 
     U128(U128Scalar),
-    Usize(usize),
+    USize(usize),
 
     //Collections
 
-    String(String) //Value),
+    String(String),
+
+    //Vecs
+
+    VecBool(Vec<bool>),
+    VecChar(Vec<char>),
+
+    VecF32(Vec<f32>),
+    VecF64(Vec<f64>),
+    VecI8(Vec<i8>),
+    VecI16(Vec<i16>),
+    VecI32(Vec<i32>),
+    VecI64(Vec<i64>),
+
+    VecI128(Vec<I128Scalar>),
+    VecISize(Vec<isize>),
+    VecU8(Vec<u8>),
+    VecU16(Vec<u16>),
+    VecU32(Vec<u32>),
+    VecU64(Vec<u64>),
+
+    VecU128(Vec<U128Scalar>),
+    VecUSize(Vec<usize>),
+
+    VecString(Vec<String>)
 
 }
 
-impl From<Whatever> for InputOneofWhatever
+impl From<Whatever> for InputOneOfWhatever
 {
 
     fn from(from_value: Whatever) -> Self {
         
         match from_value
         {
-            Whatever::Bool(val) => InputOneofWhatever::Bool(val.value),
-            Whatever::Char(val) => InputOneofWhatever::Char(val.value),
-            Whatever::F32(val) => InputOneofWhatever::F32(val.value),
-            Whatever::F64(val) => InputOneofWhatever::F64(val.value),
-            Whatever::I8(val) => InputOneofWhatever::I8(val.value),
-            Whatever::I16(val) => InputOneofWhatever::I16(val.value),
-            Whatever::I32(val) => InputOneofWhatever::I32(val.value),
-            Whatever::I64(val) => InputOneofWhatever::I64(val.value),
-            Whatever::I128(val) => InputOneofWhatever::I128(val.value),
-            Whatever::Isize(val) => InputOneofWhatever::Isize(val.value),
-            Whatever::U8(val) => InputOneofWhatever::U8(val.value),
-            Whatever::U16(val) => InputOneofWhatever::U16(val.value),
-            Whatever::U32(val) => InputOneofWhatever::U32(val.value),
-            Whatever::U64(val) => InputOneofWhatever::U64(val.value),
-            Whatever::U128(val) => InputOneofWhatever::U128(val.value),
-            Whatever::Usize(val) => InputOneofWhatever::Usize(val.value),
-            Whatever::String(val) => InputOneofWhatever::String(val.value),
+            Whatever::Bool(val) => InputOneOfWhatever::Bool(val.value),
+            Whatever::Char(val) => InputOneOfWhatever::Char(val.value),
+            Whatever::F32(val) => InputOneOfWhatever::F32(val.value),
+            Whatever::F64(val) => InputOneOfWhatever::F64(val.value),
+            Whatever::I8(val) => InputOneOfWhatever::I8(val.value),
+            Whatever::I16(val) => InputOneOfWhatever::I16(val.value),
+            Whatever::I32(val) => InputOneOfWhatever::I32(val.value),
+            Whatever::I64(val) => InputOneOfWhatever::I64(val.value),
+            Whatever::I128(val) => InputOneOfWhatever::I128(val.value),
+            Whatever::Isize(val) => InputOneOfWhatever::Isize(val.value),
+            Whatever::U8(val) => InputOneOfWhatever::U8(val.value),
+            Whatever::U16(val) => InputOneOfWhatever::U16(val.value),
+            Whatever::U32(val) => InputOneOfWhatever::U32(val.value),
+            Whatever::U64(val) => InputOneOfWhatever::U64(val.value),
+            Whatever::U128(val) => InputOneOfWhatever::U128(val.value),
+            Whatever::USize(val) => InputOneOfWhatever::USize(val.value),
+
+            //Collectons
+
+            Whatever::String(val) => InputOneOfWhatever::String(val.value),
+
+            Whatever::VecBool(val) => InputOneOfWhatever::VecBool(val.value),
+            Whatever::VecChar(val) => InputOneOfWhatever::VecChar(val.value),
+        
+            Whatever::VecF32(val) => InputOneOfWhatever::VecF32(val.value),
+            Whatever::VecF64(val) => InputOneOfWhatever::VecF64(val.value),
+            Whatever::VecI8(val) => InputOneOfWhatever::VecI8(val.value),
+            Whatever::VecI16(val) => InputOneOfWhatever::VecI16(val.value),
+            Whatever::VecI32(val) => InputOneOfWhatever::VecI32(val.value),
+            Whatever::VecI64(val) => InputOneOfWhatever::VecI64(val.value),
+        
+            Whatever::VecI128(val) => InputOneOfWhatever::VecI128(val.value),
+            Whatever::VecISize(val) => InputOneOfWhatever::VecISize(val.value),
+            Whatever::VecU8(val) => InputOneOfWhatever::VecU8(val.value),
+            Whatever::VecU16(val) => InputOneOfWhatever::VecU16(val.value),
+            Whatever::VecU32(val) => InputOneOfWhatever::VecU32(val.value),
+            Whatever::VecU64(val) => InputOneOfWhatever::VecU64(val.value),
+        
+            Whatever::VecU128(val) => InputOneOfWhatever::VecU128(val.value),
+            Whatever::VecUSize(val) => InputOneOfWhatever::VecUSize(val.value),
+        
+            Whatever::VecString(val) => InputOneOfWhatever::VecString(val.value),
         }
 
     }
 
 }
 
-/*
-#[derive(Enum, Copy, Clone, Eq, PartialEq, Default)] 
-pub enum UnitInput
-{
-
-    #[default]
-    Unit
-    
-}
-*/
-
-/*
-
-#[derive(Enum, Copy, Clone, Eq, PartialEq, Hash)]
-pub enum WhateverType
-{
-
-    Bool,
-    Char,
-    F32,
-    F64,
-    I8,
-    I16,
-    I32,
-    I64,
-
-    I128,
-    Isize,
-    U8,
-    U16,
-    U32,
-    U64,
-
-    U128,
-    Usize,
-
-    //Collections
-
-    String
-
-}
-*/
-
 //Selected - Output
 
 cfg_if::cfg_if! {
-    //if #[cfg(any(feature = "all_types", feature = "bool", feature = "char", feature = "f32", feature = "f64", feature = "i8", feature = "i16", feature = "i32", feature = "i64", feature = "i128", feature = "isize", feature = "u8", feature = "u16", feature = "u32", feature = "u64", feature = "u128", feature = "usize", feature = "String"))] {
+
         if #[cfg(any(feature = "all_types", feature = "SelectedType", feature = "SelectedTypeIO"))] {
 
-        #[derive(Union, Clone)] //, FromStr
+        #[derive(Union, Clone)]
         pub enum SelectedType
         {
 
@@ -1975,7 +1315,7 @@ cfg_if::cfg_if! {
             I64(I64Value),
 
             #[cfg(any(feature = "all_types", feature = "i128"))]
-            I128(I128Value), //(I128ScalarValue),
+            I128(I128Value),
             #[cfg(any(feature = "all_types", feature = "isize"))]
             ISize(ISizeValue),
             #[cfg(any(feature = "all_types", feature = "u8"))]
@@ -1988,7 +1328,7 @@ cfg_if::cfg_if! {
             U64(U64Value),
 
             #[cfg(any(feature = "all_types", feature = "u128"))]
-            U128(U128Value), //(U128ScalarValue),
+            U128(U128Value),
             #[cfg(any(feature = "all_types", feature = "usize"))]
             USize(USizeValue),
 
@@ -1997,15 +1337,43 @@ cfg_if::cfg_if! {
             #[cfg(any(feature = "all_types", feature = "String"))]
             String(StringValue),
 
-            //Whatever
+            //Vecs
 
-            //#[cfg(any(feature = "all_types", feature = "Whatever"))]
-            //Whatever(InputOneofWhatever)
+            #[cfg(any(feature = "all_types", feature = "Vec_bool"))]
+            VecBool(VecBoolValue),
+            #[cfg(any(feature = "all_types", feature = "Vec_char"))]
+            VecChar(VecCharValue),
 
-            //Seems that Unions do not support OneofObjects
-
-            //#[cfg(any(feature = "all_types", feature = "Whatever"))]
-            //Whatever(Whatever)
+            #[cfg(any(feature = "all_types", feature = "Vec_f32"))]
+            VecF32(VecF32Value),
+            #[cfg(any(feature = "all_types", feature = "Vec_f64"))]
+            VecF64(VecF64Value),
+            #[cfg(any(feature = "all_types", feature = "Vec_i8"))]
+            VecI8(VecI8Value),
+            #[cfg(any(feature = "all_types", feature = "Vec_i16"))]
+            VecI16(VecI16Value),
+            #[cfg(any(feature = "all_types", feature = "Vec_i32"))]
+            VecI32(VecI32Value),
+            #[cfg(any(feature = "all_types", feature = "Vec_i64"))]
+            VecI64(VecI64Value),
+            #[cfg(any(feature = "all_types", feature = "Vec_i128"))]
+            VecI128(VecI128Value),
+            #[cfg(any(feature = "all_types", feature = "Vec_isize"))]
+            VecISize(VecISizeValue),
+            #[cfg(any(feature = "all_types", feature = "Vec_u8"))]
+            VecU8(VecU8Value),
+            #[cfg(any(feature = "all_types", feature = "Vec_u16"))]
+            VecU16(VecU16Value),
+            #[cfg(any(feature = "all_types", feature = "Vec_u32"))]
+            VecU32(VecU32Value),
+            #[cfg(any(feature = "all_types", feature = "Vec_u64"))]
+            VecU64(VecU64Value),
+            #[cfg(any(feature = "all_types", feature = "Vec_u128"))]
+            VecU128(VecU128Value),
+            #[cfg(any(feature = "all_types", feature = "Vec_usize"))]
+            VecUSize(VecUSizeValue),
+            #[cfg(any(feature = "all_types", feature = "Vec_String"))]
+            VecString(VecStringValue)
 
         }
 
@@ -2021,47 +1389,88 @@ cfg_if::cfg_if! {
 
         }
 
-        impl From<InputOneofSelectedType> for SelectedType
+        impl From<InputOneOfSelectedType> for SelectedType
         {
 
-            fn from(from_value: InputOneofSelectedType) -> Self {
+            fn from(from_value: InputOneOfSelectedType) -> Self {
 
                 match from_value
                 {
                     #[cfg(any(feature = "all_types", feature = "bool"))]
-                    InputOneofSelectedType::Bool(val) => SelectedType::Bool(val.into()),
+                    InputOneOfSelectedType::Bool(val) => SelectedType::Bool(val.into()),
                     #[cfg(any(feature = "all_types", feature = "char"))]
-                    InputOneofSelectedType::Char(val) => SelectedType::Char(val.into()),
+                    InputOneOfSelectedType::Char(val) => SelectedType::Char(val.into()),
                     #[cfg(any(feature = "all_types", feature = "f32"))]
-                    InputOneofSelectedType::F32(val) => SelectedType::F32(val.into()),
+                    InputOneOfSelectedType::F32(val) => SelectedType::F32(val.into()),
                     #[cfg(any(feature = "all_types", feature = "f64"))]
-                    InputOneofSelectedType::F64(val) => SelectedType::F64(val.into()),
+                    InputOneOfSelectedType::F64(val) => SelectedType::F64(val.into()),
                     #[cfg(any(feature = "all_types", feature = "i8"))]
-                    InputOneofSelectedType::I8(val) => SelectedType::I8(val.into()),
+                    InputOneOfSelectedType::I8(val) => SelectedType::I8(val.into()),
                     #[cfg(any(feature = "all_types", feature = "i16"))]
-                    InputOneofSelectedType::I16(val) => SelectedType::I16(val.into()),
+                    InputOneOfSelectedType::I16(val) => SelectedType::I16(val.into()),
                     #[cfg(any(feature = "all_types", feature = "i32"))]
-                    InputOneofSelectedType::I32(val) => SelectedType::I32(val.into()),
+                    InputOneOfSelectedType::I32(val) => SelectedType::I32(val.into()),
                     #[cfg(any(feature = "all_types", feature = "i64"))]
-                    InputOneofSelectedType::I64(val) => SelectedType::I64(val.into()),
+                    InputOneOfSelectedType::I64(val) => SelectedType::I64(val.into()),
                     #[cfg(any(feature = "all_types", feature = "i128"))]
-                    InputOneofSelectedType::I128(val) => SelectedType::I128(val.into()),
+                    InputOneOfSelectedType::I128(val) => SelectedType::I128(val.into()),
                     #[cfg(any(feature = "all_types", feature = "isize"))]
-                    InputOneofSelectedType::Isize(val) => SelectedType::ISize(val.into()),
+                    InputOneOfSelectedType::Isize(val) => SelectedType::ISize(val.into()),
                     #[cfg(any(feature = "all_types", feature = "u8"))]
-                    InputOneofSelectedType::U8(val) => SelectedType::U8(val.into()),
+                    InputOneOfSelectedType::U8(val) => SelectedType::U8(val.into()),
                     #[cfg(any(feature = "all_types", feature = "u16"))]
-                    InputOneofSelectedType::U16(val) => SelectedType::U16(val.into()),
+                    InputOneOfSelectedType::U16(val) => SelectedType::U16(val.into()),
                     #[cfg(any(feature = "all_types", feature = "u32"))]
-                    InputOneofSelectedType::U32(val) => SelectedType::U32(val.into()),
+                    InputOneOfSelectedType::U32(val) => SelectedType::U32(val.into()),
                     #[cfg(any(feature = "all_types", feature = "u64"))]
-                    InputOneofSelectedType::U64(val) => SelectedType::U64(val.into()),
+                    InputOneOfSelectedType::U64(val) => SelectedType::U64(val.into()),
                     #[cfg(any(feature = "all_types", feature = "u128"))]
-                    InputOneofSelectedType::U128(val) => SelectedType::U128(val.into()),
+                    InputOneOfSelectedType::U128(val) => SelectedType::U128(val.into()),
                     #[cfg(any(feature = "all_types", feature = "usize"))]
-                    InputOneofSelectedType::Usize(val) => SelectedType::USize(val.into()),
+                    InputOneOfSelectedType::Usize(val) => SelectedType::USize(val.into()),
+
+                    //Collections
+
                     #[cfg(any(feature = "all_types", feature = "string"))]
-                    InputOneofSelectedType::String(val) => SelectedType::String(val.into()),
+                    InputOneOfSelectedType::String(val) => SelectedType::String(val.into()),
+
+                    //Vecs
+
+                    #[cfg(any(feature = "all_types", feature = "Vec_bool"))]
+                    InputOneOfSelectedType::VecBool(val) => SelectedType::VecBool(val.into()),
+                    #[cfg(any(feature = "all_types", feature = "Vec_char"))]
+                    InputOneOfSelectedType::VecChar(val) => SelectedType::VecChar(val.into()),
+                    #[cfg(any(feature = "all_types", feature = "Vec_f32"))]
+                    InputOneOfSelectedType::VecF32(val) => SelectedType::VecF32(val.into()),
+                    #[cfg(any(feature = "all_types", feature = "Vec_f64"))]
+                    InputOneOfSelectedType::VecF64(val) => SelectedType::VecF64(val.into()),
+                    #[cfg(any(feature = "all_types", feature = "Vec_i8"))]
+                    InputOneOfSelectedType::VecI8(val) => SelectedType::VecI8(val.into()),
+                    #[cfg(any(feature = "all_types", feature = "Vec_i16"))]
+                    InputOneOfSelectedType::VecI16(val) => SelectedType::VecI16(val.into()),
+                    #[cfg(any(feature = "all_types", feature = "Vec_i32"))]
+                    InputOneOfSelectedType::VecI32(val) => SelectedType::VecI32(val.into()),
+                    #[cfg(any(feature = "all_types", feature = "Vec_i64"))]
+                    InputOneOfSelectedType::VecI64(val) => SelectedType::VecI64(val.into()),
+                    #[cfg(any(feature = "all_types", feature = "Vec_i128"))]
+                    InputOneOfSelectedType::VecI128(val) => SelectedType::VecI128(val.into()),
+                    #[cfg(any(feature = "all_types", feature = "Vec_isize"))]
+                    InputOneOfSelectedType::VecISize(val) => SelectedType::VecISize(val.into()),
+                    #[cfg(any(feature = "all_types", feature = "Vec_u8"))]
+                    InputOneOfSelectedType::VecU8(val) => SelectedType::VecU8(val.into()),
+                    #[cfg(any(feature = "all_types", feature = "Vec_u16"))]
+                    InputOneOfSelectedType::VecU16(val) => SelectedType::VecU16(val.into()),
+                    #[cfg(any(feature = "all_types", feature = "Vec_u32"))]
+                    InputOneOfSelectedType::VecU32(val) => SelectedType::VecU32(val.into()),
+                    #[cfg(any(feature = "all_types", feature = "Vec_u64"))]
+                    InputOneOfSelectedType::VecU64(val) => SelectedType::VecU64(val.into()),
+                    #[cfg(any(feature = "all_types", feature = "Vec_u128"))]
+                    InputOneOfSelectedType::VecU128(val) => SelectedType::VecU128(val.into()),
+                    #[cfg(any(feature = "all_types", feature = "Vec_usize"))]
+                    InputOneOfSelectedType::VecUSize(val) => SelectedType::VecUSize(val.into()),
+                    #[cfg(any(feature = "all_types", feature = "Vec_String"))]
+                    InputOneOfSelectedType::VecString(val) => SelectedType::VecString(val.into())
+
                 }
 
             }
@@ -2073,7 +1482,7 @@ cfg_if::cfg_if! {
         //non-zero integers - https://doc.rust-lang.org/std/num/index.html
 
         #[derive(OneofObject)]
-        pub enum InputOneofSelectedType
+        pub enum InputOneOfSelectedType
         {
             #[cfg(any(feature = "all_types", feature = "bool"))]
             Bool(bool),
@@ -2111,11 +1520,50 @@ cfg_if::cfg_if! {
             //Collections
 
             #[cfg(any(feature = "all_types", feature = "string"))]
-            String(String)
+            String(String),
+
+            //Vecs
+
+            #[cfg(any(feature = "all_types", feature = "Vec_bool"))]
+            VecBool(Vec<bool>),
+            #[cfg(any(feature = "all_types", feature = "Vec_char"))]
+            VecChar(Vec<char>),
+
+            #[cfg(any(feature = "all_types", feature = "Vec_f32"))]
+            VecF32(Vec<f32>),
+            #[cfg(any(feature = "all_types", feature = "Vec_f64"))]
+            VecF64(Vec<f64>),
+            #[cfg(any(feature = "all_types", feature = "Vec_i8"))]
+            VecI8(Vec<i8>),
+            #[cfg(any(feature = "all_types", feature = "Vec_i16"))]
+            VecI16(Vec<i16>),
+            #[cfg(any(feature = "all_types", feature = "Vec_i32"))]
+            VecI32(Vec<i32>),
+            #[cfg(any(feature = "all_types", feature = "Vec_i64"))]
+            VecI64(Vec<i64>),
+            #[cfg(any(feature = "all_types", feature = "Vec_i128"))]
+            VecI128(Vec<I128Scalar>),
+            #[cfg(any(feature = "all_types", feature = "Vec_isize"))]
+            VecISize(Vec<isize>),
+            #[cfg(any(feature = "all_types", feature = "Vec_u8"))]
+            VecU8(Vec<u8>),
+            #[cfg(any(feature = "all_types", feature = "Vec_u16"))]
+            VecU16(Vec<u16>),
+            #[cfg(any(feature = "all_types", feature = "Vec_u32"))]
+            VecU32(Vec<u32>),
+            #[cfg(any(feature = "all_types", feature = "Vec_u64"))]
+            VecU64(Vec<u64>),
+            #[cfg(any(feature = "all_types", feature = "Vec_u128"))]
+            VecU128(Vec<U128Scalar>),
+            #[cfg(any(feature = "all_types", feature = "Vec_usize"))]
+            VecUSize(Vec<usize>),
+            #[cfg(any(feature = "all_types", feature = "Vec_String"))]
+            VecString(Vec<String>)
+            
 
         }
 
-        impl From<SelectedType> for InputOneofSelectedType
+        impl From<SelectedType> for InputOneOfSelectedType
         {
 
             fn from(from_value: SelectedType) -> Self {
@@ -2123,46 +1571,91 @@ cfg_if::cfg_if! {
                 match from_value
                 {
                     #[cfg(any(feature = "all_types", feature = "bool"))]
-                    SelectedType::Bool(val) => InputOneofSelectedType::Bool(val.value),
+                    SelectedType::Bool(val) => InputOneOfSelectedType::Bool(val.value),
                     #[cfg(any(feature = "all_types", feature = "char"))]
-                    SelectedType::Char(val) => InputOneofSelectedType::Char(val.value),
+                    SelectedType::Char(val) => InputOneOfSelectedType::Char(val.value),
                     #[cfg(any(feature = "all_types", feature = "f32"))]
-                    SelectedType::F32(val) => InputOneofSelectedType::F32(val.value),
+                    SelectedType::F32(val) => InputOneOfSelectedType::F32(val.value),
                     #[cfg(any(feature = "all_types", feature = "f64"))]
-                    SelectedType::F64(val) => InputOneofSelectedType::F64(val.value),
+                    SelectedType::F64(val) => InputOneOfSelectedType::F64(val.value),
                     #[cfg(any(feature = "all_types", feature = "i8"))]
-                    SelectedType::I8(val) => InputOneofSelectedType::I8(val.value),
+                    SelectedType::I8(val) => InputOneOfSelectedType::I8(val.value),
                     #[cfg(any(feature = "all_types", feature = "i16"))]
-                    SelectedType::I16(val) => InputOneofSelectedType::I16(val.value),
+                    SelectedType::I16(val) => InputOneOfSelectedType::I16(val.value),
                     #[cfg(any(feature = "all_types", feature = "i32"))]
-                    SelectedType::I32(val) => InputOneofSelectedType::I32(val.value),
+                    SelectedType::I32(val) => InputOneOfSelectedType::I32(val.value),
                     #[cfg(any(feature = "all_types", feature = "i64"))]
-                    SelectedType::I64(val) => InputOneofSelectedType::I64(val.value),
+                    SelectedType::I64(val) => InputOneOfSelectedType::I64(val.value),
                     #[cfg(any(feature = "all_types", feature = "i128"))]
-                    SelectedType::I128(val) => InputOneofSelectedType::I128(val.value),
+                    SelectedType::I128(val) => InputOneOfSelectedType::I128(val.value),
                     #[cfg(any(feature = "all_types", feature = "isize"))]
-                    SelectedType::ISize(val) => InputOneofSelectedType::Isize(val.value),
+                    SelectedType::ISize(val) => InputOneOfSelectedType::Isize(val.value),
                     #[cfg(any(feature = "all_types", feature = "u8"))]
-                    SelectedType::U8(val) => InputOneofSelectedType::U8(val.value),
+                    SelectedType::U8(val) => InputOneOfSelectedType::U8(val.value),
                     #[cfg(any(feature = "all_types", feature = "u16"))]
-                    SelectedType::U16(val) => InputOneofSelectedType::U16(val.value),
+                    SelectedType::U16(val) => InputOneOfSelectedType::U16(val.value),
                     #[cfg(any(feature = "all_types", feature = "u32"))]
-                    SelectedType::U32(val) => InputOneofSelectedType::U32(val.value),
+                    SelectedType::U32(val) => InputOneOfSelectedType::U32(val.value),
                     #[cfg(any(feature = "all_types", feature = "u64"))]
-                    SelectedType::U64(val) => InputOneofSelectedType::U64(val.value),
+                    SelectedType::U64(val) => InputOneOfSelectedType::U64(val.value),
                     #[cfg(any(feature = "all_types", feature = "u128"))]
-                    SelectedType::U128(val) => InputOneofSelectedType::U128(val.value),
+                    SelectedType::U128(val) => InputOneOfSelectedType::U128(val.value),
                     #[cfg(any(feature = "all_types", feature = "usize"))]
-                    SelectedType::USize(val) => InputOneofSelectedType::Usize(val.value),
+                    SelectedType::USize(val) => InputOneOfSelectedType::Usize(val.value),
+
+                    //Collections
+
                     #[cfg(any(feature = "all_types", feature = "string"))]
-                    SelectedType::String(val) => InputOneofSelectedType::String(val.value),
+                    SelectedType::String(val) => InputOneOfSelectedType::String(val.value),
+
+                    //Vecs
+
+                    #[cfg(any(feature = "all_types", feature = "Vec_bool"))]
+                    SelectedType::VecBool(val) => InputOneOfSelectedType::VecBool(val.value),
+                    #[cfg(any(feature = "all_types", feature = "Vec_char"))]
+                    SelectedType::VecChar(val) => InputOneOfSelectedType::VecChar(val.value),
+                    #[cfg(any(feature = "all_types", feature = "Vec_f32"))]
+                    SelectedType::VecF32(val) => InputOneOfSelectedType::VecF32(val.value),
+                    #[cfg(any(feature = "all_types", feature = "Vec_f64"))]
+                    SelectedType::VecF64(val) => InputOneOfSelectedType::VecF64(val.value),
+                    #[cfg(any(feature = "all_types", feature = "Vec_i8"))]
+                    SelectedType::VecI8(val) => InputOneOfSelectedType::VecI8(val.value),
+                    #[cfg(any(feature = "all_types", feature = "Vec_i16"))]
+                    SelectedType::VecI16(val) => InputOneOfSelectedType::VecI16(val.value),
+                    #[cfg(any(feature = "all_types", feature = "Vec_i32"))]
+                    SelectedType::VecI32(val) => InputOneOfSelectedType::VecI32(val.value),
+                    #[cfg(any(feature = "all_types", feature = "Vec_i64"))]
+                    SelectedType::VecI64(val) => InputOneOfSelectedType::VecI64(val.value),
+                    #[cfg(any(feature = "all_types", feature = "Vec_i128"))]
+                    SelectedType::VecI128(val) => InputOneOfSelectedType::VecI128(val.value),
+                    #[cfg(any(feature = "all_types", feature = "Vec_isize"))]
+                    SelectedType::VecISize(val) => InputOneOfSelectedType::VecISize(val.value),
+                    #[cfg(any(feature = "all_types", feature = "Vec_u8"))]
+                    SelectedType::VecU8(val) => InputOneOfSelectedType::VecU8(val.value),
+                    #[cfg(any(feature = "all_types", feature = "Vec_u16"))]
+                    SelectedType::VecU16(val) => InputOneOfSelectedType::VecU16(val.value),
+                    #[cfg(any(feature = "all_types", feature = "Vec_u32"))]
+                    SelectedType::VecU32(val) => InputOneOfSelectedType::VecU32(val.value),
+                    #[cfg(any(feature = "all_types", feature = "Vec_u64"))]
+                    SelectedType::VecU64(val) => InputOneOfSelectedType::VecU64(val.value),
+                    #[cfg(any(feature = "all_types", feature = "Vec_u128"))]
+                    SelectedType::VecU128(val) => InputOneOfSelectedType::VecU128(val.value),
+                    #[cfg(any(feature = "all_types", feature = "Vec_usize"))]
+                    SelectedType::VecUSize(val) => InputOneOfSelectedType::VecUSize(val.value),
+
+                    //Collections
+
+                    #[cfg(any(feature = "all_types", feature = "string"))]
+                    SelectedType::VecString(val) => InputOneOfSelectedType::VecString(val.value),
+
+
                 }
 
             }
 
         }
 
-        #[derive(Enum, Copy, Clone, Eq, PartialEq, Hash)] //, ToString
+        #[derive(Enum, Copy, Clone, Eq, PartialEq, Hash)]
         pub enum AvalibleSelectedType
         {
 
@@ -2204,7 +1697,44 @@ cfg_if::cfg_if! {
             //Collections
 
             #[cfg(any(feature = "all_types", feature = "String"))]
-            String
+            String,
+
+            //Vecs
+
+            #[cfg(any(feature = "all_types", feature = "Vec_bool"))]
+            VecBool,
+            #[cfg(any(feature = "all_types", feature = "Vec_char"))]
+            VecChar,
+            #[cfg(any(feature = "all_types", feature = "Vec_f32"))]
+            VecF32,
+            #[cfg(any(feature = "all_types", feature = "Vec_f64"))]
+            VecF64,
+            #[cfg(any(feature = "all_types", feature = "Vec_i8"))]
+            VecI8,
+            #[cfg(any(feature = "all_types", feature = "Vec_i16"))]
+            VecI16,
+            #[cfg(any(feature = "all_types", feature = "Vec_i32"))]
+            VecI32,
+            #[cfg(any(feature = "all_types", feature = "Vec_i64"))]
+            VecI64,
+            #[cfg(any(feature = "all_types", feature = "Vec_i128"))]
+            VecI128,
+            #[cfg(any(feature = "all_types", feature = "Vec_isize"))]
+            VecISize,
+            #[cfg(any(feature = "all_types", feature = "Vec_u8"))]
+            VecU8,
+            #[cfg(any(feature = "all_types", feature = "Vec_u16"))]
+            VecU16,
+            #[cfg(any(feature = "all_types", feature = "Vec_u32"))]
+            VecU32,
+            #[cfg(any(feature = "all_types", feature = "Vec_u64"))]
+            VecU64,
+            #[cfg(any(feature = "all_types", feature = "Vec_u128"))]
+            VecU128,
+            #[cfg(any(feature = "all_types", feature = "Vec_usize"))]
+            VecUSize,
+            #[cfg(any(feature = "all_types", feature = "Vec_string"))]
+            VecString
 
         }
 
@@ -2259,6 +1789,43 @@ cfg_if::cfg_if! {
                     #[cfg(any(feature = "all_types", feature = "String"))]
                     "String" => Ok(AvalibleSelectedType::String),
 
+                    //Vecs
+
+                    #[cfg(any(feature = "all_types", feature = "Vec_bool"))]
+                    "VecBool" => Ok(AvalibleSelectedType::VecBool),
+                    #[cfg(any(feature = "all_types", feature = "Vec_char"))]
+                    "VecChar" => Ok(AvalibleSelectedType::VecChar),
+                    #[cfg(any(feature = "all_types", feature = "Vec_f32"))]
+                    "VecF32" => Ok(AvalibleSelectedType::VecF32),
+                    #[cfg(any(feature = "all_types", feature = "Vec_f64"))]
+                    "VecF64" => Ok(AvalibleSelectedType::VecF64),
+                    #[cfg(any(feature = "all_types", feature = "Vec_i8"))]
+                    "VecI8" => Ok(AvalibleSelectedType::VecI8),
+                    #[cfg(any(feature = "all_types", feature = "Vec_i16"))]
+                    "VecI16" => Ok(AvalibleSelectedType::VecI16),
+                    #[cfg(any(feature = "all_types", feature = "Vec_i32"))]
+                    "VecI32" => Ok(AvalibleSelectedType::VecI32),
+                    #[cfg(any(feature = "all_types", feature = "Vec_i64"))]
+                    "VecI64" => Ok(AvalibleSelectedType::VecI64),
+                    #[cfg(any(feature = "all_types", feature = "Vec_i128"))]
+                    "VecI128" => Ok(AvalibleSelectedType::VecI128),
+                    #[cfg(any(feature = "all_types", feature = "Vec_isize"))]
+                    "VecISize" => Ok(AvalibleSelectedType::VecISize),
+                    #[cfg(any(feature = "all_types", feature = "Vec_u8"))]
+                    "VecU8" => Ok(AvalibleSelectedType::VecU8),
+                    #[cfg(any(feature = "all_types", feature = "Vec_u16"))]
+                    "VecU16" => Ok(AvalibleSelectedType::VecU16),
+                    #[cfg(any(feature = "all_types", feature = "Vec_u32"))]
+                    "VecU32" => Ok(AvalibleSelectedType::VecU32),
+                    #[cfg(any(feature = "all_types", feature = "Vec_u64"))]
+                    "VecU64" => Ok(AvalibleSelectedType::VecU64),
+                    #[cfg(any(feature = "all_types", feature = "Vec_u128"))]
+                    "VecU128" => Ok(AvalibleSelectedType::VecU128),
+                    #[cfg(any(feature = "all_types", feature = "Vec_usize"))]
+                    "VecUSize" => Ok(AvalibleSelectedType::VecUSize),
+                    #[cfg(any(feature = "all_types", feature = "Vec_string"))]
+                    "VecString" => Ok(AvalibleSelectedType::VecString),
+
                     //Error
 
                     _ => Err(Error::new("Error: Invalid type provided"))       
@@ -2270,13 +1837,6 @@ cfg_if::cfg_if! {
         }
 
         /*
-
-        Originaly for:
-
-        SelectedTypeIOQuery -> async fn read_selected_type_values
-
-         */
-
         #[derive(SimpleObject)]
         pub struct SelectedTypeKvP
         {
@@ -2303,6 +1863,7 @@ cfg_if::cfg_if! {
             }
 
         }
+        */
 
     }
 }

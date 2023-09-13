@@ -4,9 +4,12 @@ use delegate::delegate;
 
 use crate::{types::ops::*, impl_update_fn_op_method};
 
-use paste::paste;
+//use paste::paste;
+
 
 type KeyType = crate::types::keys::VecBoolKeyType;
+
+crate::impl_vec_collection_fns_imports!();
 
 #[cfg(feature = "scc_hashmap_namespaces")]
 use super::super::scc_crate::hashmap_namespace::HashMapNamespace as SCC_HashMapNamespace;
@@ -22,14 +25,14 @@ type Namespace = DashMapNamespace<KeyType, Vec<bool>>;
 
 //K: 'static + Clone + Eq + Hash + Ord + Sync
 
-pub struct BoolVecNamespace
+pub struct VecBoolNamespace
 {
 
     namespace: Namespace
 
 }
 
-impl BoolVecNamespace
+impl VecBoolNamespace
 {
 
     pub fn new() -> Self
@@ -55,17 +58,17 @@ impl BoolVecNamespace
 
             pub async fn try_replace(&self, key: &KeyType, value: Vec<bool>) -> Option<Vec<bool>>;
 
-            pub async fn update_fn<R, FN: FnMut(&mut Vec<bool>) -> async_graphql::Result<R>>(&self, key: &KeyType, updater: FN) -> async_graphql::Result<R>;
+            pub async fn update_fn<R, FN: FnOnce(&mut Vec<bool>) -> async_graphql::Result<R>>(&self, key: &KeyType, updater: FN) -> async_graphql::Result<R>;
 
-            pub async fn update_kv_fn<R, FN: FnMut(&KeyType, &mut Vec<bool>) -> async_graphql::Result<R>>(&self, key: &KeyType, updater: FN) -> async_graphql::Result<R>;
+            pub async fn update_kv_fn<R, FN: FnOnce(&KeyType, &mut Vec<bool>) -> async_graphql::Result<R>>(&self, key: &KeyType, updater: FN) -> async_graphql::Result<R>;
 
             pub async fn remove(&self, key: &KeyType) -> async_graphql::Result<&'static str>;
 
             pub async fn try_retrieve(&self, key: &KeyType) -> Option<Vec<bool>>;
 
-            pub async fn read_fn<R, FN: Fn(&Vec<bool>) -> async_graphql::Result<R>>(&self, key: &KeyType, reader: FN) -> async_graphql::Result<R>;
+            pub async fn read_fn<R, FN: FnOnce(&Vec<bool>) -> async_graphql::Result<R>>(&self, key: &KeyType, reader: FN) -> async_graphql::Result<R>;
 
-            pub async fn read_kv_fn<R, FN: Fn(&KeyType, &Vec<bool>) -> async_graphql::Result<R>>(&self, key: &KeyType, reader: FN) -> async_graphql::Result<R>;
+            pub async fn read_kv_fn<R, FN: FnOnce(&KeyType, &Vec<bool>) -> async_graphql::Result<R>>(&self, key: &KeyType, reader: FN) -> async_graphql::Result<R>;
 
             pub async fn contains(&self, key: &KeyType) -> bool;
 
@@ -90,21 +93,9 @@ impl BoolVecNamespace
         }
     }
 
-    /*
-    impl_update_fn_op_method!(not, KeyType, bool);
+    crate::impl_vec_fns!(KeyType, bool);
 
-    impl_update_fn_op_method!(bit_and, KeyType, bool, value: bool);
-
-    impl_update_fn_op_method!(bit_and_self, KeyType, bool);
-
-    impl_update_fn_op_method!(bit_or, KeyType, bool, value: bool);
-
-    impl_update_fn_op_method!(bit_or_self, KeyType, bool);
-
-    impl_update_fn_op_method!(bit_xor, KeyType, bool, value: bool);
-
-    impl_update_fn_op_method!(bit_xor_self, KeyType, bool);
-    */
+    //Ops
 
 }
 

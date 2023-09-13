@@ -86,7 +86,7 @@ impl<K, V> HashMapNamespace<K, V>
     //updater must return async_graphql::Result<R>
 
     pub async fn update_fn<R, FN>(&self, key: &K, mut updater: FN) -> async_graphql::Result<R>
-        where FN: FnMut(&mut V) -> async_graphql::Result<R>
+        where FN: FnOnce(&mut V) -> async_graphql::Result<R>
     {
 
         let res = self.map.update_async(&key, |_, v| { updater(v) });
@@ -103,7 +103,7 @@ impl<K, V> HashMapNamespace<K, V>
     }
 
     pub async fn update_kv_fn<R, FN>(&self, key: &K, mut updater: FN) -> async_graphql::Result<R>
-        where FN: FnMut(&K, &mut V) -> async_graphql::Result<R>
+        where FN: FnOnce(&K, &mut V) -> async_graphql::Result<R>
     {
 
         let res = self.map.update_async(&key, |k, v| { updater(k, v) });
@@ -155,7 +155,7 @@ impl<K, V> HashMapNamespace<K, V>
     //reader must return async_graphql::Result<R>
 
     pub async fn read_fn<R, FN>(&self, key: &K, reader:FN) -> async_graphql::Result<R>
-        where FN: Fn(&V) -> async_graphql::Result<R>
+        where FN: FnOnce(&V) -> async_graphql::Result<R>
     {
 
         let res = self.map.read_async(&key, |_, v| { reader(v) });
@@ -172,7 +172,7 @@ impl<K, V> HashMapNamespace<K, V>
     }
 
     pub async fn read_kv_fn<R, FN>(&self, key: &K, reader: FN) -> async_graphql::Result<R>
-        where FN: Fn(&K, &V) -> async_graphql::Result<R>
+        where FN: FnOnce(&K, &V) -> async_graphql::Result<R>
     {
 
         let res = self.map.read_async(&key, |k, v| { reader(k, v) });

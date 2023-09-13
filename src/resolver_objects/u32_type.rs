@@ -69,7 +69,7 @@ impl U32Query
 
     }
 
-    pub async fn u32_get_all_keys(&self, ctx: &Context<'_>) -> HashSet<String>
+    pub async fn u32_get_all_keys(&self, ctx: &Context<'_>) -> HashSet<KeyType>
     {
 
         call_store_method_no_key!(ctx, get_u32_namespace_ref, get_all_keys)

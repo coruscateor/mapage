@@ -65,7 +65,7 @@ impl SelectedTypeQuery
 
     }
 
-    pub async fn selected_type_get_all_keys(&self, ctx: &Context<'_>) -> HashSet<String>
+    pub async fn selected_type_get_all_keys(&self, ctx: &Context<'_>) -> HashSet<KeyType>
     {
 
         call_store_method_no_key!(ctx, get_selected_type_namespace_ref, get_all_keys)
@@ -97,28 +97,28 @@ pub struct SelectedTypeMutation;
 impl SelectedTypeMutation
 {
     
-    pub async fn selected_type_insert(&self, ctx: &Context<'_>, key: KeyType, value: InputOneofSelectedType) -> async_graphql::Result<&'static str>
+    pub async fn selected_type_insert(&self, ctx: &Context<'_>, key: KeyType, value: InputOneOfSelectedType) -> async_graphql::Result<&'static str>
     {
 
         call_store_method_only_move_key!(ctx, get_selected_type_namespace_ref, insert, key, value.into())
 
     }
 
-    pub async fn selected_type_update(&self, ctx: &Context<'_>, key: KeyType, value: InputOneofSelectedType) -> async_graphql::Result<&'static str>
+    pub async fn selected_type_update(&self, ctx: &Context<'_>, key: KeyType, value: InputOneOfSelectedType) -> async_graphql::Result<&'static str>
     {
 
         call_store_method!(ctx, get_selected_type_namespace_ref, update, key, value.into())
 
     }
 
-    pub async fn selected_type_try_replace(&self, ctx: &Context<'_>, key: KeyType, value: InputOneofSelectedType) -> Option<SelectedType>
+    pub async fn selected_type_try_replace(&self, ctx: &Context<'_>, key: KeyType, value: InputOneOfSelectedType) -> Option<SelectedType>
     {
 
         call_store_method!(ctx, get_selected_type_namespace_ref, try_replace, key, value.into())
 
     }
 
-    pub async fn selected_type_upsert(&self, ctx: &Context<'_>, key: KeyType, value: InputOneofSelectedType) -> async_graphql::Result<&'static str>
+    pub async fn selected_type_upsert(&self, ctx: &Context<'_>, key: KeyType, value: InputOneOfSelectedType) -> async_graphql::Result<&'static str>
     {
 
         call_store_method_only_move_key!(ctx, get_selected_type_namespace_ref, upsert, key, value.into())

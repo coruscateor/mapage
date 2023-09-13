@@ -69,7 +69,7 @@ impl CharQuery
 
     }
 
-    pub async fn char_get_all_keys(&self, ctx: &Context<'_>) -> HashSet<String>
+    pub async fn char_get_all_keys(&self, ctx: &Context<'_>) -> HashSet<KeyType>
     {
 
         call_store_method_no_key!(ctx, get_char_namespace_ref, get_all_keys)

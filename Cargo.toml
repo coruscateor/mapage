@@ -96,15 +96,15 @@ Vec_i32 = []
 Vec_i64 = []
 Vec_i128 = []
 Vec_isize = []
-Vec_SelectedType = []
-Vec_String = []
+VecSelectedType = []
+VecString = []
 Vec_u8 = []
 Vec_u16 = []
 Vec_u32 = []
 Vec_u64 = []
 Vec_u128 = []
 Vec_usize = []
-Vec_Whatever = []
+VecWhatever = []
 
 #Keys:
 

@@ -18,6 +18,53 @@ impl MiscellaneousQuery
 
     }
 
+    async fn get_arc_str(&self) -> Arc<str>
+    {
+
+        let test_string = "test 123 etc".to_string();
+
+        let test_arc_str: Arc<str> = test_string.into();
+
+        test_arc_str
+
+    }
+
+    async fn set_arc_str(&self, _input: Arc<str>) -> bool
+    {
+
+        true
+
+    }
+
+    async fn get_arc_i32(&self) -> Arc<[i32]>
+    {
+
+        let test_123 = vec![1, 2, 3];
+
+        let test_arc_123: Arc<[i32]> = test_123.into();
+
+        test_arc_123
+
+    }
+
+    async fn get_arc_i8(&self) -> Arc<[i8]>
+    {
+
+        let test_123 = vec![1, 2, 3];
+
+        let test_arc_123: Arc<[i8]> = test_123.into();
+
+        test_arc_123
+
+    }
+
+    async fn set_arc_i8(&self, _input: Arc<[i8]>) -> bool
+    {
+
+        true
+
+    }
+    
     //JSONObject
 
     /*

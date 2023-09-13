@@ -1,9 +1,23 @@
-//use crate::builds::levels::namespace_and_sub_namespace::collections::vec_collection_fns;
 
-//constructors
+//Imports
 
 #[macro_export]
-macro_rules! impl_vec_new
+macro_rules! impl_vec_collection_fns_imports
+{
+
+    () =>
+    {
+
+        use crate::builds::levels::namespace_and_sub_namespace::collections::vec_collection_fns::*;
+
+    }
+
+}
+
+//Constructors
+
+#[macro_export]
+macro_rules! impl_vec_insert_new
 {
 
     //$type_name:ident, 
@@ -13,16 +27,12 @@ macro_rules! impl_vec_new
 
         //[<$type_name _vec_new>]
 
-        paste! {
+        pub async fn insert_new(&self, key: $key_type) -> async_graphql::Result<&'static str>
+        {
 
-            pub async fn vec_new(&self, key: &$key_type) -> async_graphql::Result<&'static str>
-            {
+            let my_vec = vec_new();
 
-                let my_vec = vec_new();
-
-                self.namespace.insert(key, my_vec).await
-
-            }
+            self.namespace.insert(key, my_vec).await
 
         }
 
@@ -31,22 +41,18 @@ macro_rules! impl_vec_new
 }
 
 #[macro_export]
-macro_rules! impl_vec_with_capacity
+macro_rules! impl_vec_insert_with_capacity
 {
 
     ($key_type:ty) =>
     {
 
-        paste! {
+        pub async fn insert_with_capacity(&self, key: $key_type, capacity: usize) -> async_graphql::Result<&'static str>
+        {
 
-            pub async fn vec_with_capacity(&self, key: &$key_type, capacity: usize) -> async_graphql::Result<&'static str>
-            {
+            let my_vec = vec_with_capacity(capacity);
 
-                let my_vec = vec_with_capacity(capacity);
-
-                self.namespace.insert(key, my_vec).await
-
-            }
+            self.namespace.insert(key, my_vec).await
 
         }
 
@@ -55,22 +61,18 @@ macro_rules! impl_vec_with_capacity
 }
 
 #[macro_export]
-macro_rules! impl_vec_with_no_capacity
+macro_rules! impl_vec_insert_with_no_capacity
 {
 
     ($key_type:ty) =>
     {
 
-        paste! {
+        pub async fn insert_with_no_capacity(&self, key: $key_type) -> async_graphql::Result<&'static str>
+        {
 
-            pub async fn vec_with_no_capacity(&self, key: &$key_type) -> async_graphql::Result<&'static str>
-            {
+            let my_vec = vec_with_no_capacity();
 
-                let my_vec = vec_with_no_capacity();
-
-                self.namespace.insert(key, my_vec).await
-
-            }
+            self.namespace.insert(key, my_vec).await
 
         }
 
@@ -81,22 +83,18 @@ macro_rules! impl_vec_with_no_capacity
 //Queries
 
 #[macro_export]
-macro_rules! impl_vec_capacity
+macro_rules! impl_vec_read_capacity
 {
 
     ($key_type:ty) =>
     {
 
-        paste! {
+        pub async fn read_capacity(&self, key: &$key_type) -> async_graphql::Result<usize>
+        {
 
-            pub async fn vec_capacity(&self, key: &$key_type, capacity: usize) -> async_graphql::Result<usize>
-            {
+            let my_fn = get_vec_capacity_fn();
 
-                let my_fn = get_vec_capacity_fn(capacity);
-
-                self.namespace.read_fn(key, my_fn).await
-
-            }
+            self.namespace.read_fn(key, my_fn).await
 
         }
 
@@ -105,22 +103,18 @@ macro_rules! impl_vec_capacity
 }
 
 #[macro_export]
-macro_rules! impl_vec_len
+macro_rules! impl_vec_read_len
 {
 
     ($key_type:ty) =>
     {
 
-        paste! {
+        pub async fn read_len(&self, key: &$key_type) -> async_graphql::Result<usize>
+        {
 
-            pub async fn vec_len(&self, key: &$key_type) -> async_graphql::Result<&'static str>
-            {
+            let my_fn = get_vec_len_fn();
 
-                let my_fn = get_vec_len_fn();
-
-                self.namespace.read_fn(key, my_fn).await
-
-            }
+            self.namespace.read_fn(key, my_fn).await
 
         }
 
@@ -128,4 +122,1021 @@ macro_rules! impl_vec_len
 
 }
 
+#[macro_export]
+macro_rules! impl_vec_read_is_empty
+{
 
+    ($key_type:ty) =>
+    {
+
+        pub async fn read_is_empty(&self, key: &$key_type) -> async_graphql::Result<bool>
+        {
+
+            let my_fn = get_vec_is_empty_fn();
+
+            self.namespace.read_fn(key, my_fn).await
+
+        }
+
+    }
+
+}
+
+#[macro_export]
+macro_rules! impl_vec_read_first
+{
+
+    ($key_type:ty, $value_type:ty) =>
+    {
+
+        pub async fn read_first(&self, key: &$key_type) -> async_graphql::Result<Option<$value_type>>
+        {
+
+            let my_fn = get_vec_first_fn();
+
+            self.namespace.read_fn(key, my_fn).await
+
+        }
+
+    }
+
+}
+
+#[macro_export]
+macro_rules! impl_vec_read_last
+{
+
+    ($key_type:ty, $value_type:ty) =>
+    {
+
+        pub async fn read_last(&self, key: &$key_type) -> async_graphql::Result<Option<$value_type>>
+        {
+
+            let my_fn = get_vec_last_fn();
+
+            self.namespace.read_fn(key, my_fn).await
+
+        }
+
+    }
+
+}
+
+/*
+implementation of `FnOnce` is not general enough
+`impl FnOnce(&'2 Vec<bool>) -> std::result::Result<usize, async_graphql::Error>` must implement `FnOnce<(&'1 Vec<bool>,)>`, for any lifetime `'1`...
+...but it actually implements `FnOnce<(&'2 Vec<bool>,)>`, for some specific lifetime `'2`rustcClick for full compiler diagnostic
+vec_collection_macros.rs(818, 9): Error originated from macro call here
+bool_vec_namespace.rs(96, 5): Error originated from macro call here
+mismatched types
+expected associated type `<impl FnOnce(&Vec<bool>) -> std::result::Result<usize, async_graphql::Error> as FnOnce<(&Vec<bool>,)>>::Output`
+   found associated type `<impl FnOnce(&Vec<bool>) -> std::result::Result<usize, async_graphql::Error> as FnOnce<(&Vec<bool>,)>>::Output`rustcClick for full compiler diagnostic
+vec_collection_macros.rs(818, 9): Error originated from macro call here
+bool_vec_namespace.rs(96, 5): Error originated from macro call here
+hashmap_namespace.rs(158, 33): the lifetime requirement is introduced here
+No quick fixes available
+*/
+
+//Requres Ord
+
+#[macro_export]
+macro_rules! impl_vec_read_binary_search
+{
+
+    ($key_type:ty, $value_type:ty) =>
+    {
+
+        pub async fn read_binary_search(&self, key: &$key_type, x: $value_type) -> async_graphql::Result<usize> //&'static //'static 
+        {
+
+            let my_fn = get_vec_binary_search_fn(x);
+
+            self.namespace.read_fn(key, my_fn).await
+
+        }
+
+    }
+
+}
+
+#[macro_export]
+macro_rules! impl_vec_read_index
+{
+
+    ($key_type:ty, $value_type:ty) =>
+    {
+
+        pub async fn read_index(&self, key: &$key_type, index: usize) -> async_graphql::Result<$value_type>
+        {
+
+            let my_fn = get_vec_index_fn::<$value_type>(index);
+
+            self.namespace.read_fn(key, my_fn).await
+
+        }
+
+    }
+
+}
+
+//Mutations
+
+#[macro_export]
+macro_rules! impl_vec_update_index_mut
+{
+
+    ($key_type:ty, $value_type:ty) =>
+    {
+
+        pub async fn update_index_mut(&self, key: &$key_type, index: usize, value: $value_type) -> async_graphql::Result<&'static str>
+        {
+
+            let my_fn = get_vec_index_mut_fn::<$value_type>(index, value);
+
+            self.namespace.update_fn(key, my_fn).await
+
+        }
+
+    }
+
+}
+
+//reserve
+
+#[macro_export]
+macro_rules! impl_vec_update_reserve
+{
+
+    ($key_type:ty) =>
+    {
+
+        pub async fn update_reserve(&self, key: &$key_type, additional: usize) -> async_graphql::Result<&'static str>
+        {
+
+            let my_fn = get_vec_reserve_fn(additional);
+
+            self.namespace.update_fn(key, my_fn).await
+
+        }
+
+    }
+
+}
+
+//reserve_exact
+
+#[macro_export]
+macro_rules! impl_vec_update_reserve_exact
+{
+
+    ($key_type:ty) =>
+    {
+
+        pub async fn update_reserve_exact(&self, key: &$key_type, additional: usize) -> async_graphql::Result<&'static str>
+        {
+
+            let my_fn = get_vec_reserve_exact_fn(additional);
+
+            self.namespace.update_fn(key, my_fn).await
+
+        }
+
+    }
+
+}
+
+//try_reserve
+
+#[macro_export]
+macro_rules! impl_vec_update_try_reserve
+{
+
+    ($key_type:ty) =>
+    {
+
+        pub async fn update_try_reserve(&self, key: &$key_type, additional: usize) -> async_graphql::Result<&'static str>
+        {
+
+            let my_fn = get_vec_try_reserve_fn(additional);
+
+            self.namespace.update_fn(key, my_fn).await
+            
+        }
+
+    }
+
+}
+
+//try_reserve_exact
+
+#[macro_export]
+macro_rules! impl_vec_update_try_reserve_exact
+{
+
+    ($key_type:ty) =>
+    {
+
+        pub async fn update_try_reserve_exact(&self, key: &$key_type, additional: usize) -> async_graphql::Result<&'static str>
+        {
+
+            let my_fn = get_vec_try_reserve_exact_fn(additional);
+
+            self.namespace.update_fn(key, my_fn).await
+            
+        }
+
+    }
+
+}
+
+//shrink_to_fit
+
+#[macro_export]
+macro_rules! impl_vec_update_shrink_to_fit
+{
+
+    ($key_type:ty) =>
+    {
+
+        pub async fn update_shrink_to_fit(&self, key: &$key_type) -> async_graphql::Result<&'static str>
+        {
+
+            let my_fn = get_vec_shrink_to_fit_fn();
+
+            self.namespace.update_fn(key, my_fn).await
+
+        }
+
+    }
+
+}
+
+//shrink_to
+
+#[macro_export]
+macro_rules! impl_vec_update_shrink_to
+{
+
+    ($key_type:ty) =>
+    {
+
+        pub async fn update_shrink_to(&self, key: &$key_type, min_capacity: usize) -> async_graphql::Result<&'static str>
+        {
+
+            let my_fn = get_vec_shrink_to_fn(min_capacity);
+
+            self.namespace.update_fn(key, my_fn).await
+            
+        }
+
+    }
+
+}
+
+//truncate
+
+#[macro_export]
+macro_rules! impl_vec_update_truncate
+{
+
+    ($key_type:ty) =>
+    {
+
+        pub async fn update_truncate(&self, key: &$key_type, len: usize) -> async_graphql::Result<&'static str>
+        {
+
+            let my_fn = get_vec_truncate_fn(len);
+
+            self.namespace.update_fn(key, my_fn).await
+            
+        }
+
+    }
+
+}
+
+//insert
+
+#[macro_export]
+macro_rules! impl_vec_update_insert
+{
+
+    ($key_type:ty, $value_type:ty) =>
+    {
+
+        pub async fn update_insert(&self, key: &$key_type, index: usize, element: $value_type) -> async_graphql::Result<&'static str>
+        {
+
+            let my_fn = get_vec_insert_fn(index, element);
+
+            self.namespace.update_fn(key, my_fn).await
+            
+        }
+
+    }
+
+}
+
+//impl_vec_insert_method - with channel
+
+//push
+
+#[macro_export]
+macro_rules! impl_vec_update_push
+{
+
+    ($key_type:ty, $value_type:ty) =>
+    {
+
+        pub async fn update_push(&self, key: &$key_type, value: $value_type) -> async_graphql::Result<&'static str>
+        {
+
+            let my_fn = get_vec_push_fn(value);
+
+            self.namespace.update_fn(key, my_fn).await
+            
+        }
+
+    }
+
+}
+
+//impl_vec_push_method - with channel
+
+//pop
+
+#[macro_export]
+macro_rules! impl_vec_update_pop
+{
+
+    ($key_type:ty, $value_type:ty) =>
+    {
+
+        pub async fn update_pop(&self, key: &$key_type) -> async_graphql::Result<Option<$value_type>>
+        {
+
+            let my_fn = get_vec_pop_fn();
+
+            self.namespace.update_fn(key, my_fn).await
+            
+        }
+
+    }
+
+}
+
+//append
+
+/*
+#[macro_export]
+macro_rules! impl_vec_append_method
+{
+
+    ($key_type:ty, $value_type:ty) =>
+    {
+
+        pub async fn append_method(&self, key: &$key_type, value: &'static mut Vec<$value_type>) -> async_graphql::Result<&'static str>
+        {
+
+            let my_fn = get_vec_append_fn(value); //<'static, $value_type>
+
+            self.namespace.update_fn(key, my_fn).await
+            
+        }
+    }
+
+}
+*/
+
+/*
+`value` does not live long enough
+borrowed value does not live long enoughrustcClick for full compiler diagnostic
+vec_collection_macros.rs(795, 9): Error originated from macro call here
+bool_vec_namespace.rs(96, 5): Error originated from macro call here
+vec_collection_macros.rs(476, 9): `value` dropped here while still borrowed
+vec_collection_macros.rs(469, 60): binding `value` declared here
+vec_collection_macros.rs(472, 25): argument requires that `value` is borrowed for `'static`
+hashmap_namespace.rs(89, 19): due to current limitations in the borrow checker, this implies a `'static` lifetime
+No quick fixes available
+ */
+
+ /*
+ implementation of `FnOnce` is not general enough
+`impl FnOnce(&'2 mut Vec<bool>) -> std::result::Result<&'static str, async_graphql::Error>` must implement `FnOnce<(&'1 mut Vec<bool>,)>`, for any lifetime `'1`...
+...but it actually implements `FnOnce<(&'2 mut Vec<bool>,)>`, for some specific lifetime `'2`rustcClick for full compiler diagnostic
+vec_collection_macros.rs(795, 9): Error originated from macro call here
+bool_vec_namespace.rs(96, 5): Error originated from macro call here
+mismatched types
+expected associated type `<impl FnOnce(&mut Vec<bool>) -> std::result::Result<&'static str, async_graphql::Error> as FnOnce<(&mut Vec<bool>,)>>::Output`
+   found associated type `<impl FnOnce(&mut Vec<bool>) -> std::result::Result<&'static str, async_graphql::Error> as FnOnce<(&mut Vec<bool>,)>>::Output`rustcClick for full compiler diagnostic
+vec_collection_macros.rs(795, 9): Error originated from macro call here
+bool_vec_namespace.rs(96, 5): Error originated from macro call here
+hashmap_namespace.rs(89, 37): the lifetime requirement is introduced here
+No quick fixes available
+*/
+/*
+#[macro_export]
+macro_rules! impl_vec_append_method
+{
+
+    ($key_type:ty, $value_type:ty) =>
+    {
+
+        pub async fn append_method(&self, key: &$key_type, value: Vec<$value_type>) -> async_graphql::Result<&'static str>
+        {
+
+            let my_fn = get_vec_append_fn(&mut value);
+
+            self.namespace.update_fn(key, my_fn).await
+            
+        }
+    }
+
+}
+*/
+
+#[macro_export]
+macro_rules! impl_vec_update_append
+{
+
+    ($key_type:ty, $value_type:ty) =>
+    {
+
+        pub async fn update_append(&self, key: &$key_type, value: Vec<$value_type>) -> async_graphql::Result<&'static str>
+        {
+
+            let my_fn = get_vec_append_fn(value);
+
+            self.namespace.update_fn(key, my_fn).await //.0
+            
+        }
+
+    }
+
+}
+
+//impl_vec_append_method - with channel
+
+/*
+#[macro_export]
+macro_rules! impl_vec_append_method_ref
+{
+
+    ($key_type:ty, $value_type:ty) =>
+    {
+
+        pub async fn append_method(&self, key: &$key_type, value: MoveOnly<&mut Vec<$value_type>>) -> async_graphql::Result<&'static str>
+        {
+
+            let my_fn = get_vec_append_ref_fn(value);
+
+            self.namespace.update_fn(key, my_fn).await
+            
+        }
+
+    }
+
+}
+*/
+
+//clear
+
+#[macro_export]
+macro_rules! impl_vec_update_clear
+{
+
+    ($key_type:ty, $value_type:ty) =>
+    {
+
+        pub async fn update_clear(&self, key: &$key_type) -> async_graphql::Result<&'static str>
+        {
+
+            let my_fn = get_vec_clear_fn();
+
+            self.namespace.update_fn(key, my_fn).await
+            
+        }
+
+    }
+
+}
+
+//split_off
+
+#[macro_export]
+macro_rules! impl_vec_update_split_off
+{
+
+    ($key_type:ty, $value_type:ty) =>
+    {
+
+        pub async fn update_split_off(&self, key: &$key_type, at: usize) -> async_graphql::Result<Vec<$value_type>>
+        {
+
+            let my_fn = get_vec_split_off_fn::<$value_type>(at);
+
+            self.namespace.update_fn(key, my_fn).await
+            
+        }
+
+    }
+
+}
+
+//resize
+
+#[macro_export]
+macro_rules! impl_vec_update_resize
+{
+
+    ($key_type:ty, $value_type:ty) =>
+    {
+
+        pub async fn update_resize(&self, key: &$key_type, new_len: usize, value: $value_type) -> async_graphql::Result<&'static str>
+        {
+
+            let my_fn = get_vec_resize_fn(new_len, value);
+
+            self.namespace.update_fn(key, my_fn).await
+            
+        }
+
+    }
+
+}
+
+//impl_vec_resize_method - With Channel
+
+//dedup
+
+//Requires PartialEq
+
+#[macro_export]
+macro_rules! impl_vec_update_dedup
+{
+
+    ($key_type:ty) =>
+    {
+
+        pub async fn update_dedup(&self, key: &$key_type) -> async_graphql::Result<&'static str>
+        {
+
+            let my_fn = get_vec_dedup_fn();
+
+            self.namespace.update_fn(key, my_fn).await
+            
+        }
+
+    }
+
+}
+
+//sort_unstable
+
+//Requres Ord
+
+#[macro_export]
+macro_rules! impl_vec_update_sort_unstable
+{
+
+    ($key_type:ty) =>
+    {
+
+        pub async fn update_sort_unstable(&self, key: &$key_type) -> async_graphql::Result<&'static str>
+        {
+
+            let my_fn = get_vec_sort_unstable_fn();
+
+            self.namespace.update_fn(key, my_fn).await
+            
+        }
+
+    }
+
+}
+
+//rotate_left
+
+//Requres Ord
+
+#[macro_export]
+macro_rules! impl_vec_update_rotate_left
+{
+
+    ($key_type:ty) =>
+    {
+
+        pub async fn update_rotate_left(&self, key: &$key_type, mid: usize) -> async_graphql::Result<&'static str>
+        {
+
+            let my_fn = get_vec_rotate_left_fn(mid);
+
+            self.namespace.update_fn(key, my_fn).await
+            
+        }
+
+    }
+
+}
+
+//rotate_right
+
+//Requres Ord
+
+#[macro_export]
+macro_rules! impl_vec_update_rotate_right
+{
+
+    ($key_type:ty) =>
+    {
+
+        pub async fn update_rotate_right(&self, key: &$key_type, mid: usize) -> async_graphql::Result<&'static str>
+        {
+
+            let my_fn = get_vec_rotate_right_fn(mid);
+
+            self.namespace.update_fn(key, my_fn).await
+            
+        }
+
+    }
+
+}
+
+//fill
+
+#[macro_export]
+macro_rules! impl_vec_update_fill
+{
+
+    ($key_type:ty, $value_type:ty) =>
+    {
+
+        pub async fn update_fill(&self, key: &$key_type, mid: $value_type) -> async_graphql::Result<&'static str>
+        {
+
+            let my_fn = get_vec_fill_fn(mid);
+
+            self.namespace.update_fn(key, my_fn).await
+            
+        }
+
+    }
+
+}
+
+//sort
+
+//Requres Ord
+
+#[macro_export]
+macro_rules! impl_vec_update_sort
+{
+
+    ($key_type:ty) =>
+    {
+
+        pub async fn update_sort(&self, key: &$key_type) -> async_graphql::Result<&'static str>
+        {
+
+            let my_fn = get_vec_sort_fn();
+
+            self.namespace.update_fn(key, my_fn).await
+            
+        }
+
+    }
+
+}
+
+//swap
+
+//Requres Ord
+
+#[macro_export]
+macro_rules! impl_vec_update_swap
+{
+
+    ($key_type:ty) =>
+    {
+
+        pub async fn update_swap(&self, key: &$key_type, a: usize, b: usize) -> async_graphql::Result<&'static str>
+        {
+
+            let my_fn = get_vec_swap_fn(a, b);
+
+            self.namespace.update_fn(key, my_fn).await
+            
+        }
+
+    }
+
+}
+
+//retrieve_contents_fn
+
+#[macro_export]
+macro_rules! impl_vec_update_retrieve_contents
+{
+
+    ($key_type:ty, $value_type:ty) =>
+    {
+
+        pub async fn retrieve_contents_fn(&self, key: &$key_type) -> async_graphql::Result<Vec<$value_type>>
+        {
+
+            let my_fn = get_vec_retrieve_contents_fn();
+
+            self.namespace.update_fn(key, my_fn).await
+            
+        }
+
+    }
+
+}
+
+//
+
+#[macro_export]
+macro_rules! impl_vec_fns
+{
+
+    ($key_type:ty, $value_type:ty) =>
+    {
+
+        //Constructors
+
+        crate::impl_vec_insert_new!($key_type);
+
+        crate::impl_vec_insert_with_capacity!($key_type);
+
+        crate::impl_vec_insert_with_no_capacity!($key_type);
+
+        //Queries
+
+        crate::impl_vec_read_capacity!($key_type);
+
+        crate::impl_vec_read_len!($key_type);
+
+        crate::impl_vec_read_is_empty!($key_type);
+
+        crate::impl_vec_read_first!($key_type, $value_type);
+
+        crate::impl_vec_read_last!($key_type, $value_type);
+
+        crate::impl_vec_read_binary_search!($key_type, $value_type);
+
+        crate::impl_vec_read_index!($key_type, $value_type);
+
+        //Mutations
+
+        crate::impl_vec_update_index_mut!($key_type, $value_type);
+
+        crate::impl_vec_update_reserve!($key_type);
+
+        crate::impl_vec_update_reserve_exact!($key_type);
+
+        crate::impl_vec_update_try_reserve!($key_type);
+
+        crate::impl_vec_update_try_reserve_exact!($key_type);
+
+        crate::impl_vec_update_shrink_to_fit!($key_type);
+
+        crate::impl_vec_update_shrink_to!($key_type);
+
+        crate::impl_vec_update_truncate!($key_type);
+
+        crate::impl_vec_update_insert!($key_type, $value_type);
+
+        crate::impl_vec_update_push!($key_type, $value_type);
+
+        crate::impl_vec_update_pop!($key_type, $value_type);
+
+        crate::impl_vec_update_append!($key_type, $value_type);
+
+        crate::impl_vec_update_clear!($key_type, $value_type);
+
+        crate::impl_vec_update_split_off!($key_type, $value_type);
+
+        crate::impl_vec_update_resize!($key_type, $value_type);
+
+        crate::impl_vec_update_dedup!($key_type);
+
+        crate::impl_vec_update_sort_unstable!($key_type);
+
+        crate::impl_vec_update_rotate_left!($key_type);
+
+        crate::impl_vec_update_rotate_right!($key_type);
+
+        crate::impl_vec_update_fill!($key_type, $value_type);
+
+        crate::impl_vec_update_sort!($key_type);
+
+        crate::impl_vec_update_swap!($key_type);
+
+        crate::impl_vec_update_retrieve_contents!($key_type, $value_type);
+
+    }
+
+}
+
+
+#[macro_export]
+macro_rules! impl_vec_fns_no_ord
+{
+
+    ($key_type:ty, $value_type:ty) =>
+    {
+
+        //Constructors
+
+        crate::impl_vec_insert_new!($key_type);
+
+        crate::impl_vec_insert_with_capacity!($key_type);
+
+        crate::impl_vec_insert_with_no_capacity!($key_type);
+
+        //Queries
+
+        crate::impl_vec_read_capacity!($key_type);
+
+        crate::impl_vec_read_len!($key_type);
+
+        crate::impl_vec_read_is_empty!($key_type);
+
+        crate::impl_vec_read_first!($key_type, $value_type);
+
+        crate::impl_vec_read_last!($key_type, $value_type);
+
+        //crate::impl_vec_binary_search_method!($key_type, $value_type);
+
+        crate::impl_vec_read_index!($key_type, $value_type);
+
+        //Mutations
+
+        crate::impl_vec_update_index_mut!($key_type, $value_type);
+
+        crate::impl_vec_update_reserve!($key_type);
+
+        crate::impl_vec_update_reserve_exact!($key_type);
+
+        crate::impl_vec_update_try_reserve!($key_type);
+
+        crate::impl_vec_update_try_reserve_exact!($key_type);
+
+        crate::impl_vec_update_shrink_to_fit!($key_type);
+
+        crate::impl_vec_update_shrink_to!($key_type);
+
+        crate::impl_vec_update_truncate!($key_type);
+
+        crate::impl_vec_update_insert!($key_type, $value_type);
+
+        crate::impl_vec_update_push!($key_type, $value_type);
+
+        crate::impl_vec_update_pop!($key_type, $value_type);
+
+        crate::impl_vec_update_append!($key_type, $value_type);
+
+        crate::impl_vec_update_clear!($key_type, $value_type);
+
+        crate::impl_vec_update_split_off!($key_type, $value_type);
+
+        crate::impl_vec_update_resize!($key_type, $value_type);
+
+        crate::impl_vec_update_dedup!($key_type);
+
+        //crate::impl_vec_sort_unstable_method!($key_type);
+
+        //crate::impl_vec_rotate_left_method!($key_type);
+
+        //crate::impl_vec_rotate_right_method!($key_type);
+
+        //crate::impl_vec_fill_method!($key_type, $value_type);
+
+        //crate::impl_vec_sort_method!($key_type);
+
+        //crate::impl_vec_swap_method!($key_type);
+        
+        crate::impl_vec_update_retrieve_contents!($key_type, $value_type);
+
+    }
+
+}
+
+
+#[macro_export]
+macro_rules! impl_vec_fns_ord_only
+{
+
+    ($key_type:ty, $value_type:ty) =>
+    {
+
+        //Queries
+
+        crate::impl_vec_read_binary_search!($key_type, $value_type);
+
+        //Mutations
+
+        crate::impl_vec_update_index_mut!($key_type, $value_type);
+
+        crate::impl_vec_update_sort_unstable!($key_type);
+       
+        crate::impl_vec_update_rotate_left!($key_type);
+       
+        crate::impl_vec_update_rotate_right!($key_type);
+       
+        crate::impl_vec_update_fill!($key_type, $value_type);
+       
+        crate::impl_vec_update_sort!($key_type);
+       
+        crate::impl_vec_update_swap!($key_type);
+
+    }
+
+}
+
+#[macro_export]
+macro_rules! impl_vec_fns_no_ord_or_partial_eq
+{
+
+    ($key_type:ty, $value_type:ty) =>
+    {
+
+        //Constructors
+
+        crate::impl_vec_insert_new!($key_type);
+
+        crate::impl_vec_insert_with_capacity!($key_type);
+
+        crate::impl_vec_insert_with_no_capacity!($key_type);
+
+        //Queries
+
+        crate::impl_vec_read_capacity!($key_type);
+
+        crate::impl_vec_read_len!($key_type);
+
+        crate::impl_vec_read_is_empty!($key_type);
+
+        crate::impl_vec_read_first!($key_type, $value_type);
+
+        crate::impl_vec_read_last!($key_type, $value_type);
+
+        //crate::impl_vec_binary_search_method!($key_type, $value_type);
+
+        crate::impl_vec_read_index!($key_type, $value_type);
+
+        //Mutations
+
+        crate::impl_vec_update_index_mut!($key_type, $value_type);
+
+        crate::impl_vec_update_reserve!($key_type);
+
+        crate::impl_vec_update_reserve_exact!($key_type);
+
+        crate::impl_vec_update_try_reserve!($key_type);
+
+        crate::impl_vec_update_try_reserve_exact!($key_type);
+
+        crate::impl_vec_update_shrink_to_fit!($key_type);
+
+        crate::impl_vec_update_shrink_to!($key_type);
+
+        crate::impl_vec_update_truncate!($key_type);
+
+        crate::impl_vec_update_insert!($key_type, $value_type);
+
+        crate::impl_vec_update_push!($key_type, $value_type);
+
+        crate::impl_vec_update_pop!($key_type, $value_type);
+
+        crate::impl_vec_update_append!($key_type, $value_type);
+
+        crate::impl_vec_update_clear!($key_type, $value_type);
+
+        crate::impl_vec_update_split_off!($key_type, $value_type);
+
+        crate::impl_vec_update_resize!($key_type, $value_type);
+
+        //crate::impl_vec_update_dedup!($key_type);
+
+        //crate::impl_vec_dedup_method!($key_type);
+
+        //crate::impl_vec_sort_unstable_method!($key_type);
+
+        //crate::impl_vec_rotate_left_method!($key_type);
+
+        //crate::impl_vec_rotate_right_method!($key_type);
+
+        //crate::impl_vec_fill_method!($key_type, $value_type);
+
+        //crate::impl_vec_sort_method!($key_type);
+
+        //crate::impl_vec_swap_method!($key_type);
+        
+        crate::impl_vec_update_retrieve_contents!($key_type, $value_type);
+
+    }
+
+}

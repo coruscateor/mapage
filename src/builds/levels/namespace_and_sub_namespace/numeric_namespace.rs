@@ -57,17 +57,17 @@ impl<K, T> NumericNamespace<K, T>
 
             pub async fn try_replace(&self, key: &K, value: T) -> Option<T>;
 
-            pub async fn update_fn<R, FN: FnMut(&mut T) -> async_graphql::Result<R>>(&self, key: &K, updater: FN) -> async_graphql::Result<R>;
+            pub async fn update_fn<R, FN: FnOnce(&mut T) -> async_graphql::Result<R>>(&self, key: &K, updater: FN) -> async_graphql::Result<R>;
 
-            pub async fn update_kv_fn<R, FN: FnMut(&K, &mut T) -> async_graphql::Result<R>>(&self, key: &K, updater: FN) -> async_graphql::Result<R>;
+            pub async fn update_kv_fn<R, FN: FnOnce(&K, &mut T) -> async_graphql::Result<R>>(&self, key: &K, updater: FN) -> async_graphql::Result<R>;
 
             pub async fn remove(&self, key: &K) -> async_graphql::Result<&'static str>;
 
             pub async fn try_retrieve(&self, key: &K) -> Option<T>;
 
-            pub async fn read_fn<R, FN: Fn(&T) -> async_graphql::Result<R>>(&self, key: &K, reader: FN) -> async_graphql::Result<R>;
+            pub async fn read_fn<R, FN: FnOnce(&T) -> async_graphql::Result<R>>(&self, key: &K, reader: FN) -> async_graphql::Result<R>;
             
-            pub async fn read_kv_fn<R, FN: Fn(&K, &T) -> async_graphql::Result<R>>(&self, key: &K, reader: FN) -> async_graphql::Result<R>;
+            pub async fn read_kv_fn<R, FN: FnOnce(&K, &T) -> async_graphql::Result<R>>(&self, key: &K, reader: FN) -> async_graphql::Result<R>;
 
             pub async fn contains(&self, key: &K) -> bool;
 

@@ -80,7 +80,7 @@ impl<K, V> DashMapNamespace<K, V>
     //updater must return async_graphql::Result<R>
 
     pub async fn update_fn<R, FN>(&self, key: &K, mut updater: FN) -> async_graphql::Result<R>
-        where FN: FnMut(&mut V) -> async_graphql::Result<R>
+        where FN: FnOnce(&mut V) -> async_graphql::Result<R>
     {
 
         let res = self.map.get_mut(&key);
@@ -95,9 +95,9 @@ impl<K, V> DashMapNamespace<K, V>
         invalid_operation()
 
     }
-
+    
     pub async fn update_kv_fn<R, FN>(&self, key: &K, mut updater: FN) -> async_graphql::Result<R>
-        where FN: FnMut(&K, &mut V) -> async_graphql::Result<R>
+        where FN: FnOnce(&K, &mut V) -> async_graphql::Result<R>
     {
 
         let res = self.map.get_mut(&key);
@@ -174,7 +174,7 @@ impl<K, V> DashMapNamespace<K, V>
     //reader must return async_graphql::Result<R>
 
     pub async fn read_fn<R, FN>(&self, key: &K, reader: FN) -> async_graphql::Result<R>
-        where FN: Fn(&V) -> async_graphql::Result<R>
+        where FN: FnOnce(&V) -> async_graphql::Result<R>
     {
 
         let res = self.map.get(&key);
@@ -191,7 +191,7 @@ impl<K, V> DashMapNamespace<K, V>
     }
 
     pub async fn read_kv_fn<R, FN>(&self, key: &K, reader: FN) -> async_graphql::Result<R>
-        where FN: Fn(&K, &V) -> async_graphql::Result<R>
+        where FN: FnOnce(&K, &V) -> async_graphql::Result<R>
     {
 
         let res = self.map.get(&key);
