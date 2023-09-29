@@ -102,8 +102,226 @@ impl<K, T> VecNumericNamespace<K, T>
 
 //Uints and ints - Neg
 
+impl<K, T> VecNumericNamespace<K, T>
+    where K: 'static + Clone + Eq + Hash + Ord + Sync,
+          T: Send + Sync + Copy + 'static + Add<T> + AddAssign<T> + Binary + BitAnd<T> + BitAndAssign<T> + BitOr<T> + BitOrAssign<T> + BitXor<T> + BitXorAssign<T> + Clone + Default + Display + Div<T> + DivAssign<T> + FromStr + Hash + LowerExp + LowerHex + Mul<T> + MulAssign<T> + Octal + Ord + PartialEq<T> + PartialOrd<T> + Rem<T> + RemAssign<T> + Shl<T> + ShlAssign<T> + Shr<T> + ShrAssign<T> + Sub<T> + SubAssign<T> + ToString + UpperExp
+{
+
+    crate::impl_vec_fns_ord_only!(K, T);
+
+    //Ops
+
+    /*
+    impl_update_fn_op_method!(bit_and, K, T, value: T);
+
+    impl_update_fn_op_method!(bit_and_self, K, T);
+
+    impl_update_fn_op_method!(bit_or, K, T, value: T);
+
+    impl_update_fn_op_method!(bit_or_self, K, T);
+
+    impl_update_fn_op_method!(bit_xor, K, T, value: T);
+
+    impl_update_fn_op_method!(bit_xor_self, K, T);
+
+    impl_update_fn_op_method!(shl, K, T, value: T);
+
+    impl_update_fn_op_method!(shl_self, K, T);
+
+    impl_update_fn_op_method!(shr, K, T, value: T);
+
+    impl_update_fn_op_method!(shr_self, K, T);
+    */
+
+}
+
 //Ops
 
+//For when Ops are implemented
+
+/*
+impl<K> VecNumericNamespace<K, f32>
+    where K: 'static + Clone + Eq + Hash + Ord + Sync
+{
+
+    impl_update_fn_op_method!(neg, K, f32);
+
+    impl_update_fn_op_method!(inc, K, f32, F32HasOne);
+
+    impl_update_fn_op_method!(dec, K, f32, F32HasOne);
+
+}
+
+impl<K> VecNumericNamespace<K, f64>
+    where K: 'static + Clone + Eq + Hash + Ord + Sync    
+{
+
+    impl_update_fn_op_method!(neg, K, f64);
+
+    impl_update_fn_op_method!(inc, K, f64, F64HasOne);
+
+    impl_update_fn_op_method!(dec, K, f64, F64HasOne);
+
+}
+
+impl<K> VecNumericNamespace<K, i8>
+    where K: 'static + Clone + Eq + Hash + Ord + Sync
+{
+
+    impl_update_fn_op_method!(neg, K, i8);
+
+    impl_update_fn_op_method!(not, K, i8);
+
+    impl_update_fn_op_method!(inc, K, i8, I8HasOne);
+
+    impl_update_fn_op_method!(dec, K, i8, I8HasOne);
+
+}
+
+impl<K> VecNumericNamespace<K, i16>
+    where K: 'static + Clone + Eq + Hash + Ord + Sync
+{
+
+    impl_update_fn_op_method!(neg, K, i16);
+
+    impl_update_fn_op_method!(not, K, i16);
+
+    impl_update_fn_op_method!(inc, K, i16, I16HasOne);
+
+    impl_update_fn_op_method!(dec, K, i16, I16HasOne);
+
+}
+
+impl<K> VecNumericNamespace<K, i32>
+    where K: 'static + Clone + Eq + Hash + Ord + Sync
+{
+
+    impl_update_fn_op_method!(neg, K, i32);
+
+    impl_update_fn_op_method!(not, K, i32);
+
+    impl_update_fn_op_method!(inc, K, i32, I32HasOne);
+
+    impl_update_fn_op_method!(dec, K, i32, I32HasOne);
+
+}
+
+impl<K> VecNumericNamespace<K, i64>
+    where K: 'static + Clone + Eq + Hash + Ord + Sync
+{
+
+    impl_update_fn_op_method!(neg, K, i64);
+
+    impl_update_fn_op_method!(not, K, i64);
+
+    impl_update_fn_op_method!(inc, K, i64, I64HasOne);
+
+    impl_update_fn_op_method!(dec, K, i64, I64HasOne);
+
+}
+
+impl<K> VecNumericNamespace<K, I128Scalar>
+    where K: 'static + Clone + Eq + Hash + Ord + Sync
+{
+
+    impl_update_fn_op_method!(neg, K, I128Scalar);
+
+    impl_update_fn_op_method!(not, K, I128Scalar);
+
+    impl_update_fn_op_method!(inc, K, I128Scalar, I128ScalarHasOne);
+
+    impl_update_fn_op_method!(dec, K, I128Scalar, I128ScalarHasOne);
+
+}
+
+impl<K> VecNumericNamespace<K, isize>
+    where K: 'static + Clone + Eq + Hash + Ord + Sync
+{
+
+    impl_update_fn_op_method!(neg, K, isize);
+
+    impl_update_fn_op_method!(not, K, isize);
+
+    impl_update_fn_op_method!(inc, K, isize, ISizeHasOne);
+
+    impl_update_fn_op_method!(dec, K, isize, ISizeHasOne);
+
+}
+
+//
+
+impl<K> VecNumericNamespace<K, u8>
+    where K: 'static + Clone + Eq + Hash + Ord + Sync
+{
+
+    impl_update_fn_op_method!(not, K, u8);
+
+    impl_update_fn_op_method!(inc, K, u8, U8HasOne);
+
+    impl_update_fn_op_method!(dec, K, u8, U8HasOne);
+
+}
+
+impl<K> VecNumericNamespace<K, u16>
+    where K: 'static + Clone + Eq + Hash + Ord + Sync
+{
+
+    impl_update_fn_op_method!(not, K, u16);
+
+    impl_update_fn_op_method!(inc, K, u16, U16HasOne);
+
+    impl_update_fn_op_method!(dec, K, u16, U16HasOne);
+
+}
+
+impl<K> VecNumericNamespace<K, u32>
+    where K: 'static + Clone + Eq + Hash + Ord + Sync
+{
+
+    impl_update_fn_op_method!(not, K, u32);
+
+    impl_update_fn_op_method!(inc, K, u32, U32HasOne);
+
+    impl_update_fn_op_method!(dec, K, u32, U32HasOne);
+
+}
+
+impl<K> VecNumericNamespace<K, u64>
+    where K: 'static + Clone + Eq + Hash + Ord + Sync
+{
+
+    impl_update_fn_op_method!(not, K, u64);
+
+    impl_update_fn_op_method!(inc, K, u64, U64HasOne);
+
+    impl_update_fn_op_method!(dec, K, u64, U64HasOne);
+
+}
+
+impl<K> VecNumericNamespace<K, U128Scalar>
+    where K: 'static + Clone + Eq + Hash + Ord + Sync
+{
+
+    impl_update_fn_op_method!(not, K, U128Scalar);
+
+    impl_update_fn_op_method!(inc, K, U128Scalar, U128ScalarHasOne);
+
+    impl_update_fn_op_method!(dec, K, U128Scalar, U128ScalarHasOne);
+
+}
+
+impl<K> VecNumericNamespace<K, usize>
+    where K: 'static + Clone + Eq + Hash + Ord + Sync
+{
+
+    impl_update_fn_op_method!(not, K, usize);
+
+    impl_update_fn_op_method!(inc, K, usize, USizeHasOne);
+
+    impl_update_fn_op_method!(dec, K, usize, USizeHasOne);
+
+}
+ */
 
 
 

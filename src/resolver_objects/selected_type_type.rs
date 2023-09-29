@@ -9,7 +9,7 @@ use std::collections::{HashMap, HashSet};
 
 use tokio::{task, task::JoinHandle};
 
-use crate::{call_store_method, call_store_method_no_key, call_store_method_only_move_key};
+use crate::{call_store_method, call_store_method_no_key, call_store_method_move_key};
 
 use paste::paste;
 
@@ -100,7 +100,7 @@ impl SelectedTypeMutation
     pub async fn selected_type_insert(&self, ctx: &Context<'_>, key: KeyType, value: InputOneOfSelectedType) -> async_graphql::Result<&'static str>
     {
 
-        call_store_method_only_move_key!(ctx, get_selected_type_namespace_ref, insert, key, value.into())
+        call_store_method_move_key!(ctx, get_selected_type_namespace_ref, insert, key, value.into())
 
     }
 
@@ -121,7 +121,7 @@ impl SelectedTypeMutation
     pub async fn selected_type_upsert(&self, ctx: &Context<'_>, key: KeyType, value: InputOneOfSelectedType) -> async_graphql::Result<&'static str>
     {
 
-        call_store_method_only_move_key!(ctx, get_selected_type_namespace_ref, upsert, key, value.into())
+        call_store_method_move_key!(ctx, get_selected_type_namespace_ref, upsert, key, value.into())
 
     }
 

@@ -6,7 +6,7 @@ use super::StoreType;
 
 use std::collections::HashSet;
 
-use crate::{call_store_method, call_store_method_no_key, call_store_method_only_move_key};
+use crate::{call_store_method, call_store_method_no_key, call_store_method_move_key};
 
 type KeyType = crate::types::keys::StringKeyType;
 
@@ -105,7 +105,7 @@ impl StringMutation
     pub async fn string_insert(&self, ctx: &Context<'_>, key: KeyType, value: String) -> async_graphql::Result<&'static str>
     {
 
-        call_store_method_only_move_key!(ctx, get_string_namespace_ref, insert, key, value)
+        call_store_method_move_key!(ctx, get_string_namespace_ref, insert, key, value)
 
     }
 
@@ -126,7 +126,7 @@ impl StringMutation
     pub async fn string_upsert(&self, ctx: &Context<'_>, key: KeyType, value: String) -> async_graphql::Result<&'static str>
     {
 
-        call_store_method_only_move_key!(ctx, get_string_namespace_ref, upsert, key, value)
+        call_store_method_move_key!(ctx, get_string_namespace_ref, upsert, key, value)
 
     }
 

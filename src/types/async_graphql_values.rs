@@ -80,7 +80,7 @@ macro_rules! impl_union_value
 
 //
 
-#[derive(InputObject, SimpleObject, Default, Clone, Copy)]
+#[derive(InputObject, SimpleObject, Default, Clone, Copy, PartialEq, Eq)]
 #[graphql(input_name = "BoolValueInput")]
 pub struct BoolValue
 {
@@ -108,7 +108,7 @@ impl BoolValue
 
 impl_from_trait_value!(bool, Bool);
 
-#[derive(InputObject, SimpleObject, Default, Clone, Copy)]
+#[derive(InputObject, SimpleObject, Default, Clone, Copy, PartialEq, Eq)]
 #[graphql(input_name = "CharValueInput")]
 pub struct CharValue
 {
@@ -138,7 +138,7 @@ impl_from_trait_value!(char, Char);
 
 //numeric
 
-#[derive(InputObject, SimpleObject, Default, Clone, Copy)]
+#[derive(InputObject, SimpleObject, Default, Clone, Copy, PartialEq)]
 #[graphql(input_name = "F32ValueInput")]
 pub struct F32Value
 {
@@ -166,7 +166,7 @@ impl F32Value
 
 impl_from_trait_value!(f32, F32);
 
-#[derive(InputObject, SimpleObject, Default, Clone, Copy)]
+#[derive(InputObject, SimpleObject, Default, Clone, Copy, PartialEq)]
 #[graphql(input_name = "F64ValueInput")]
 pub struct F64Value
 {
@@ -196,7 +196,7 @@ impl_from_trait_value!(f64, F64);
 
 //Signed Integers
 
-#[derive(InputObject, SimpleObject, Default, Clone, Copy)]
+#[derive(InputObject, SimpleObject, Default, Clone, Copy, PartialEq, Eq)]
 #[graphql(input_name = "I8ValueInput")]
 pub struct I8Value
 {
@@ -224,7 +224,7 @@ impl I8Value
 
 impl_from_trait_value!(i8, I8);
 
-#[derive(InputObject, SimpleObject, Default, Clone, Copy)]
+#[derive(InputObject, SimpleObject, Default, Clone, Copy, PartialEq, Eq)]
 #[graphql(input_name = "I16ValueInput")]
 pub struct I16Value
 {
@@ -252,7 +252,7 @@ impl I16Value
 
 impl_from_trait_value!(i16, I16);
 
-#[derive(InputObject, SimpleObject, Default, Clone, Copy)]
+#[derive(InputObject, SimpleObject, Default, Clone, Copy, PartialEq, Eq)]
 #[graphql(input_name = "I32ValueInput")]
 pub struct I32Value
 {
@@ -280,7 +280,7 @@ impl I32Value
 
 impl_from_trait_value!(i32, I32);
 
-#[derive(InputObject, SimpleObject, Default, Clone, Copy)]
+#[derive(InputObject, SimpleObject, Default, Clone, Copy, PartialEq, Eq)]
 #[graphql(input_name = "I64ValueInput")]
 pub struct I64Value
 {

@@ -118,7 +118,7 @@ key_type_features!(VecI64);
 key_type_features!(VecI128);
 
 #[cfg(any(feature = "all_types", feature = "Vec_isize"))]
-key_type_features!(VecIsize);
+key_type_features!(VecISize);
 
 #[cfg(any(feature = "all_types", feature = "Vec_SelectedType"))]
 key_type_features!(VecSelectedType);
@@ -142,7 +142,7 @@ key_type_features!(VecU64);
 key_type_features!(VecU128);
 
 #[cfg(any(feature = "all_types", feature = "Vec_usize"))]
-key_type_features!(VecUsize);
+key_type_features!(VecUSize);
 
 #[cfg(any(feature = "all_types", feature = "Vec_Whatever"))]
 key_type_features!(VecWhatever);

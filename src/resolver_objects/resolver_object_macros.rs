@@ -21,7 +21,7 @@ macro_rules! call_store_method
 }
 
 #[macro_export]
-macro_rules! call_store_method_only_move_key
+macro_rules! call_store_method_move_key
 {
 
     ($ctx:ident, $namespace_ref_method:ident, $method:ident, $key:expr $(,$parameter:expr)*) =>

@@ -241,6 +241,8 @@ macro_rules! impl_vec_read_index
 
 //Mutations
 
+//index_mut
+
 #[macro_export]
 macro_rules! impl_vec_update_index_mut
 {
@@ -772,10 +774,10 @@ macro_rules! impl_vec_update_fill
     ($key_type:ty, $value_type:ty) =>
     {
 
-        pub async fn update_fill(&self, key: &$key_type, mid: $value_type) -> async_graphql::Result<&'static str>
+        pub async fn update_fill(&self, key: &$key_type, value: $value_type) -> async_graphql::Result<&'static str>
         {
 
-            let my_fn = get_vec_fill_fn(mid);
+            let my_fn = get_vec_fill_fn(value);
 
             self.namespace.update_fn(key, my_fn).await
             
@@ -842,7 +844,7 @@ macro_rules! impl_vec_update_retrieve_contents
     ($key_type:ty, $value_type:ty) =>
     {
 
-        pub async fn retrieve_contents_fn(&self, key: &$key_type) -> async_graphql::Result<Vec<$value_type>>
+        pub async fn update_retrieve_contents(&self, key: &$key_type) -> async_graphql::Result<Vec<$value_type>>
         {
 
             let my_fn = get_vec_retrieve_contents_fn();
@@ -1024,7 +1026,6 @@ macro_rules! impl_vec_fns_no_ord
 
 }
 
-
 #[macro_export]
 macro_rules! impl_vec_fns_ord_only
 {
@@ -1038,8 +1039,8 @@ macro_rules! impl_vec_fns_ord_only
 
         //Mutations
 
-        crate::impl_vec_update_index_mut!($key_type, $value_type);
-
+        //crate::impl_vec_update_index_mut!($key_type, $value_type); //duplicate definitions with name `update_index_mut`
+        
         crate::impl_vec_update_sort_unstable!($key_type);
        
         crate::impl_vec_update_rotate_left!($key_type);

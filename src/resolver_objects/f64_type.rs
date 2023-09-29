@@ -6,7 +6,7 @@ use super::StoreType;
 
 use std::collections::HashSet;
 
-use crate::{call_store_method, call_store_method_no_key, call_store_method_only_move_key};
+use crate::{call_store_method, call_store_method_no_key, call_store_method_move_key};
 
 type KeyType = crate::types::keys::F64KeyType;
 
@@ -104,7 +104,7 @@ impl F64Mutation
     pub async fn f64_insert(&self, ctx: &Context<'_>, key: KeyType, value: f64) -> async_graphql::Result<&'static str>
     {
 
-        call_store_method_only_move_key!(ctx, get_f64_namespace_ref, insert, key, value)
+        call_store_method_move_key!(ctx, get_f64_namespace_ref, insert, key, value)
 
     }
 
@@ -125,7 +125,7 @@ impl F64Mutation
     pub async fn f64_upsert(&self, ctx: &Context<'_>, key: KeyType, value: f64) -> async_graphql::Result<&'static str>
     {
 
-        call_store_method_only_move_key!(ctx, get_f64_namespace_ref, upsert, key, value)
+        call_store_method_move_key!(ctx, get_f64_namespace_ref, upsert, key, value)
 
     }
 
