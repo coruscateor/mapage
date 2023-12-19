@@ -10,6 +10,7 @@ use crate::StoreType;
 
 use crate::types::vecs::into_vec;
 
+#[cfg(any(feature = "all_types", feature = "Vec_Whatever"))]
 type KeyType = crate::types::keys::VecWhateverKeyType;
 
 #[derive(Default)]

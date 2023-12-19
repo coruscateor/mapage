@@ -1291,7 +1291,7 @@ impl From<Whatever> for InputOneOfWhatever
 
 cfg_if::cfg_if! {
 
-        if #[cfg(any(feature = "all_types", feature = "SelectedType", feature = "SelectedTypeIO"))] {
+        if #[cfg(any(feature = "all_types", feature = "SelectedType"))] { //, feature = "SelectedTypeIO"))] {
 
         #[derive(Union, Clone)]
         pub enum SelectedType

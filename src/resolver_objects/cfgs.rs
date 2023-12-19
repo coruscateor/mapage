@@ -3,14 +3,25 @@
 use async_graphql::{Object, SimpleObject};
 
 #[derive(SimpleObject)]
-pub struct AllCfgs
+pub struct Cfgs //AllCfgs
 {
+
+    //Store level Atomicity
 
     store_aml: bool,
     sub_store_aml: bool,
+
+    //Storeage Implementations
+
     scc_hashmap_namespaces: bool,
     dashmap_namespaces: bool,
+
+    //Types of values to be stored
+
     all_types: bool,
+
+    //Non-generic
+
     bool_type: bool,
     char_type: bool,
     f32_type: bool,
@@ -21,16 +32,55 @@ pub struct AllCfgs
     i64_type: bool,
     i128_type: bool,
     isize_type: bool,
-    string_type: bool, //String
+
+    //String
+
+    string_type: bool,
     u8_type: bool,
     u16_type: bool,
     u32_type: bool,
     u64_type: bool,
     u128_type: bool,
     usize_type: bool,
-    whatever_type: bool, //Whatever
-    selected_type_type: bool, //SelectedType
-    selected_type_io_type: bool, //  SelectedTypeIO
+
+    //Whatever
+
+    whatever_type: bool,
+
+    //SelectedType
+
+    selected_type_type: bool, 
+
+    //SelectedTypeIO
+
+    //selected_type_io_type: bool,
+
+    //Vecs
+
+    vec_bool_type: bool,
+    vec_char_type: bool,
+    vec_f32_type: bool,
+    vec_f64_type: bool,
+    vec_i8_type: bool,
+    vec_i16_type: bool,
+    vec_i32_type: bool,
+    vec_i64_type: bool,
+    vec_i128_type: bool,
+    vec_isize_type: bool,
+    vec_u8_type: bool,
+    vec_u16_type: bool,
+    vec_u32_type: bool,
+    vec_u64_type: bool,
+    vec_u128_type: bool,
+    vec_usize_type: bool,
+    vec_string_type: bool,
+
+    //misc
+
+    vec_whatever_type: bool,
+    vec_selected_type: bool,
+    
+    //
 
     //Keys Types:
 
@@ -39,102 +89,102 @@ pub struct AllCfgs
 
     //bool keys
 
-    bool_key_type_string: bool, //bool_key_type_String
-    bool_key_type_arc_string: bool, //bool_key_type_Arc_String
+    //bool_key_type_string: bool, //bool_key_type_String
+    //bool_key_type_arc_string: bool, //bool_key_type_Arc_String
 
     //char keys
 
-    char_key_type_string: bool, //char_key_type_String
-    char_key_type_arc_string: bool, //char_key_type_Arc_String
+    //char_key_type_string: bool, //char_key_type_String
+    //char_key_type_arc_string: bool, //char_key_type_Arc_String
 
     //f32 keys
 
-    f32_key_type_string: bool, //f32_key_type_String
-    f32_key_type_arc_string: bool, //f32_key_type_Arc_String
+    //f32_key_type_string: bool, //f32_key_type_String
+    //f32_key_type_arc_string: bool, //f32_key_type_Arc_String
 
     //f64 keys
 
-    f64_key_type_string: bool, //f64_key_type_String
-    f64_key_type_arc_string: bool, //f64_key_type_Arc_String:
+    //f64_key_type_string: bool, //f64_key_type_String
+    //f64_key_type_arc_string: bool, //f64_key_type_Arc_String:
 
     //i8 keys
 
-    i8_key_type_string: bool, //i8_key_type_String
-    i8_key_type_arc_string: bool, //i8_key_type_Arc_String
+    //i8_key_type_string: bool, //i8_key_type_String
+    //i8_key_type_arc_string: bool, //i8_key_type_Arc_String
 
     //i16 keys
 
-    i16_key_type_string: bool, //i16_key_type_String
-    i16_key_type_arc_string: bool, //i16_key_type_Arc_String
+    //i16_key_type_string: bool, //i16_key_type_String
+    //i16_key_type_arc_string: bool, //i16_key_type_Arc_String
 
     //i32 keys
 
-    i32_key_type_string: bool, //i32_key_type_String
-    i32_key_type_arc_string: bool, //i32_key_type_Arc_String
+    //i32_key_type_string: bool, //i32_key_type_String
+    //i32_key_type_arc_string: bool, //i32_key_type_Arc_String
 
     //i64 keys
 
-    i64_key_type_string: bool, //i64_key_type_String
-    i64_key_type_arc_string: bool, //i64_key_type_Arc_String
+    //i64_key_type_string: bool, //i64_key_type_String
+    //i64_key_type_arc_string: bool, //i64_key_type_Arc_String
 
     //i128 keys
 
-    i128_key_type_string: bool, //i128_key_type_String
-    i128_key_type_arc_string: bool, //i128_key_type_Arc_String
+    //i128_key_type_string: bool, //i128_key_type_String
+    //i128_key_type_arc_string: bool, //i128_key_type_Arc_String
 
     //isize keys
 
-    isize_key_type_string: bool, //isize_key_type_String
-    isize_key_type_arc_string: bool, //isize_key_type_Arc_String
+    //isize_key_type_string: bool, //isize_key_type_String
+    //isize_key_type_arc_string: bool, //isize_key_type_Arc_String
 
     //SelectedType keys
 
-    selected_rype_key_type_string: bool, //SelectedType_key_type_String
-    selected_type_key_type_arc_string: bool, //SelectedType_key_type_Arc_String
+    //selected_rype_key_type_string: bool, //SelectedType_key_type_String
+    //selected_type_key_type_arc_string: bool, //SelectedType_key_type_Arc_String
 
     //String keys
 
-    string_key_type_string: bool, //String_key_type_String
-    string_key_type_arc_string: bool, //String_key_type_Arc_String
+    //string_key_type_string: bool, //String_key_type_String
+    //string_key_type_arc_string: bool, //String_key_type_Arc_String
 
     //u8 keys
 
-    u8_key_type_string: bool, //u8_key_type_String
-    u8_key_type_arc_string: bool, //u8_key_type_Arc_String
+    //u8_key_type_string: bool, //u8_key_type_String
+    //u8_key_type_arc_string: bool, //u8_key_type_Arc_String
 
     //u16 keys
 
-    u16_key_type_string: bool, //u16_key_type_String
-    u16_key_type_arc_string: bool, //u16_key_type_Arc_String
+    //u16_key_type_string: bool, //u16_key_type_String
+    //u16_key_type_arc_string: bool, //u16_key_type_Arc_String
 
     //u32 keys
 
-    u32_key_type_string: bool, //u32_key_type_String
-    u32_key_type_arc_string: bool, //u32_key_type_Arc_String
+    //u32_key_type_string: bool, //u32_key_type_String
+    //u32_key_type_arc_string: bool, //u32_key_type_Arc_String
 
     //u64 keys
 
-    u64_key_type_string: bool, //u64_key_type_String
-    u64_key_type_arc_string: bool, //u64_key_type_Arc_String
+    //u64_key_type_string: bool, //u64_key_type_String
+    //u64_key_type_arc_string: bool, //u64_key_type_Arc_String
 
     //u128 keys
 
-    u128_key_type_string: bool, //u128_key_type_String
-    u128_key_type_arc_string: bool, //u128_key_type_Arc_String
+    //u128_key_type_string: bool, //u128_key_type_String
+    //u128_key_type_arc_string: bool, //u128_key_type_Arc_String
 
     //usize keys
 
-    usize_key_type_string: bool, //usize_key_type_String
-    usize_key_type_arc_string: bool, //usize_key_type_Arc_String
+    //usize_key_type_string: bool, //usize_key_type_String
+    //usize_key_type_arc_string: bool, //usize_key_type_Arc_String
 
     //Whatever keys
 
-    whatever_key_type_string: bool, //Whatever_key_type_String
-    whatever_key_type_arc_string: bool //Whatever_key_type_Arc_String
+    //whatever_key_type_string: bool, //Whatever_key_type_String
+    //whatever_key_type_arc_string: bool //Whatever_key_type_Arc_String
 
 }
 
-impl AllCfgs
+impl Cfgs //AllCfgs
 {
 
     pub fn new() -> Self
@@ -167,7 +217,32 @@ impl AllCfgs
             usize_type: cfg!(feature = "usize"),
             whatever_type: cfg!(feature = "Whatever"),
             selected_type_type: cfg!(feature = "SelectedType"),
-            selected_type_io_type: cfg!(feature = "SelectedTypeIO"),
+            //selected_type_io_type: cfg!(feature = "SelectedTypeIO"),
+
+            //Vecs
+
+            vec_bool_type: cfg!(feature = "vec_bool_type"),
+            vec_char_type: cfg!(feature = "vec_char_type"),
+            vec_f32_type: cfg!(feature = "vec_f32_type"),
+            vec_f64_type: cfg!(feature = "vec_f64_type"),
+            vec_i8_type: cfg!(feature = "vec_i8_type"),
+            vec_i16_type: cfg!(feature = "vec_i16_type"),
+            vec_i32_type: cfg!(feature = "vec_i32_type"),
+            vec_i64_type: cfg!(feature = "vec_i64_type"),
+            vec_i128_type: cfg!(feature = "vec_i128_type"),
+            vec_isize_type: cfg!(feature = "vec_isize_type"),
+            vec_u8_type: cfg!(feature = "vec_u8_type"),
+            vec_u16_type: cfg!(feature = "vec_u16_type"),
+            vec_u32_type: cfg!(feature = "vec_u32_type"),
+            vec_u64_type: cfg!(feature = "vec_u64_type"),
+            vec_u128_type: cfg!(feature = "vec_u128_type"),
+            vec_usize_type: cfg!(feature = "vec_usize_type"),
+            vec_string_type: cfg!(feature = "vec_string_type"),
+
+            //misc
+
+            vec_whatever_type: cfg!(feature = "vec_whatever_type"),
+            vec_selected_type: cfg!(feature = "vec_selected_type"),
 
             //Keys Types:
 
@@ -176,107 +251,124 @@ impl AllCfgs
 
             //bool keys
 
-            bool_key_type_string: cfg!(feature = "bool_key_type_String"), //bool_key_type_String
-            bool_key_type_arc_string: cfg!(feature = "bool_key_type_Arc_String"), //bool_key_type_Arc_String
+            //bool_key_type_string: cfg!(feature = "bool_key_type_String"), //bool_key_type_String
+            //bool_key_type_arc_string: cfg!(feature = "bool_key_type_Arc_String"), //bool_key_type_Arc_String
 
             //char keys
 
-            char_key_type_string: cfg!(feature = "char_key_type_String"), //char_key_type_String
-            char_key_type_arc_string: cfg!(feature = "char_key_type_Arc_String"), //char_key_type_Arc_String
+            //char_key_type_string: cfg!(feature = "char_key_type_String"), //char_key_type_String
+            //char_key_type_arc_string: cfg!(feature = "char_key_type_Arc_String"), //char_key_type_Arc_String
 
             //f32 keys
 
-            f32_key_type_string: cfg!(feature = "f32_key_type_String"), //f32_key_type_String
-            f32_key_type_arc_string: cfg!(feature = "f32_key_type_Arc_String"), //f32_key_type_Arc_String
+            //f32_key_type_string: cfg!(feature = "f32_key_type_String"), //f32_key_type_String
+            //f32_key_type_arc_string: cfg!(feature = "f32_key_type_Arc_String"), //f32_key_type_Arc_String
 
             //f64 keys
 
-            f64_key_type_string: cfg!(feature = "f64_key_type_String"), //f64_key_type_String
-            f64_key_type_arc_string: cfg!(feature = "f64_key_type_Arc_String"), //f64_key_type_Arc_String
+            //f64_key_type_string: cfg!(feature = "f64_key_type_String"), //f64_key_type_String
+            //f64_key_type_arc_string: cfg!(feature = "f64_key_type_Arc_String"), //f64_key_type_Arc_String
 
             //i8 keys
 
-            i8_key_type_string: cfg!(feature = "i8_key_type_String"), //i8_key_type_String
-            i8_key_type_arc_string: cfg!(feature = "i8_key_type_Arc_String"), //i8_key_type_Arc_String
+            //i8_key_type_string: cfg!(feature = "i8_key_type_String"), //i8_key_type_String
+            //i8_key_type_arc_string: cfg!(feature = "i8_key_type_Arc_String"), //i8_key_type_Arc_String
 
             //i16 keys
 
-            i16_key_type_string: cfg!(feature = "i16_key_type_String"), //i16_key_type_String
-            i16_key_type_arc_string: cfg!(feature = "i16_key_type_Arc_String"), //i16_key_type_Arc_String
+            //i16_key_type_string: cfg!(feature = "i16_key_type_String"), //i16_key_type_String
+            //i16_key_type_arc_string: cfg!(feature = "i16_key_type_Arc_String"), //i16_key_type_Arc_String
 
             //i32 keys
 
-            i32_key_type_string: cfg!(feature = "i32_key_type_String"), //i32_key_type_String
-            i32_key_type_arc_string: cfg!(feature = "i32_key_type_Arc_String"), //i32_key_type_Arc_String
+            //i32_key_type_string: cfg!(feature = "i32_key_type_String"), //i32_key_type_String
+            //i32_key_type_arc_string: cfg!(feature = "i32_key_type_Arc_String"), //i32_key_type_Arc_String
 
             //i64 keys
 
-            i64_key_type_string: cfg!(feature = "i64_key_type_String"), //i64_key_type_String
-            i64_key_type_arc_string: cfg!(feature = "i64_key_type_Arc_String"), //i64_key_type_Arc_String
+            //i64_key_type_string: cfg!(feature = "i64_key_type_String"), //i64_key_type_String
+            //i64_key_type_arc_string: cfg!(feature = "i64_key_type_Arc_String"), //i64_key_type_Arc_String
 
             //i128 keys
 
-            i128_key_type_string: cfg!(feature = "i128_key_type_String"), //i128_key_type_String
-            i128_key_type_arc_string: cfg!(feature = "i128_key_type_Arc_String"), //i128_key_type_Arc_String
+            //i128_key_type_string: cfg!(feature = "i128_key_type_String"), //i128_key_type_String
+            //i128_key_type_arc_string: cfg!(feature = "i128_key_type_Arc_String"), //i128_key_type_Arc_String
 
             //isize keys
 
-            isize_key_type_string: cfg!(feature = "isize_key_type_String"), //isize_key_type_String
-            isize_key_type_arc_string: cfg!(feature = "isize_key_type_Arc_String"), //isize_key_type_Arc_String
+            //isize_key_type_string: cfg!(feature = "isize_key_type_String"), //isize_key_type_String
+            //isize_key_type_arc_string: cfg!(feature = "isize_key_type_Arc_String"), //isize_key_type_Arc_String
 
             //SelectedType keys
 
-            selected_rype_key_type_string: cfg!(feature = "SelectedType_key_type_String"), //SelectedType_key_type_String
-            selected_type_key_type_arc_string: cfg!(feature = "SelectedType_key_type_Arc_String"), //SelectedType_key_type_Arc_String
+            //selected_rype_key_type_string: cfg!(feature = "SelectedType_key_type_String"), //SelectedType_key_type_String
+            //selected_type_key_type_arc_string: cfg!(feature = "SelectedType_key_type_Arc_String"), //SelectedType_key_type_Arc_String
         
             //String keys
         
-            string_key_type_string: cfg!(feature = "String_key_type_String"), //String_key_type_String
-            string_key_type_arc_string: cfg!(feature = "String_key_type_Arc_String"), //String_key_type_Arc_String
+            //string_key_type_string: cfg!(feature = "String_key_type_String"), //String_key_type_String
+            //string_key_type_arc_string: cfg!(feature = "String_key_type_Arc_String"), //String_key_type_Arc_String
 
             //u8 keys
 
-            u8_key_type_string: cfg!(feature = "u8_key_type_String"), //u8_key_type_String
-            u8_key_type_arc_string: cfg!(feature = "u8_key_type_Arc_String"), //u8_key_type_Arc_String
+            //u8_key_type_string: cfg!(feature = "u8_key_type_String"), //u8_key_type_String
+            //u8_key_type_arc_string: cfg!(feature = "u8_key_type_Arc_String"), //u8_key_type_Arc_String
 
             //u16 keys
 
-            u16_key_type_string: cfg!(feature = "u16_key_type_String"), //u16_key_type_String
-            u16_key_type_arc_string: cfg!(feature = "u16_key_type_Arc_String"), //u16_key_type_Arc_String
+            //u16_key_type_string: cfg!(feature = "u16_key_type_String"), //u16_key_type_String
+            //u16_key_type_arc_string: cfg!(feature = "u16_key_type_Arc_String"), //u16_key_type_Arc_String
 
             //u32 keys
 
-            u32_key_type_string: cfg!(feature = "u32_key_type_String"), //u32_key_type_String
-            u32_key_type_arc_string: cfg!(feature = "u32_key_type_Arc_String"), //u32_key_type_Arc_String
+            //u32_key_type_string: cfg!(feature = "u32_key_type_String"), //u32_key_type_String
+            //u32_key_type_arc_string: cfg!(feature = "u32_key_type_Arc_String"), //u32_key_type_Arc_String
 
             //u64 keys
 
-            u64_key_type_string: cfg!(feature = "u64_key_type_String"), //u64_key_type_String
-            u64_key_type_arc_string: cfg!(feature = "u64_key_type_Arc_String"), //u64_key_type_Arc_String
+            //u64_key_type_string: cfg!(feature = "u64_key_type_String"), //u64_key_type_String
+            //u64_key_type_arc_string: cfg!(feature = "u64_key_type_Arc_String"), //u64_key_type_Arc_String
 
             //u128 keys
 
-            u128_key_type_string: cfg!(feature = "u128_key_type_String"), //u128_key_type_String
-            u128_key_type_arc_string: cfg!(feature = "u128_key_type_Arc_String"), //u128_key_type_Arc_String
+            //u128_key_type_string: cfg!(feature = "u128_key_type_String"), //u128_key_type_String
+            //u128_key_type_arc_string: cfg!(feature = "u128_key_type_Arc_String"), //u128_key_type_Arc_String
 
             //usize keys
 
-            usize_key_type_string: cfg!(feature = "usize_key_type_String"), //usize_key_type_String
-            usize_key_type_arc_string: cfg!(feature = "usize_key_type_Arc_String"), //usize_key_type_Arc_String
+            //usize_key_type_string: cfg!(feature = "usize_key_type_String"), //usize_key_type_String
+            //usize_key_type_arc_string: cfg!(feature = "usize_key_type_Arc_String"), //usize_key_type_Arc_String
 
             //Whatever keys
 
-            whatever_key_type_string: cfg!(feature = "Whatever_key_type_String"), //Whatever_key_type_String
-            whatever_key_type_arc_string: cfg!(feature = "Whatever_key_type_Arc_String") //Whatever_key_type_Arc_String
+            //whatever_key_type_string: cfg!(feature = "Whatever_key_type_String"), //Whatever_key_type_String
+            //whatever_key_type_arc_string: cfg!(feature = "Whatever_key_type_Arc_String") //Whatever_key_type_Arc_String
 
         }        
 
     }
 
+}
 
+#[derive(Default)]
+pub struct CfgsQuery;
+
+#[Object]
+impl CfgsQuery
+{
+
+    async fn get_cfgs(&self) -> Cfgs
+    {
+        
+        Cfgs::new()
+
+    }
 
 }
 
+//Old Query object
+
+/*
 #[derive(Default)]
 pub struct Cfgs;
 
@@ -788,4 +880,4 @@ impl Cfgs
     }
     
 }
-
+*/

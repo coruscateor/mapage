@@ -7,6 +7,7 @@ use crate::{call_store_method, call_store_method_no_key, call_store_method_move_
 
 use crate::StoreType;
 
+#[cfg(any(feature = "all_types", feature = "Vec_u128"))]
 type KeyType = crate::types::keys::VecU128KeyType;
 
 #[derive(Default)]

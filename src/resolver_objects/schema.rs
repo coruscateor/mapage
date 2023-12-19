@@ -61,7 +61,7 @@ pub struct QueryRoot
     //Configuration etc
 
     MiscellaneousQuery,
-    Cfgs,
+    CfgsQuery,
 
     //Fundamental Types
     

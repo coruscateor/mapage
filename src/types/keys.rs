@@ -59,7 +59,7 @@ key_type_features!(I64);
 key_type_features!(I128);
 
 #[cfg(any(feature = "all_types", feature = "isize"))]
-key_type_features!(Isize);
+key_type_features!(ISize);
 
 #[cfg(any(feature = "all_types", feature = "SelectedType"))]
 key_type_features!(SelectedType);
@@ -83,7 +83,7 @@ key_type_features!(U64);
 key_type_features!(U128);
 
 #[cfg(any(feature = "all_types", feature = "usize"))]
-key_type_features!(Usize);
+key_type_features!(USize);
 
 #[cfg(any(feature = "all_types", feature = "Whatever"))]
 key_type_features!(Whatever);

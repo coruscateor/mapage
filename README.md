@@ -1,18 +1,21 @@
 # Mapage
 
-Mapage is a type-namespaced key value storage system which uses [async-graphql](https://crates.io/crates/async-graphql) for client interaction.
+Mapage is a type-namespaced key-value storage system which uses [async-graphql](https://crates.io/crates/async-graphql) for client interaction.
 
 Basically what is meant by "type-namespaced" is each storable type gets its own hashmap and its own part of the API.
 
 <br/>
 
-## Why design Mapage this way?
+## Design Goals
 
-Mapage originated as a Redis-like system, but when I develved into Any trait references I decided to re-orient the project around hashmaps instead.
-
-I did this because it seemed to me that this would probably be more space-efficient as you wouldn't have to have an Any pointer for each object stored (the size of at least two 64 bit integers!) and time-efficient because you wouldn't have to figure out what type an object was every time you wanted to do something with it (This may be the case with enums as well).
-
-This also means that incorrect type errors can mostly be eliminated.
+- Customisable: Choose which types you want to store and which map implementations you want store them in.
+- Easily-Optimisable: Easily find the best features for the fastest results.
+- Type-Namespaced: Incorrect type errors should be few and far between, or non-esitant when you specify exacty which types you want stored.
+- file storage: Chache files with ease.
+- Persistable: Store any changes to your chached data in a database system of your choice or on the file .
+- Scriptable: Implement the funtionality of your choice.
+- Monitorable: Easily find out things like CPU and RAM usage.
+- Searchable: From rudimentary to regex to vector based searching functionality.
 
 <br/>
 
@@ -27,16 +30,6 @@ The namespaced-type design makes it reasonably straightforward to support differ
 | Sub-Namespace | A section of the namespace is locked per interaction (buckets) |
 | Value         | Each value is interacted with by each thread on an individual level and the namespace is seldom if ever locked | 
 
-And you can have other combinations where you can retrieve an object for interacting with indivdual objects under the top three above levels:
-
-| Level         |
-| -----------   |
-| Store-Value   |
-| Namespace-Value   |
-| Sub-Namespace-Value |
-
-But we won't be focusing on these right now (or probably for a while...).
-
 In terms of features atomicity levels are divided into two broad categories:
 
 | Store level Feature |
@@ -44,132 +37,211 @@ In terms of features atomicity levels are divided into two broad categories:
 | store_aml     | 
 | sub_store_aml |
 
-With store_aml everything must be interacted with using a single means (e.g a Mutex), but with sub_store_aml you have more discretion about how each namespace goes about handling interaction.
+With store_aml (store atomicity level) all the data is contained in a single synchronisation object e.g a Mutex or an Actor, but with the sub_store_aml (sub-store atomicity level) feature you have more discretion about how each namespace goes about handling user interaction.
 
-Currently only sub_store_aml related features have been implemented: 
+store_aml is not implemented.
+
+Once you've selected sub_store_aml you must select a default sore implementation feature: 
 
 | Default Storage Implemtation Feature |
 | -----------   |
 | scc_hashmap_namespaces |
 | dashmap_namespaces |
 
-These are the namespace implementations that will be used by default for each type-feature specified as part of the --features argument to cargo.
+As you can probably sermise; when you select "scc_hashmap_namespaces" you get scc::Hashmap namespace implementations by default and when you select "dashmap_namespaces" you get Dashmap namespace implementations by default.
 
-Only specify one.
-
-<br/>
-
-## The Types
-
-| Type Feature  | Description |
-| -----------   | ----------- |
-| all_types     | Everything  |
-| char          |             |
-| f32           |             |
-| f64           |             |
-| i8            |             |
-| i16           |             |
-| i32           |             |
-| i64           |             |
-| i128          | An async-graphql scalar value |
-| isize         |             |
-| String        |             |
-| u8            |             |
-| u16           |             |
-| u32           |             |
-| u64           |             |
-| u128          | An async-graphql scalar value |
-| usize         |             |
-| Whatever      | A GraphQL union of evrything except SelectedType |
-| SelectedType  | A GraphQL union of whatever else was selected except Whatever |
-
-As you can see if you want everything specifiy all_types when providing features to cargo. When you specify a type a namespace is added to Mapage, this is implemented as specified when you provided the default storage implemtation feature with a part of GraphQL API generated for that type. For instance if you specify an i32 type you get accessor methods to the map that your i32s would be stored in and operator methods for manipulating values as well. With String and other methods mutation methods other that for value replacement are not yet supported.
+Select only one of these.
 
 <br/>
 
-Specify the Whatever type if you want to to be able store whatever types Mapage supports and async-graphql allows in a single value. As Whatever is a GraphQL union type it cannot not store other unions i.e SelectedType.
-SelectedTypes store whatever other types the user has specified (except Whatevers obviously as that is also a GraphQL union).
+## All Features
+
+| Feature                   | Description |
+| -----------               | ----------- |
+| store_aml                 | Store atomicity level |   
+| sub_store_aml             | Sub-store atomicity level |
+| scc_hashmap_namespaces    | Use scc::Hashmap namespace implementations by default |
+| dashmap_namespaces        | Use Dashmap namespace implementations by default |
+| all_types                 | All types   |
+| char                      | char type   |
+| f32                       | f32 type    |
+| f64                       | f64 type    |
+| i8                        | i8 type     |
+| i16                       | i16 type    |
+| i32                       | i32 type    |
+| i64                       | Broken - incompatible with GraphQL/async-graphql |
+| i128                      | Broken - incompatible with GraphQL/async-graphql |
+| isize                     | To be removed |
+| String                    | String type |
+| u8                        | u8 type     |
+| u16                       | u16 type    |
+| u32                       | u32 type    |
+| u64                       | Broken - incompatible with GraphQL/async-graphql |
+| u128                      | Broken - incompatible with GraphQL/async-graphql |
+| usize                     | To be removed |
+| Whatever                  | A GraphQL union of everything except SelectedType |
+| SelectedType              | A GraphQL union of whatever else was selected except Whatever - To be removed |
+| Vec_bool                  | A std::vec::Vec of bools |
+| Vec_char                  | &nbsp;&nbsp;&nbsp;&nbsp; " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; chars |
+| Vec_f32                   | &nbsp;&nbsp;&nbsp;&nbsp; " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; f32s  |
+| Vec_f64                   | &nbsp;&nbsp;&nbsp;&nbsp; " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; f64s  |
+| Vec_i8                    | &nbsp;&nbsp;&nbsp;&nbsp; " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; i8s   |
+| Vec_i16                   | &nbsp;&nbsp;&nbsp;&nbsp; " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; i16s  |
+| Vec_i32                   | &nbsp;&nbsp;&nbsp;&nbsp; " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; i32s  |
+| Vec_i64                   | Broken - incompatible with GraphQL/async-graphql |
+| Vec_i128                  | Broken - incompatible with GraphQL/async-graphql |
+| Vec_isize                 | To be removed |
+| VecSelectedType           | To be removed |
+| VecString                 | A std::vec::Vec of std::string::Strings |
+| Vec_u8                    | &nbsp;&nbsp;&nbsp;&nbsp; " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; u8s  |
+| Vec_u16                   | &nbsp;&nbsp;&nbsp;&nbsp; " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; u16s |
+| Vec_u32                   | &nbsp;&nbsp;&nbsp;&nbsp; " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; u32s |
+| Vec_u64                   | Broken - incompatible with GraphQL/async-graphql |
+| Vec_u128                  | Broken - incompatible with GraphQL/async-graphql |
+| Vec_usize                 | To be removed           |
+| VecWhatever               | A std::vec::Vec of Whatevers |
+| all_key_types_String      | Use std::string::String keys by default |
+| all_key_types_Arc_String  | Use std::sync::Arc containing std::string::String keys by default |
 
 <br/>
 
-## SelectedTypeIO
+## Settings
 
-The SelectedTypeIO feature adds GraphQL methods which enable users to query mutliple namespaces asynchronously. They allow (or should allow) only one namespace query per request. What the user needs to do is provide the keys to look up and the namespaces (type names) in which the values are looked up and added to the results Vec.
-
-You might use this method if you want to store the fields of an object on a Mapage server but want to have it so each field can be mutated with out having to rediscover its type. This storege scheme also allows you to share fields between querys as well.
+To be implemented
 
 <br/>
 
-## Usage Considerations
+## Build Examples
 
-Mapage is intended for the out-of-process storage of data. Out-of-process storage meaning application data being put in a separate process or processes from where the main work is being done.
+One with everything:
 
-This is benefical because the data is isolated from what is happening in other applications and this data can be easily read and mutated by these applications (if they're on the same network).
+```
+cargo build --features=sub_store_aml,scc_hashmap_namespaces,all_types,all_key_types_String
+```
 
-Some downsides to using Mapage, when compared to in-process caching, might be the costs of serialisation and deserialisation and network communications.
+In the above build you have the "sub_store_aml" feature to indicate that each namespace handles synchronisation independently.
+
+The "scc_hashmap_namespaces" feature indicates that you want the namespace implemtations to be scc::Hashmap by default.
+
+The "all_types" feature indicates that you want all the types that mappage supports to be inculded in the build.
+
+Finally the "all_key_types_String" feature indicates that you want the keys for all the included types to be std::string::Strings by default.
 
 <br/>
 
-Though the downside to in-process caching is that it is vulerable to whatever ever other broad application affecting events occur (panics, power-loss etc).
+Using the all_types feature, while convenient, will produce a mapage application with gigantic GraphQL API.
+
+Why don't we try and be more a bit more selective:
+
+```
+cargo build --features=sub_store_aml,dashmap_namespaces,bool,char,i32,Whatever,all_key_types_String
+```
+
+Here instead of sub_store_aml, we have dashmap_namespaces for the namespace implementations.
+
+And instead of all_types there are four individual types specified: bool, char, i32 and Whatever.
 
 <br/>
 
-Basically you'd want to use Mapage when you want a dedicated data cache that is isolated from other processes in your system setup, but not necessarily a persistent or authoritative storage location.
+When you know what you want to store you'll avoid using space unnecessary and have amore consise API that you would've had selecting everything available.
 
 <br/>
 
-## Over-Development
+## Build Must-Haves
 
-The primary goal of Mapage is to provide features that have a level of performance that users will find acceptable at minimum.
+To be explicit, in every build you need or should have specified:
 
-The secondy goal is to provide features that have either questionable performance characteristics or clearly bad performance characteristics as I think it would be both intersting and useful to be able to compare and contrast how different syncronistation methodologies affect how long it takes the system to get things done.  
+1. The store atomicity level (only sub_store_aml is valid right now)
+2. The namespace implementations for each selected type to use by default.
+3. The types you want (char, f32, i8 etc) (this is optional but you wont have much of a cache if you skip this step)
+4. The key type to use for each namespace by default
 
-For instance how would a Tokio Mutex enforcing store level atomicity on all its namespaces compare against SCC Hashmaps enforcing sub-namespace level atomicity on their namespace data?
+Feature incompatabilty error conditions have not be implemented yet so you may have to do some reading if you get something wrong. 
 
-A type-namespaced cache such as Mapage should make implementing both approaches fairly straight-forward so this kind of question can be answered.
+## Optimal Builds
+
+To be implemented
+
+<br/>
+
+## A note on experimentation
+
+While you would implement the most optimal features for practical usage scenarios, sub-optimal features will also be added for curiositys sake.
 
 <br/>
 
 ## Todo:
 
-- Add store management features which would handle:
+- Add store/namespace management features which would handle:
     - Object evictions.
     - Authentication and authorisation
     - Persistence
     - Replication (partial and whole)
-    - Events (probably required by replication)
-- Add collections types such as Standard Vec and Hashmap.
-- Add immutable namespaces, where the values can be added, retrieved, removed, replaced, have only immutable methods called on them. Also this is where collections are put in Arcs (sub-namespace and value atomicity levels only probably).
+    - Events/Streaming
+- Add collections types such as standard Vec and Hashmap.
+- Add immutable namespaces, where the values can be added, retrieved, removed, replaced, have only immutable methods called on them. Also this is where collections are put in Arcs.
 - Async-graphql response caching (possibly in 5 second increments)
-- Scripting with Rhai and Lua
-- Arc'd String Keys (feature - best used in conjection with store management features)
+- Scripting with Rhai and Lua (others?)
+- WGPU integration - to be used in conjunction with scripting. 
+- Arc'd String Keys and other key types
 - Add error conditions and messages for conflicting feature specifications.
-- Vector searching and comparison.
+- Vector comparison functionality
+- Vector search functionality
 - Add more namespace implementations using collection types like [Moka](https://crates.io/crates/moka) and std::Hashmap etc.
 - Complete namespace implementations for the store and atomicity levels.
+- Add regex storage
+- Add the ability to search for namespace items using a regex that is either stored or part of the request i.e. Mass deletion based on whether on not a given regex matches etc.
+- Add the ability to remove namespace items based on weather or not it starts with or ends with a certain sequence of values or otherwise contains this sequence of values.
 - Clean up the code.
 - Document the code. 
 
 ## Possible:
 
-- VRAM storege
 - Option Types (Unlikely, unless it's Vec\<Option\<T\>\>)
-- Non-String keys - integer types
-- Add support for gRPC (probably using [Tonic](https://crates.io/crates/tonic))
+
+<br/>
+
+## Known Issues And Types To Be Removed Or Disabled
+
+| Feature                   | Issue       |
+| -----------               | ----------- |
+| i64                       | Broken - incompatible with GraphQL/async-graphql |
+| i128                      | Broken - incompatible with GraphQL/async-graphql |
+| isize                     | To be removed |
+| u64                       | Broken - incompatible with GraphQL/async-graphql |
+| u128                      | Broken - incompatible with GraphQL/async-graphql |
+| usize                     | To be removed |
+| SelectedType              | A GraphQL union of whatever else was selected except Whatever - To be removed/disabled |
+| Vec_i64                   | Broken - incompatible with GraphQL/async-graphql |
+| Vec_i128                  | Broken - incompatible with GraphQL/async-graphql |
+| Vec_isize                 | To be removed |
+| VecSelectedType           | To be removed/disabled |
+| Vec_u64                   | Broken - incompatible with GraphQL/async-graphql |
+| Vec_u128                  | Broken - incompatible with GraphQL/async-graphql |
+| Vec_usize                 | To be removed           |
+
+So GraphQL doesn't support intergers with sizes [above 32 bits](https://spec.graphql.org/October2021/#sec-Int).
+
+I'll implement a work around for this issue.
+
+The isize and usize types are redundant.
+
+SelectedType was implemented for an experiment in asynchronous queries.
+
+I think I got to the trial implementation stage with this feature and I may revisit it so I'll remove SelectedType and VecSelectedType in the next version but keep the code in the repository.
 
 <br/>
 
 ## About Generic Permutations
 
-In order to control the amount of work requred certain classes of type will or won't be implemented:
+In order to control the amount of work requred certain classes of type will and won't be implemented:
 
 - No option unless in other gernerics e.g. Vec\<Option\<T\>\>. While having a base level Option could be a convenient way to reserve a key in a namespace, for the time being at least, base level Option namespaces wont be added.
-- With hashmaps and other generic types that take multiple auguments you can have all manner of different combinations. So namespace hashmap implementations will probably be constrained to String or whatever other type is desired for the key and then the value types will be the other scalar and collection values offered by Mapage (sub-namespaces basically).
-- Other generic collections such as: std::BTreeMap and std::HashSet may eventually be supported.
+- With hashmaps and other generic types that take multiple augments you can have all manner of different combinations. So the keys of namespace implementations will probably be constrained to what you can select with the available features and not arbitrary values (sub-namespaces).
 
 <br/>
 
-This project has come along way since its inception in mid-2022 as a Redis-like cache and it has a long way to go still. Please use with the understanding that this project is a work in progress,
+This project has come along way since its inception in mid-2022 as a Redis-like cache and it has a long way to go still. Please use with the understanding that this project is a work in progress.
 
 <br/>
 

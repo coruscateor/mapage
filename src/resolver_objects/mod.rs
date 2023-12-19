@@ -1,9 +1,5 @@
 
-//pub mod schema;
-
 pub mod bool_type;
-
-use std::sync::Arc;
 
 pub use bool_type::*;
 
@@ -127,7 +123,8 @@ cfg_if::cfg_if!
         cfg_if::cfg_if! 
         {
 
-            if #[cfg(not(any(feature = "all_types", feature = "SelectedTypeIO")))]
+            //if #[cfg(not(any(feature = "all_types", feature = "SelectedTypeIO")))]
+            if #[cfg(not(feature = "all_types"))]
             {
             
                 pub type StoreType = Store;
@@ -146,8 +143,11 @@ cfg_if::cfg_if!
         cfg_if::cfg_if! 
         {
 
-            if #[cfg(any(feature = "all_types", feature = "SelectedTypeIO"))]
+            //if #[cfg(any(feature = "all_types", feature = "SelectedTypeIO"))]
+            if #[cfg(feature = "all_types")]
             {
+
+                use std::sync::Arc;
 
                 pub type StoreType = Arc<Store>;
 

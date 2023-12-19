@@ -18,6 +18,9 @@ impl MiscellaneousQuery
 
     }
 
+    //Experimentation
+
+    /*
     async fn get_arc_str(&self) -> Arc<str>
     {
 
@@ -64,6 +67,7 @@ impl MiscellaneousQuery
         true
 
     }
+    */
     
     //JSONObject
 
@@ -89,7 +93,7 @@ impl MiscellaneousQuery
     }
     */
 
-    //Some experementaion
+    //Some experimentation
 
     /*
     async fn can_do_join_handles(&self) -> JoinHandle<&'static str>

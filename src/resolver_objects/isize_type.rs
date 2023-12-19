@@ -8,7 +8,8 @@ use std::collections::HashSet;
 
 use crate::{call_store_method, call_store_method_no_key, call_store_method_move_key};
 
-type KeyType = crate::types::keys::IsizeKeyType;
+#[cfg(any(feature = "all_types", feature = "isize"))]
+type KeyType = crate::types::keys::ISizeKeyType;
 
 #[derive(Default)]
 pub struct ISizeQuery;

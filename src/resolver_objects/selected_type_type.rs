@@ -13,6 +13,7 @@ use crate::{call_store_method, call_store_method_no_key, call_store_method_move_
 
 use paste::paste;
 
+#[cfg(any(feature = "all_types", feature = "SelectedType"))]
 type KeyType = crate::types::keys::SelectedTypeKeyType;
 
 #[derive(Default)]

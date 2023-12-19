@@ -2,12 +2,13 @@ use std::collections::HashSet;
 
 use async_graphql::{Object, Context};
 
-use crate::{types::{sizes::size_of_bool, OkValue}};
+use crate::types::{sizes::size_of_bool, OkValue};
 
 use crate::{call_store_method, call_store_method_no_key, call_store_method_move_key};
 
 use super::StoreType;
 
+#[cfg(any(feature = "all_types", feature = "bool"))]
 type KeyType = crate::types::keys::BoolKeyType;
 
 #[derive(Default)]

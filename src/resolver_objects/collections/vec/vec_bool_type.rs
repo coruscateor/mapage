@@ -6,6 +6,7 @@ use crate::{call_store_method, call_store_method_no_key, call_store_method_move_
 
 use crate::StoreType;
 
+#[cfg(any(feature = "all_types", feature = "Vec_bool"))]
 type KeyType = crate::types::keys::VecBoolKeyType;
 
 #[derive(Default)]
@@ -118,7 +119,7 @@ impl VecBoolQuery
     
 }
 
-#[cfg(not(any(feature = "all_types", feature = "bool")))]
+#[cfg(not(any(feature = "all_types", feature = "Vec_bool")))]
 #[Object]
 impl VecBoolQuery 
 {
@@ -385,7 +386,7 @@ impl VecBoolMutation
 
 }
 
-#[cfg(not(any(feature = "all_types", feature = "bool")))]
+#[cfg(not(any(feature = "all_types", feature = "Vec_bool")))]
 #[Object]
 impl VecBoolMutation
 {
