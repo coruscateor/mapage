@@ -121,7 +121,7 @@ cargo build --features=sub_store_aml,scc_hashmap_namespaces,all_types,all_key_ty
 
 In the above build you have the "sub_store_aml" feature to indicate that each namespace handles synchronisation independently.
 
-The "scc_hashmap_namespaces" feature indicates that you want the namespace implemtations to be scc::Hashmap by default.
+The "scc_hashmap_namespaces" feature indicates that you want the namespace implemtations to be scc::Hashmaps by default.
 
 The "all_types" feature indicates that you want all the types that mappage supports to be inculded in the build.
 
@@ -143,7 +143,7 @@ And instead of all_types there are four individual types specified: bool, char, 
 
 <br/>
 
-When you know what you want to store you'll avoid using space unnecessary and have amore consise API that you would've had selecting everything available.
+When you know what you want to store you'll avoid using space unnecessary and have a more consise API than you would've had selecting everything available.
 
 <br/>
 
@@ -178,7 +178,7 @@ While you would implement the most optimal features for practical usage scenario
     - Persistence
     - Replication (partial and whole)
     - Events/Streaming
-- Add collections types such as standard Vec and Hashmap.
+- Add sub-namespaces
 - Add immutable namespaces, where the values can be added, retrieved, removed, replaced, have only immutable methods called on them. Also this is where collections are put in Arcs.
 - Async-graphql response caching (possibly in 5 second increments)
 - Scripting with Rhai and Lua (others?)
