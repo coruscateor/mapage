@@ -4,7 +4,7 @@
 
 - Initial release
 
-## Version 0.2.0 (22/01/2024)
+## Version 0.2.0 (24/01/2024)
 
 - Updated dependencies
 - Added queries for getting feature configurations.
@@ -21,8 +21,8 @@
 - Added Vec types to Whatever, SelectedType, InputOneOfSelectedType and AvalibleSelectedType with conversions.
 - Updated project description in cargo.toml.
 - Every key and value stored in namespaces must now implement Clone.
-- Added fns and macros for Vec namespaces
-- Added feature flags for Vec types
+- Added fns and macros for Vec namespaces.
+- Added feature flags for Vec types.
 - Rearranged the contents of the resolver_objects/schema module to be a bit more readable.
 - Made a bunch of Graphql input and output types implement PartialEq and Eq where possible.
 - Stopped the .vscode directory from being tracked in the repository.
