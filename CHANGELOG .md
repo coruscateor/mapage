@@ -4,7 +4,7 @@
 
 - Initial release
 
-## Version 0.2.0 (24/01/2024)
+## Version 0.2.0 (25/01/2024)
 
 - Updated dependencies
 - Added queries for getting feature configurations.
