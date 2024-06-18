@@ -44,6 +44,8 @@ async fn main()
 
     let listener = TcpListener::bind("0.0.0.0:3000").await.unwrap();
 
+    println!("Mapage listening on: ws://localhost:3000");
+
     axum::serve(listener, app).await.unwrap();
 
 }
