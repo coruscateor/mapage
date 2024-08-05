@@ -42,7 +42,7 @@ async fn main()
 
     let app = Router::new().route("/", get(ws_handler));
 
-    let listener = TcpListener::bind("0.0.0.0:3000").await.unwrap();
+    let listener = TcpListener::bind("localhost:3000").await.unwrap(); //TcpListener::bind("http://localhost:3000").await.unwrap(); //TcpListener::bind("0.0.0.0:3000").await.unwrap();
 
     println!("Mapage listening on: ws://localhost:3000");
 
