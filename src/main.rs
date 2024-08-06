@@ -42,7 +42,17 @@ async fn main()
 
     let app = Router::new().route("/", get(ws_handler));
 
-    let listener = TcpListener::bind("localhost:3000").await.unwrap(); //TcpListener::bind("http://localhost:3000").await.unwrap(); //TcpListener::bind("0.0.0.0:3000").await.unwrap();
+    println!("app\n");
+
+    println!("{app:?}\n");
+
+    //let listener = TcpListener::bind("localhost:3000").await.unwrap(); //TcpListener::bind("http://localhost:3000").await.unwrap(); //TcpListener::bind("0.0.0.0:3000").await.unwrap();
+
+    let listener = TcpListener::bind("0.0.0.0:3000").await.unwrap();
+
+    println!("listener\n");
+
+    println!("{listener:?}\n");
 
     println!("Mapage listening on: ws://localhost:3000");
 
@@ -63,14 +73,25 @@ async fn handle_client(fut: UpgradeFut) -> Result<(), WebSocketError>
         match frame.opcode
         {
 
-            OpCode::Close => break,
+            OpCode::Close =>
+            {
+
+                println!("Close frame received.");
+
+                break;
+
+            } //break,
             OpCode::Text | OpCode::Binary =>
             {
 
                 ws.write_frame(frame).await?;
 
             },
-            _ => {}
+            _ => {
+
+                println!("I should do something now.")
+
+            }
             
         }
         
