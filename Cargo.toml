@@ -34,7 +34,7 @@ delegate = "0.10.0"
 #WebSockets
 
 axum = "0.7.*"
-fastwebsockets = { version = "0.7.*", features = ["upgrade", "with_axum"] }
+fastwebsockets = { version = "0.8.*", features = ["upgrade", "with_axum"] }
 
 [features]
 
