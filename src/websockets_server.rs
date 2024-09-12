@@ -8,6 +8,8 @@ use upgrade::{UpgradeFut, IncomingUpgrade};
 
 pub struct WebSocketsServer();
 
+//https://docs.rs/axum/latest/axum/#sharing-state-with-handlers
+
 impl WebSocketsServer
 {
 
@@ -15,22 +17,51 @@ impl WebSocketsServer
     {
 
         let app = Router::new().route("/", get(ws_handler));
+    
+        //Make the port number a variable.
 
-        //println!("app\n");
+        let listener;
+
+        match TcpListener::bind("0.0.0.0:3000").await
+        {
+
+            Ok(new_listener) =>
+            {
+
+                listener = new_listener;
+
+            }
+            Err(err) =>
+            {
+
+                //Output to console only for now...
+
+                println!("{}", err);
+
+                return;
+
+            } 
+        }
     
-        //println!("{app:?}\n");
-    
-        //let listener = TcpListener::bind("localhost:3000").await.unwrap(); //TcpListener::bind("http://localhost:3000").await.unwrap(); //TcpListener::bind("0.0.0.0:3000").await.unwrap();
-    
-        let listener = TcpListener::bind("0.0.0.0:3000").await.unwrap();
-    
-        //println!("listener\n");
-    
-        //println!("{listener:?}\n");
-    
-        println!("Mapage is listening on: localhost:3000"); //ws://
-    
-        axum::serve(listener, app).await.unwrap();
+        println!("Mapage is listening on: localhost:3000");
+
+        match axum::serve(listener, app).await
+        {
+
+            Ok(_) =>
+            {
+
+                println!("bye bye");
+
+            }
+            Err(err) =>
+            {
+
+                println!("{}", err);
+
+            }
+
+        }
 
     }
 
@@ -56,7 +87,7 @@ async fn handle_client(fut: UpgradeFut) -> Result<(), WebSocketError>
 
                 break;
 
-            } //break,
+            }
             OpCode::Text | OpCode::Binary =>
             {
 
@@ -92,6 +123,10 @@ async fn ws_handler(ws: IncomingUpgrade) -> impl IntoResponse
         }
 
     });
+
+    //Maybe log the response somewhere.
+
+    //println!("{}", response);
 
     response
 
