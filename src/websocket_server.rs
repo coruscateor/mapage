@@ -1,4 +1,4 @@
-use axum::{response::IntoResponse, routing::get, Router};
+use axum::{extract::State, response::IntoResponse, routing::get, Router};
 
 use fastwebsockets::{upgrade, OpCode, WebSocketError, FragmentCollector};
 
@@ -6,17 +6,27 @@ use tokio::{net::TcpListener, task};
 
 use upgrade::{UpgradeFut, IncomingUpgrade};
 
-pub struct WebSocketsServer();
+use std::sync::Arc;
+
+use crate::Store;
+
+pub struct WebSocketServer ();
 
 //https://docs.rs/axum/latest/axum/#sharing-state-with-handlers
 
-impl WebSocketsServer
+impl WebSocketServer 
 {
 
     pub async fn serve()
     {
 
-        let app = Router::new().route("/", get(ws_handler));
+        let store = Arc::new(Store::new());
+
+        let method_router = get(ws_handler).with_state(store);
+
+        let app = Router::new().route("/", method_router);
+
+        //let app = Router::new().route("/", get(ws_handler)).with_state(store);
     
         //Make the port number a variable.
 
@@ -108,7 +118,7 @@ async fn handle_client(fut: UpgradeFut) -> Result<(), WebSocketError>
 
 }
 
-async fn ws_handler(ws: IncomingUpgrade) -> impl IntoResponse
+async fn ws_handler(ws: IncomingUpgrade, State(store): State<Arc<Store>>) -> impl IntoResponse //State(store): State<Store>,
 {
 
     let (response, fut) = ws.upgrade().unwrap();

@@ -16,6 +16,8 @@ type Namespace = SCC_HashMapNamespace<KeyType, String>;
 #[cfg(feature = "dashmap_namespaces")]
 type Namespace = DashMapNamespace<KeyType, String>;
 
+use anyhow::Result;
+
 //K: 'static + Clone + Eq + Hash + Ord + Sync
 
 pub struct StringNamespace
@@ -45,23 +47,23 @@ impl StringNamespace
     delegate! {
         to self.namespace {
 
-            pub async fn insert(&self, key: KeyType, value: String) -> async_graphql::Result<&'static str>;
+            pub async fn insert(&self, key: KeyType, value: String) -> Result<&'static str>;
 
-            pub async fn update(&self, key: &KeyType, value: String) -> async_graphql::Result<&'static str>;
+            pub async fn update(&self, key: &KeyType, value: String) -> Result<&'static str>;
 
             pub async fn try_replace(&self, key: &KeyType, value: String) -> Option<String>;
 
-            pub async fn update_fn<R, FN: FnOnce(&mut String) -> async_graphql::Result<R>>(&self, key: &KeyType, updater: FN) -> async_graphql::Result<R>;
+            pub async fn update_fn<R, FN: FnOnce(&mut String) -> Result<R>>(&self, key: &KeyType, updater: FN) -> Result<R>;
             
-            pub async fn update_kv_fn<R, FN: FnOnce(&KeyType, &mut String) -> async_graphql::Result<R>>(&self, key: &KeyType, updater: FN) -> async_graphql::Result<R>;
+            pub async fn update_kv_fn<R, FN: FnOnce(&KeyType, &mut String) -> Result<R>>(&self, key: &KeyType, updater: FN) -> Result<R>;
 
-            pub async fn remove(&self, key: &KeyType) -> async_graphql::Result<&'static str>;
+            pub async fn remove(&self, key: &KeyType) -> Result<&'static str>;
 
             pub async fn try_retrieve(&self, key: &KeyType) -> Option<String>;
 
-            pub async fn read_fn<R, FN: FnOnce(&String) -> async_graphql::Result<R>>(&self, key: &KeyType, reader: FN) -> async_graphql::Result<R>;
+            pub async fn read_fn<R, FN: FnOnce(&String) -> Result<R>>(&self, key: &KeyType, reader: FN) -> Result<R>;
 
-            pub async fn read_kv_fn<R, FN: FnOnce(&KeyType, &String) -> async_graphql::Result<R>>(&self, key: &KeyType, reader: FN) -> async_graphql::Result<R>;
+            pub async fn read_kv_fn<R, FN: FnOnce(&KeyType, &String) -> Result<R>>(&self, key: &KeyType, reader: FN) -> Result<R>;
 
             pub async fn contains(&self, key: &KeyType) -> bool;
 
@@ -78,14 +80,14 @@ impl StringNamespace
         }
     }
 
-    pub async fn upsert(&self, key: KeyType, value: String) -> async_graphql::Result<&'static str>
+    pub async fn upsert(&self, key: KeyType, value: String) -> Result<&'static str>
     {
 
         self.namespace.upsert_clone(key, value).await
 
     }
 
-    pub async fn read(&self, key: &KeyType) -> async_graphql::Result<String>
+    pub async fn read(&self, key: &KeyType) -> Result<String>
     {
 
         self.namespace.read_clone(key).await

@@ -4,6 +4,8 @@ use delegate::delegate;
 
 use crate::{types::ops::*, impl_update_fn_op_method};
 
+use anyhow::Result;
+
 //use paste::paste;
 
 
@@ -52,23 +54,23 @@ impl VecBoolNamespace
     delegate! {
         to self.namespace {
 
-            pub async fn insert(&self, key: KeyType, value: Vec<bool>) -> async_graphql::Result<&'static str>;
+            pub async fn insert(&self, key: KeyType, value: Vec<bool>) -> Result<&'static str>;
 
-            pub async fn update(&self, key: &KeyType, value: Vec<bool>) -> async_graphql::Result<&'static str>;
+            pub async fn update(&self, key: &KeyType, value: Vec<bool>) -> Result<&'static str>;
 
             pub async fn try_replace(&self, key: &KeyType, value: Vec<bool>) -> Option<Vec<bool>>;
 
-            pub async fn update_fn<R, FN: FnOnce(&mut Vec<bool>) -> async_graphql::Result<R>>(&self, key: &KeyType, updater: FN) -> async_graphql::Result<R>;
+            pub async fn update_fn<R, FN: FnOnce(&mut Vec<bool>) -> Result<R>>(&self, key: &KeyType, updater: FN) -> Result<R>;
 
-            pub async fn update_kv_fn<R, FN: FnOnce(&KeyType, &mut Vec<bool>) -> async_graphql::Result<R>>(&self, key: &KeyType, updater: FN) -> async_graphql::Result<R>;
+            pub async fn update_kv_fn<R, FN: FnOnce(&KeyType, &mut Vec<bool>) -> Result<R>>(&self, key: &KeyType, updater: FN) -> Result<R>;
 
-            pub async fn remove(&self, key: &KeyType) -> async_graphql::Result<&'static str>;
+            pub async fn remove(&self, key: &KeyType) -> Result<&'static str>;
 
             pub async fn try_retrieve(&self, key: &KeyType) -> Option<Vec<bool>>;
 
-            pub async fn read_fn<R, FN: FnOnce(&Vec<bool>) -> async_graphql::Result<R>>(&self, key: &KeyType, reader: FN) -> async_graphql::Result<R>;
+            pub async fn read_fn<R, FN: FnOnce(&Vec<bool>) -> Result<R>>(&self, key: &KeyType, reader: FN) -> Result<R>;
 
-            pub async fn read_kv_fn<R, FN: FnOnce(&KeyType, &Vec<bool>) -> async_graphql::Result<R>>(&self, key: &KeyType, reader: FN) -> async_graphql::Result<R>;
+            pub async fn read_kv_fn<R, FN: FnOnce(&KeyType, &Vec<bool>) -> Result<R>>(&self, key: &KeyType, reader: FN) -> Result<R>;
 
             pub async fn contains(&self, key: &KeyType) -> bool;
 
@@ -82,9 +84,9 @@ impl VecBoolNamespace
 
             pub async fn capacity(&self) -> usize;
 
-            pub async fn upsert(&self, key: KeyType, value: Vec<bool>) -> async_graphql::Result<&'static str>;
+            pub async fn upsert(&self, key: KeyType, value: Vec<bool>) -> Result<&'static str>;
 
-            pub async fn read(&self, key: &KeyType) -> async_graphql::Result<Vec<bool>>;
+            pub async fn read(&self, key: &KeyType) -> Result<Vec<bool>>;
 
             pub async fn try_read(&self, key: &KeyType) -> Option<Vec<bool>>;
 

@@ -6,6 +6,8 @@ use crate::{types::{get_ok_value_str}, errors::invalid_operation};
 
 use std::mem::replace;
 
+use anyhow::Result;
+
 pub struct DashMapNamespace<K, V>
     where K: 'static + Eq + Hash + Sync + Clone,
           V: 'static + Sync + Default + Clone
@@ -32,7 +34,7 @@ impl<K, V> DashMapNamespace<K, V>
 
     }
 
-    pub async fn insert(&self, key: K, value: V) -> async_graphql::Result<&'static str>
+    pub async fn insert(&self, key: K, value: V) -> Result<&'static str>
     {
         
         let _res = self.map.insert(key, value);
@@ -41,7 +43,7 @@ impl<K, V> DashMapNamespace<K, V>
 
     }
 
-    pub async fn update(&self, key: &K, value: V) -> async_graphql::Result<&'static str>
+    pub async fn update(&self, key: &K, value: V) -> Result<&'static str>
     {
 
         let res = self.map.get_mut(&key);
@@ -77,10 +79,10 @@ impl<K, V> DashMapNamespace<K, V>
 
     //calling functions etc
 
-    //updater must return async_graphql::Result<R>
+    //updater must return Result<R>
 
-    pub async fn update_fn<R, FN>(&self, key: &K, mut updater: FN) -> async_graphql::Result<R>
-        where FN: FnOnce(&mut V) -> async_graphql::Result<R>
+    pub async fn update_fn<R, FN>(&self, key: &K, mut updater: FN) -> Result<R>
+        where FN: FnOnce(&mut V) -> Result<R>
     {
 
         let res = self.map.get_mut(&key);
@@ -96,8 +98,8 @@ impl<K, V> DashMapNamespace<K, V>
 
     }
     
-    pub async fn update_kv_fn<R, FN>(&self, key: &K, mut updater: FN) -> async_graphql::Result<R>
-        where FN: FnOnce(&K, &mut V) -> async_graphql::Result<R>
+    pub async fn update_kv_fn<R, FN>(&self, key: &K, mut updater: FN) -> Result<R>
+        where FN: FnOnce(&K, &mut V) -> Result<R>
     {
 
         let res = self.map.get_mut(&key);
@@ -113,7 +115,7 @@ impl<K, V> DashMapNamespace<K, V>
 
     }
 
-    pub async fn upsert(&self, key: K, value: V) -> async_graphql::Result<&'static str>
+    pub async fn upsert(&self, key: K, value: V) -> Result<&'static str>
     {
         
         let res = self.map.get_mut(&key);
@@ -137,7 +139,7 @@ impl<K, V> DashMapNamespace<K, V>
 
     //
 
-    pub async fn remove(&self, key: &K) -> async_graphql::Result<&'static str>
+    pub async fn remove(&self, key: &K) -> Result<&'static str>
     {
 
         let res = self.map.remove(key);
@@ -171,10 +173,10 @@ impl<K, V> DashMapNamespace<K, V>
 
     //read - calling functions
 
-    //reader must return async_graphql::Result<R>
+    //reader must return Result<R>
 
-    pub async fn read_fn<R, FN>(&self, key: &K, reader: FN) -> async_graphql::Result<R>
-        where FN: FnOnce(&V) -> async_graphql::Result<R>
+    pub async fn read_fn<R, FN>(&self, key: &K, reader: FN) -> Result<R>
+        where FN: FnOnce(&V) -> Result<R>
     {
 
         let res = self.map.get(&key);
@@ -190,8 +192,8 @@ impl<K, V> DashMapNamespace<K, V>
 
     }
 
-    pub async fn read_kv_fn<R, FN>(&self, key: &K, reader: FN) -> async_graphql::Result<R>
-        where FN: FnOnce(&K, &V) -> async_graphql::Result<R>
+    pub async fn read_kv_fn<R, FN>(&self, key: &K, reader: FN) -> Result<R>
+        where FN: FnOnce(&K, &V) -> Result<R>
     {
 
         let res = self.map.get(&key);
@@ -259,7 +261,7 @@ impl<K, V> DashMapNamespace<K, V>
 
     //
     
-    pub async fn read(&self, key: &K) -> async_graphql::Result<V>
+    pub async fn read(&self, key: &K) -> Result<V>
     {
 
         let res = self.map.get(key);
@@ -328,14 +330,14 @@ impl<K, V> DashMapNamespace<K, V>
           V: 'static + Sync + Default + Copy + Clone
 {
 
-    pub async fn upsert_copy(&self, key: K, value: V) -> async_graphql::Result<&'static str>
+    pub async fn upsert_copy(&self, key: K, value: V) -> Result<&'static str>
     {
 
         self.upsert(key, value).await
 
     }
 
-    pub async fn read_copy(&self, key: &K) -> async_graphql::Result<V>
+    pub async fn read_copy(&self, key: &K) -> Result<V>
     {
 
         let res = self.map.get(key);
@@ -376,14 +378,14 @@ impl<K, V> DashMapNamespace<K, V>
           V: 'static + Sync + Default + Clone
 {
 
-    pub async fn upsert_clone(&self, key: K, value: V) -> async_graphql::Result<&'static str>
+    pub async fn upsert_clone(&self, key: K, value: V) -> Result<&'static str>
     {
 
         self.upsert(key, value).await
 
     }
     
-    pub async fn read_clone(&self, key: &K) -> async_graphql::Result<V>
+    pub async fn read_clone(&self, key: &K) -> Result<V>
     {
 
         let res = self.map.get(key);

@@ -1,5 +1,3 @@
-use websockets_server::WebSocketsServer;
-
 mod builds;
 
 mod types;
@@ -8,12 +6,20 @@ mod common_model_body_macros;
 
 mod tasks_and_actors;
 
-mod websockets_server;
+mod websocket_server;
+
+use websocket_server::WebSocketServer ;
+
+mod store;
+
+pub use store::*;
+
+mod errors;
 
 #[tokio::main]
 async fn main()
 {
 
-    WebSocketsServer::serve().await;
+    WebSocketServer ::serve().await;
 
 }

@@ -8,7 +8,9 @@ use paste::paste;
 
 use corlib::has_one::*;
 
-use crate::{types::{ops::*, async_graphql_values::{I128Scalar, U128Scalar}}, impl_update_fn_op_method};
+use anyhow::Result;
+
+use crate::{impl_update_fn_op_method, types::ops::*};
 
 #[cfg(feature = "scc_hashmap_namespaces")]
 use super::scc_crate::hashmap_namespace::HashMapNamespace as SCC_HashMapNamespace;
@@ -51,23 +53,23 @@ impl<K, T> NumericNamespace<K, T>
     delegate! {
         to self.namespace {
 
-            pub async fn insert(&self, key: K, value: T) -> async_graphql::Result<&'static str>;
+            pub async fn insert(&self, key: K, value: T) -> Result<&'static str>;
 
-            pub async fn update(&self, key: &K, value: T) -> async_graphql::Result<&'static str>;
+            pub async fn update(&self, key: &K, value: T) -> Result<&'static str>;
 
             pub async fn try_replace(&self, key: &K, value: T) -> Option<T>;
 
-            pub async fn update_fn<R, FN: FnOnce(&mut T) -> async_graphql::Result<R>>(&self, key: &K, updater: FN) -> async_graphql::Result<R>;
+            pub async fn update_fn<R, FN: FnOnce(&mut T) -> Result<R>>(&self, key: &K, updater: FN) -> Result<R>;
 
-            pub async fn update_kv_fn<R, FN: FnOnce(&K, &mut T) -> async_graphql::Result<R>>(&self, key: &K, updater: FN) -> async_graphql::Result<R>;
+            pub async fn update_kv_fn<R, FN: FnOnce(&K, &mut T) -> Result<R>>(&self, key: &K, updater: FN) -> Result<R>;
 
-            pub async fn remove(&self, key: &K) -> async_graphql::Result<&'static str>;
+            pub async fn remove(&self, key: &K) -> Result<&'static str>;
 
             pub async fn try_retrieve(&self, key: &K) -> Option<T>;
 
-            pub async fn read_fn<R, FN: FnOnce(&T) -> async_graphql::Result<R>>(&self, key: &K, reader: FN) -> async_graphql::Result<R>;
+            pub async fn read_fn<R, FN: FnOnce(&T) -> Result<R>>(&self, key: &K, reader: FN) -> Result<R>;
             
-            pub async fn read_kv_fn<R, FN: FnOnce(&K, &T) -> async_graphql::Result<R>>(&self, key: &K, reader: FN) -> async_graphql::Result<R>;
+            pub async fn read_kv_fn<R, FN: FnOnce(&K, &T) -> Result<R>>(&self, key: &K, reader: FN) -> Result<R>;
 
             pub async fn contains(&self, key: &K) -> bool;
 
@@ -84,14 +86,14 @@ impl<K, T> NumericNamespace<K, T>
         }
     }
 
-    pub async fn upsert(&self, key: K, value: T) -> async_graphql::Result<&'static str>
+    pub async fn upsert(&self, key: K, value: T) -> Result<&'static str>
     {
 
         self.namespace.upsert_copy(key, value).await
 
     }
 
-    pub async fn read(&self, key: &K) -> async_graphql::Result<T>
+    pub async fn read(&self, key: &K) -> Result<T>
     {
 
         self.namespace.read_copy(key).await
@@ -169,6 +171,7 @@ impl<K, T> NumericNamespace<K, T>
 
 //Base traits + Neg for floats and ints
 
+/*
 #[derive(Default)]
 pub struct I128ScalarHasOne();
 
@@ -196,6 +199,7 @@ impl HasOne<U128Scalar> for U128ScalarHasOne {
     }
 
 }
+*/
 
 impl<K> NumericNamespace<K, f32>
     where K: 'static + Clone + Eq + Hash + Ord + Sync
@@ -277,17 +281,17 @@ impl<K> NumericNamespace<K, i64>
 
 }
 
-impl<K> NumericNamespace<K, I128Scalar>
+impl<K> NumericNamespace<K, i128> //I128Scalar>
     where K: 'static + Clone + Eq + Hash + Ord + Sync
 {
 
-    impl_update_fn_op_method!(neg, K, I128Scalar);
+    impl_update_fn_op_method!(neg, K, i128); //I128Scalar);
 
-    impl_update_fn_op_method!(not, K, I128Scalar);
+    impl_update_fn_op_method!(not, K, i128); //I128Scalar);
 
-    impl_update_fn_op_method!(inc, K, I128Scalar, I128ScalarHasOne);
+    impl_update_fn_op_method!(inc, K, i128, I128HasOne); //I128Scalar, I128ScalarHasOne);
 
-    impl_update_fn_op_method!(dec, K, I128Scalar, I128ScalarHasOne);
+    impl_update_fn_op_method!(dec, K, i128, I128HasOne); //I128Scalar, I128ScalarHasOne);
 
 }
 
@@ -355,15 +359,15 @@ impl<K> NumericNamespace<K, u64>
 
 }
 
-impl<K> NumericNamespace<K, U128Scalar>
+impl<K> NumericNamespace<K, u128> //U128Scalar>
     where K: 'static + Clone + Eq + Hash + Ord + Sync
 {
 
-    impl_update_fn_op_method!(not, K, U128Scalar);
+    impl_update_fn_op_method!(not, K, u128); //U128Scalar);
 
-    impl_update_fn_op_method!(inc, K, U128Scalar, U128ScalarHasOne);
+    impl_update_fn_op_method!(inc, K, u128, U128HasOne); //U128Scalar, U128ScalarHasOne);
 
-    impl_update_fn_op_method!(dec, K, U128Scalar, U128ScalarHasOne);
+    impl_update_fn_op_method!(dec, K, u128, U128HasOne); // U128Scalar, U128ScalarHasOne);
 
 }
 

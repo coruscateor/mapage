@@ -11,20 +11,20 @@ use super::char_namespace::CharNamespace;
 #[cfg(any(feature = "all_types", feature = "f32", feature = "f64", feature = "i8", feature = "i16", feature = "i32", feature = "i64", feature = "i128", feature = "isize", feature = "u8", feature = "u16", feature = "u32", feature = "u64", feature = "u128", feature = "usize"))]
 use super::numeric_namespace::NumericNamespace; 
 
-#[cfg(any(feature = "all_types", feature = "i128", feature = "Vec_i128"))]
-use crate::types::async_graphql_values::I128Scalar;
+//#[cfg(any(feature = "all_types", feature = "i128", feature = "Vec_i128"))]
+//use crate::types::async_graphql_values::I128Scalar;
 
-#[cfg(any(feature = "all_types", feature = "u128", feature = "Vec_u128"))]
-use crate::types::async_graphql_values::U128Scalar;
+//#[cfg(any(feature = "all_types", feature = "u128", feature = "Vec_u128"))]
+//use crate::types::async_graphql_values::U128Scalar;
 
 #[cfg(any(feature = "all_types", feature = "String"))]
 use super::string_namespace::StringNamespace;
 
-#[cfg(any(feature = "all_types", feature = "Whatever"))]
-use super::whatever_namespace::WhateverNamespace;
+//#[cfg(any(feature = "all_types", feature = "Whatever"))]
+//use super::whatever_namespace::WhateverNamespace;
 
-#[cfg(any(feature = "all_types", feature = "SelectedType"))]
-use super::selected_type_namespace::SelectedTypeNamespace;
+//#[cfg(any(feature = "all_types", feature = "SelectedType"))]
+//use super::selected_type_namespace::SelectedTypeNamespace;
 
 //Key Types
 
@@ -94,11 +94,11 @@ use super::collections::vec_numeric_namespace::VecNumericNamespace;
 #[cfg(any(feature = "all_types", feature = "VecString"))]
 use super::collections::vec_string_namespace::VecStringNamespace;
 
-#[cfg(any(feature = "all_types", feature = "VecWhatever"))]
-use super::collections::vec_whatever_namespace::VecWhateverNamespace;
+//#[cfg(any(feature = "all_types", feature = "VecWhatever"))]
+//use super::collections::vec_whatever_namespace::VecWhateverNamespace;
 
-#[cfg(any(feature = "all_types", feature = "VecSelectedType"))]
-use super::collections::vec_selected_type_namespace::VecSelectedTypeNamespace;
+//#[cfg(any(feature = "all_types", feature = "VecSelectedType"))]
+//use super::collections::vec_selected_type_namespace::VecSelectedTypeNamespace;
 
 pub struct Store 
 {
@@ -128,7 +128,7 @@ pub struct Store
     i64_namespace: NumericNamespace<I64KeyType, i64>,
 
     #[cfg(any(feature = "all_types", feature = "i128"))]
-    i128_namespace: NumericNamespace<I128KeyType, I128Scalar>,
+    i128_namespace: NumericNamespace<I128KeyType, i128>, //I128Scalar>,
 
     #[cfg(any(feature = "all_types", feature = "isize"))]
     isize_namespace: NumericNamespace<ISizeKeyType, isize>,
@@ -146,7 +146,7 @@ pub struct Store
     u64_namespace: NumericNamespace<U64KeyType, u64>,
 
     #[cfg(any(feature = "all_types", feature = "u128"))]
-    u128_namespace: NumericNamespace<U128KeyType, U128Scalar>,
+    u128_namespace: NumericNamespace<U128KeyType, u128>, //U128Scalar>,
 
     #[cfg(any(feature = "all_types", feature = "usize"))]
     usize_namespace: NumericNamespace<USizeKeyType, usize>,
@@ -156,11 +156,11 @@ pub struct Store
 
     //misc
 
-    #[cfg(any(feature = "all_types", feature = "Whatever"))]
-    whatever_namespace: WhateverNamespace,
+    //#[cfg(any(feature = "all_types", feature = "Whatever"))]
+    //whatever_namespace: WhateverNamespace,
 
-    #[cfg(any(feature = "all_types", feature = "SelectedType"))]
-    selected_type_namespace: SelectedTypeNamespace,
+    //#[cfg(any(feature = "all_types", feature = "SelectedType"))]
+    //selected_type_namespace: SelectedTypeNamespace,
 
     //vecs
 
@@ -189,7 +189,7 @@ pub struct Store
     vec_i64_namespace: VecNumericNamespace<I64KeyType, i64>,
 
     #[cfg(any(feature = "all_types", feature = "Vec_i128"))]
-    vec_i128_namespace: VecNumericNamespace<I128KeyType, I128Scalar>,
+    vec_i128_namespace: VecNumericNamespace<I128KeyType, i128>, //I128Scalar>,
 
     #[cfg(any(feature = "all_types", feature = "Vec_isize"))]
     vec_isize_namespace: VecNumericNamespace<ISizeKeyType, isize>,
@@ -207,7 +207,7 @@ pub struct Store
     vec_u64_namespace: VecNumericNamespace<U64KeyType, u64>,
 
     #[cfg(any(feature = "all_types", feature = "Vec_u128"))]
-    vec_u128_namespace: VecNumericNamespace<U128KeyType, U128Scalar>,
+    vec_u128_namespace: VecNumericNamespace<U128KeyType, u128>, //U128Scalar>,
 
     #[cfg(any(feature = "all_types", feature = "Vec_usize"))]
     vec_usize_namespace: VecNumericNamespace<USizeKeyType, usize>,
@@ -217,11 +217,13 @@ pub struct Store
 
     //misc
 
+    /*
     #[cfg(any(feature = "all_types", feature = "VecWhatever"))]
     vec_whatever_namespace: VecWhateverNamespace,
 
     #[cfg(any(feature = "all_types", feature = "VecSelectedType"))]
     vec_selected_type_namespace: VecSelectedTypeNamespace
+    */
 
 }
 
@@ -287,11 +289,11 @@ impl Store
 
             //misc
 
-            #[cfg(any(feature = "all_types", feature = "Whatever"))]
-            whatever_namespace: WhateverNamespace::new(),
+            //#[cfg(any(feature = "all_types", feature = "Whatever"))]
+            //whatever_namespace: WhateverNamespace::new(),
 
-            #[cfg(any(feature = "all_types", feature = "SelectedType"))]
-            selected_type_namespace: SelectedTypeNamespace::new(),
+            //#[cfg(any(feature = "all_types", feature = "SelectedType"))]
+            //selected_type_namespace: SelectedTypeNamespace::new(),
 
             //vecs
 
@@ -347,13 +349,15 @@ impl Store
             vec_string_namespace: VecStringNamespace::new(),
         
             //misc
-        
+            
+            /*
             #[cfg(any(feature = "all_types", feature = "VecWhatever"))]
             vec_whatever_namespace: VecWhateverNamespace::new(),
         
             #[cfg(any(feature = "all_types", feature = "VecSelectedType"))]
             vec_selected_type_namespace: VecSelectedTypeNamespace::new()
-            
+            */
+
         }
 
     }
@@ -383,7 +387,7 @@ impl Store
     impl_get_ref!(i64_namespace, NumericNamespace<I64KeyType, i64>);
 
     #[cfg(any(feature = "all_types", feature = "i128"))]
-    impl_get_ref!(i128_namespace, NumericNamespace<I128KeyType, I128Scalar>);
+    impl_get_ref!(i128_namespace, NumericNamespace<I128KeyType, i128>); //I128Scalar>);
 
     #[cfg(any(feature = "all_types", feature = "isize"))]
     impl_get_ref!(isize_namespace, NumericNamespace<ISizeKeyType, isize>);
@@ -401,7 +405,7 @@ impl Store
     impl_get_ref!(u64_namespace, NumericNamespace<U64KeyType, u64>);
 
     #[cfg(any(feature = "all_types", feature = "u128"))]
-    impl_get_ref!(u128_namespace, NumericNamespace<U128KeyType, U128Scalar>);
+    impl_get_ref!(u128_namespace, NumericNamespace<U128KeyType, u128>); //U128Scalar>);
 
     #[cfg(any(feature = "all_types", feature = "usize"))]
     impl_get_ref!(usize_namespace, NumericNamespace<USizeKeyType, usize>);
@@ -409,11 +413,11 @@ impl Store
     #[cfg(any(feature = "all_types", feature = "String"))]
     impl_get_ref!(string_namespace, StringNamespace);
 
-    #[cfg(any(feature = "all_types", feature = "Whatever"))]
-    impl_get_ref!(whatever_namespace, WhateverNamespace);
+    //#[cfg(any(feature = "all_types", feature = "Whatever"))]
+    //impl_get_ref!(whatever_namespace, WhateverNamespace);
 
-    #[cfg(any(feature = "all_types", feature = "SelectedType"))]
-    impl_get_ref!(selected_type_namespace, SelectedTypeNamespace);
+    //#[cfg(any(feature = "all_types", feature = "SelectedType"))]
+    //impl_get_ref!(selected_type_namespace, SelectedTypeNamespace);
 
     //vecs
 
@@ -442,7 +446,7 @@ impl Store
     impl_get_ref!(vec_i64_namespace, VecNumericNamespace<I64KeyType, i64>);
 
     #[cfg(any(feature = "all_types", feature = "Vec_i128"))]
-    impl_get_ref!(vec_i128_namespace, VecNumericNamespace<I128KeyType, I128Scalar>);
+    impl_get_ref!(vec_i128_namespace, VecNumericNamespace<I128KeyType, i128>); //I128Scalar>);
 
     #[cfg(any(feature = "all_types", feature = "Vec_isize"))]
     impl_get_ref!(vec_isize_namespace, VecNumericNamespace<ISizeKeyType, isize>);
@@ -460,7 +464,7 @@ impl Store
     impl_get_ref!(vec_u64_namespace, VecNumericNamespace<U64KeyType, u64>);
 
     #[cfg(any(feature = "all_types", feature = "Vec_u128"))]
-    impl_get_ref!(vec_u128_namespace, VecNumericNamespace<U128KeyType, U128Scalar>);
+    impl_get_ref!(vec_u128_namespace, VecNumericNamespace<U128KeyType, u128>); //U128Scalar>);
 
     #[cfg(any(feature = "all_types", feature = "Vec_usize"))]
     impl_get_ref!(vec_usize_namespace, VecNumericNamespace<USizeKeyType, usize>);
@@ -468,11 +472,13 @@ impl Store
     #[cfg(any(feature = "all_types", feature = "VecString"))]
     impl_get_ref!(vec_string_namespace, VecStringNamespace);
 
+    /*
     #[cfg(any(feature = "all_types", feature = "VecWhatever"))]
     impl_get_ref!(vec_whatever_namespace, VecWhateverNamespace);
 
     #[cfg(any(feature = "all_types", feature = "VecSelectedType"))]
     impl_get_ref!(vec_selected_type_namespace, VecSelectedTypeNamespace);
+    */
     
 }
 

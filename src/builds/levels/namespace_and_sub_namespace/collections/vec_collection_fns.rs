@@ -2,7 +2,7 @@ use std::{vec::Vec, sync::Arc, mem};
 
 use core::mem::size_of;
 
-use async_graphql::{ErrorExtensionValues, ErrorExtensions};
+use anyhow::{Result, Error};
 
 use crate::types::get_ok_value_str;
 
@@ -58,7 +58,7 @@ pub fn arc_vec_with_no_capacity<T>() -> Arc<Vec<T>>
 
 //capacity
 
-pub fn get_vec_capacity_fn<T>() -> impl FnOnce(&Vec<T>) -> async_graphql::Result<usize>
+pub fn get_vec_capacity_fn<T>() -> impl FnOnce(&Vec<T>) -> Result<usize>
     //where F:  //, F
 {
     
@@ -71,7 +71,7 @@ pub fn get_vec_capacity_fn<T>() -> impl FnOnce(&Vec<T>) -> async_graphql::Result
 
 }
 
-fn will_go_over_capacity<T>(col: &Vec<T>, additional: usize) -> Option<async_graphql::Result<&'static str>>
+fn will_go_over_capacity<T>(col: &Vec<T>, additional: usize) -> Option<Result<&'static str>>
 {
 
     //Should be in Corlib
@@ -98,7 +98,7 @@ fn will_go_over_capacity<T>(col: &Vec<T>, additional: usize) -> Option<async_gra
     if new_cap_bytes > max_bytes
     {
 
-        return Some(Err(async_graphql::Error::new("Error: new capacity exeeds isize::MAX bytes of Vec contained type.")));
+        return Some(Err(Error::msg("Error: new capacity exeeds isize::MAX bytes of Vec contained type.")));
 
     }
 
@@ -110,7 +110,7 @@ fn will_go_over_capacity<T>(col: &Vec<T>, additional: usize) -> Option<async_gra
 
 //len
 
-pub fn get_vec_len_fn<T>() -> impl FnOnce(&Vec<T>) -> async_graphql::Result<usize>
+pub fn get_vec_len_fn<T>() -> impl FnOnce(&Vec<T>) -> Result<usize>
 {
     
     |col: &Vec<T>|
@@ -124,7 +124,7 @@ pub fn get_vec_len_fn<T>() -> impl FnOnce(&Vec<T>) -> async_graphql::Result<usiz
 
 //is_empty
 
-pub fn get_vec_is_empty_fn<T>() -> impl FnOnce(&Vec<T>) -> async_graphql::Result<bool>
+pub fn get_vec_is_empty_fn<T>() -> impl FnOnce(&Vec<T>) -> Result<bool>
 {
     
     |col: &Vec<T>|
@@ -139,7 +139,7 @@ pub fn get_vec_is_empty_fn<T>() -> impl FnOnce(&Vec<T>) -> async_graphql::Result
 //is_ascii
 
 /*
-pub fn get_vec_is_ascii_fn<T>() -> impl Fn(&Vec<T>) -> async_graphql::Result<bool>
+pub fn get_vec_is_ascii_fn<T>() -> impl Fn(&Vec<T>) -> Result<bool>
 {
     
     |col: &Vec<T>|
@@ -154,7 +154,7 @@ pub fn get_vec_is_ascii_fn<T>() -> impl Fn(&Vec<T>) -> async_graphql::Result<boo
 
 //first
 
-pub fn get_vec_first_fn<T>() -> impl FnOnce(&Vec<T>) -> async_graphql::Result<Option<T>>
+pub fn get_vec_first_fn<T>() -> impl FnOnce(&Vec<T>) -> Result<Option<T>>
     where T : Clone
 {
     
@@ -169,7 +169,7 @@ pub fn get_vec_first_fn<T>() -> impl FnOnce(&Vec<T>) -> async_graphql::Result<Op
 
 //last
 
-pub fn get_vec_last_fn<T>() -> impl FnOnce(&Vec<T>) -> async_graphql::Result<Option<T>>
+pub fn get_vec_last_fn<T>() -> impl FnOnce(&Vec<T>) -> Result<Option<T>>
     where T : Clone
 {
     
@@ -184,7 +184,7 @@ pub fn get_vec_last_fn<T>() -> impl FnOnce(&Vec<T>) -> async_graphql::Result<Opt
 
 //contains
 
-pub fn get_vec_contains_fn<'a, T>(x: &'a T) -> impl FnOnce(&'a Vec<T>) -> async_graphql::Result<bool>
+pub fn get_vec_contains_fn<'a, T>(x: &'a T) -> impl FnOnce(&'a Vec<T>) -> Result<bool>
     where T : PartialEq
 {
     
@@ -199,7 +199,7 @@ pub fn get_vec_contains_fn<'a, T>(x: &'a T) -> impl FnOnce(&'a Vec<T>) -> async_
 
 //binary_search
 
-pub fn get_vec_binary_search_fn<T>(x: T) -> impl FnOnce(&Vec<T>) -> async_graphql::Result<usize> //<'a, T>(x: &'a T) -> impl FnOnce(&'a Vec<T>) -> async_graphql::Result<usize>
+pub fn get_vec_binary_search_fn<T>(x: T) -> impl FnOnce(&Vec<T>) -> Result<usize>
     where T : Ord
 {
     
@@ -212,21 +212,15 @@ pub fn get_vec_binary_search_fn<T>(x: T) -> impl FnOnce(&Vec<T>) -> async_graphq
             Result::Ok(val) =>
             {
 
-                async_graphql::Result::Ok(val)
+                Result::Ok(val)
 
             },
             Result::Err(err) =>
             {
 
-                let mut ag_err = async_graphql::Error::new("Binary search error");
-
-                ag_err = ag_err.extend_with(|_, extv| {
-
-                    extv.set("index", err);
-
-                });
-
-                async_graphql::Result::Err(ag_err)
+                let mut ag_err = Error::msg("Binary search error");
+                
+                Result::Err(ag_err)
 
             }
 
@@ -242,7 +236,7 @@ pub fn get_vec_binary_search_fn<T>(x: T) -> impl FnOnce(&Vec<T>) -> async_graphq
 
 //
 
-fn is_out_of_index<T, R>(col: &Vec<T>, index: usize) -> Option<async_graphql::Result<R>>
+fn is_out_of_index<T, R>(col: &Vec<T>, index: usize) -> Option<Result<R>>
 {
 
     let len = col.len();
@@ -250,7 +244,7 @@ fn is_out_of_index<T, R>(col: &Vec<T>, index: usize) -> Option<async_graphql::Re
     if len == 0
     {
 
-        return Some(Err(async_graphql::Error::new("Error: Vec is empty.")));
+        return Some(Err(Error::msg("Error: Vec is empty.")));
 
     }
 
@@ -263,13 +257,13 @@ fn is_out_of_index<T, R>(col: &Vec<T>, index: usize) -> Option<async_graphql::Re
 
     }
 
-    Some(Err(async_graphql::Error::new("Error: The provided index is out of bounds.")))
+    Some(Err(Error::msg("Error: The provided index is out of bounds.")))
 
 }
 
 //
 
-fn is_out_of_index_only<T, R>(col: &Vec<T>, index: usize) -> Option<async_graphql::Result<R>> //&'static str
+fn is_out_of_index_only<T, R>(col: &Vec<T>, index: usize) -> Option<Result<R>>
 {
 
     let len = col.len();
@@ -288,11 +282,11 @@ fn is_out_of_index_only<T, R>(col: &Vec<T>, index: usize) -> Option<async_graphq
 
     }
 
-    Some(Err(async_graphql::Error::new("Error: The provided index is out of bounds.")))
+    Some(Err(Error::msg("Error: The provided index is out of bounds.")))
 
 }
 
-fn is_out_of_index_must_have_len<T>(col: &Vec<T>, index: usize) -> Option<async_graphql::Result<&'static str>>
+fn is_out_of_index_must_have_len<T>(col: &Vec<T>, index: usize) -> Option<Result<&'static str>>
 {
 
     let len = col.len();
@@ -300,7 +294,7 @@ fn is_out_of_index_must_have_len<T>(col: &Vec<T>, index: usize) -> Option<async_
     if len == 0
     {
 
-        return Some(Err(async_graphql::Error::new("Error: The provided index is out of bounds.")));
+        return Some(Err(Error::msg("Error: The provided index is out of bounds.")));
 
     }
 
@@ -311,13 +305,13 @@ fn is_out_of_index_must_have_len<T>(col: &Vec<T>, index: usize) -> Option<async_
 
     }
 
-    Some(Err(async_graphql::Error::new("Error: The provided index is out of bounds.")))
+    Some(Err(Error::msg("Error: The provided index is out of bounds.")))
 
 }
 
 //index - get_at_index
 
-pub fn get_vec_index_fn<T>(index: usize) -> impl FnOnce(&Vec<T>) -> async_graphql::Result<T>
+pub fn get_vec_index_fn<T>(index: usize) -> impl FnOnce(&Vec<T>) -> Result<T>
     where T : Clone
 {
     
@@ -345,7 +339,7 @@ pub fn get_vec_index_fn<T>(index: usize) -> impl FnOnce(&Vec<T>) -> async_graphq
 
 //index_mut - set_at_index
 
-pub fn get_vec_index_mut_fn<T>(index: usize, value: T) -> impl FnOnce(&mut Vec<T>) -> async_graphql::Result<&'static str>
+pub fn get_vec_index_mut_fn<T>(index: usize, value: T) -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
     where T : Clone
 {
     
@@ -369,7 +363,7 @@ pub fn get_vec_index_mut_fn<T>(index: usize, value: T) -> impl FnOnce(&mut Vec<T
 
 //reserve
 
-pub fn get_vec_reserve_fn<T>(additional: usize) -> impl FnOnce(&mut Vec<T>) -> async_graphql::Result<&'static str>
+pub fn get_vec_reserve_fn<T>(additional: usize) -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
 {
 
     move |col: &mut Vec<T>|
@@ -394,7 +388,7 @@ pub fn get_vec_reserve_fn<T>(additional: usize) -> impl FnOnce(&mut Vec<T>) -> a
 
 //reserve_exact
 
-pub fn get_vec_reserve_exact_fn<T>(additional: usize) -> impl FnOnce(&mut Vec<T>) -> async_graphql::Result<&'static str>
+pub fn get_vec_reserve_exact_fn<T>(additional: usize) -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
 {
 
     move |col: &mut Vec<T>|
@@ -419,7 +413,7 @@ pub fn get_vec_reserve_exact_fn<T>(additional: usize) -> impl FnOnce(&mut Vec<T>
 
 //try_reserve
 
-pub fn get_vec_try_reserve_fn<T>(additional: usize) -> impl FnOnce(&mut Vec<T>) -> async_graphql::Result<&'static str>
+pub fn get_vec_try_reserve_fn<T>(additional: usize) -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
 {
 
     move |col: &mut Vec<T>|
@@ -428,7 +422,7 @@ pub fn get_vec_try_reserve_fn<T>(additional: usize) -> impl FnOnce(&mut Vec<T>) 
         if let Err(_err) = col.try_reserve(additional)
         {
 
-            return Result::Err(async_graphql::Error::new("Error"));
+            return Result::Err(Error::msg("Error"));
 
         }
 
@@ -440,7 +434,7 @@ pub fn get_vec_try_reserve_fn<T>(additional: usize) -> impl FnOnce(&mut Vec<T>) 
 
 //try_reserve_exact
 
-pub fn get_vec_try_reserve_exact_fn<T>(additional: usize) -> impl FnOnce(&mut Vec<T>) -> async_graphql::Result<&'static str>
+pub fn get_vec_try_reserve_exact_fn<T>(additional: usize) -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
 {
 
     move |col: &mut Vec<T>|
@@ -449,7 +443,7 @@ pub fn get_vec_try_reserve_exact_fn<T>(additional: usize) -> impl FnOnce(&mut Ve
         if let Err(_err) = col.try_reserve_exact(additional)
         {
 
-            return Result::Err(async_graphql::Error::new("Error"));
+            return Result::Err(Error::msg("Error"));
 
         }
         
@@ -461,7 +455,7 @@ pub fn get_vec_try_reserve_exact_fn<T>(additional: usize) -> impl FnOnce(&mut Ve
 
 //shrink_to_fit
 
-pub fn get_vec_shrink_to_fit_fn<T>() -> impl FnOnce(&mut Vec<T>) -> async_graphql::Result<&'static str>
+pub fn get_vec_shrink_to_fit_fn<T>() -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
 {
 
     move |col: &mut Vec<T>|
@@ -477,7 +471,7 @@ pub fn get_vec_shrink_to_fit_fn<T>() -> impl FnOnce(&mut Vec<T>) -> async_graphq
 
 //shrink_to
 
-pub fn get_vec_shrink_to_fn<T>(min_capacity: usize) -> impl FnOnce(&mut Vec<T>) -> async_graphql::Result<&'static str>
+pub fn get_vec_shrink_to_fn<T>(min_capacity: usize) -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
 {
 
     move |col: &mut Vec<T>|
@@ -493,7 +487,7 @@ pub fn get_vec_shrink_to_fn<T>(min_capacity: usize) -> impl FnOnce(&mut Vec<T>) 
 
 //truncate
 
-pub fn get_vec_truncate_fn<T>(len: usize) -> impl FnOnce(&mut Vec<T>) -> async_graphql::Result<&'static str>
+pub fn get_vec_truncate_fn<T>(len: usize) -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
 {
 
     move |col: &mut Vec<T>|
@@ -513,7 +507,7 @@ pub fn get_vec_truncate_fn<T>(len: usize) -> impl FnOnce(&mut Vec<T>) -> async_g
 
 //insert
 
-pub fn get_vec_insert_fn<T>(index: usize, element: T) -> impl FnOnce(&mut Vec<T>) -> async_graphql::Result<&'static str>
+pub fn get_vec_insert_fn<T>(index: usize, element: T) -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
 {
 
     //let mut my_index = Some(index);
@@ -547,7 +541,7 @@ pub fn get_vec_insert_fn<T>(index: usize, element: T) -> impl FnOnce(&mut Vec<T>
 
 //push
 
-pub fn get_vec_push_fn<T>(value: T) -> impl FnOnce(&mut Vec<T>) -> async_graphql::Result<&'static str>
+pub fn get_vec_push_fn<T>(value: T) -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
 {
 
     let mut my_value = Some(value);
@@ -576,7 +570,7 @@ pub fn get_vec_push_fn<T>(value: T) -> impl FnOnce(&mut Vec<T>) -> async_graphql
 
 //pop
 
-pub fn get_vec_pop_fn<T>() -> impl FnOnce(&mut Vec<T>) -> async_graphql::Result<Option<T>>
+pub fn get_vec_pop_fn<T>() -> impl FnOnce(&mut Vec<T>) -> Result<Option<T>>
 {
     
     move |col: &mut Vec<T>|
@@ -593,7 +587,7 @@ pub fn get_vec_pop_fn<T>() -> impl FnOnce(&mut Vec<T>) -> async_graphql::Result<
 //append
 
 /*
-pub fn get_vec_append_fn<'a, T>(other: &'a mut Vec<T>) -> impl FnOnce(&'a mut Vec<T>) -> async_graphql::Result<&'static str>
+pub fn get_vec_append_fn<'a, T>(other: &'a mut Vec<T>) -> impl FnOnce(&'a mut Vec<T>) -> Result<&'static str>
 {
     
     let mv = move |col: &'a mut Vec<T>|
@@ -621,7 +615,7 @@ pub fn get_vec_append_fn<'a, T>(other: &'a mut Vec<T>) -> impl FnOnce(&'a mut Ve
 }
 */
 
-pub fn get_vec_append_fn<T>(mut other: Vec<T>) -> impl FnOnce(&mut Vec<T>) -> async_graphql::Result<&'static str> //(async_graphql::Result<&'static str>, Vec<T>)
+pub fn get_vec_append_fn<T>(mut other: Vec<T>) -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
 {
     
     move |col: &mut Vec<T>|
@@ -650,7 +644,7 @@ pub fn get_vec_append_fn<T>(mut other: Vec<T>) -> impl FnOnce(&mut Vec<T>) -> as
 
 //clear
 
-pub fn get_vec_clear_fn<T>() -> impl FnOnce(&mut Vec<T>) -> async_graphql::Result<&'static str>
+pub fn get_vec_clear_fn<T>() -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
 {
     
     move |col: &mut Vec<T>|
@@ -666,7 +660,7 @@ pub fn get_vec_clear_fn<T>() -> impl FnOnce(&mut Vec<T>) -> async_graphql::Resul
 
 //split_off
 
-pub fn get_vec_split_off_fn<T>(at: usize) -> impl FnOnce(&mut Vec<T>) -> async_graphql::Result<Vec<T>>
+pub fn get_vec_split_off_fn<T>(at: usize) -> impl FnOnce(&mut Vec<T>) -> Result<Vec<T>>
 {
     
     move |col: &mut Vec<T>|
@@ -687,7 +681,7 @@ pub fn get_vec_split_off_fn<T>(at: usize) -> impl FnOnce(&mut Vec<T>) -> async_g
 
 //resize
 
-pub fn get_vec_resize_fn<T>(new_len: usize, value: T) -> impl FnOnce(&mut Vec<T>) -> async_graphql::Result<&'static str>
+pub fn get_vec_resize_fn<T>(new_len: usize, value: T) -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
     where T : Clone
 {
 
@@ -708,7 +702,7 @@ pub fn get_vec_resize_fn<T>(new_len: usize, value: T) -> impl FnOnce(&mut Vec<T>
 
 //dedup
 
-pub fn get_vec_dedup_fn<T>() -> impl FnOnce(&mut Vec<T>) -> async_graphql::Result<&'static str>
+pub fn get_vec_dedup_fn<T>() -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
     where T : PartialEq
 {
     
@@ -725,7 +719,7 @@ pub fn get_vec_dedup_fn<T>() -> impl FnOnce(&mut Vec<T>) -> async_graphql::Resul
 
 //sort_unstable
 
-pub fn get_vec_sort_unstable_fn<T>() -> impl FnOnce(&mut Vec<T>) -> async_graphql::Result<&'static str>
+pub fn get_vec_sort_unstable_fn<T>() -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
     where T : Ord
 {
     
@@ -742,7 +736,7 @@ pub fn get_vec_sort_unstable_fn<T>() -> impl FnOnce(&mut Vec<T>) -> async_graphq
 
 //rotate_left
 
-pub fn get_vec_rotate_left_fn<T>(mid: usize) -> impl FnOnce(&mut Vec<T>) -> async_graphql::Result<&'static str>
+pub fn get_vec_rotate_left_fn<T>(mid: usize) -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
     where T : Ord
 {
 
@@ -772,7 +766,7 @@ pub fn get_vec_rotate_left_fn<T>(mid: usize) -> impl FnOnce(&mut Vec<T>) -> asyn
 
 //rotate_right
 
-pub fn get_vec_rotate_right_fn<T>(mid: usize) -> impl FnOnce(&mut Vec<T>) -> async_graphql::Result<&'static str>
+pub fn get_vec_rotate_right_fn<T>(mid: usize) -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
     where T : Ord
 {
 
@@ -802,7 +796,7 @@ pub fn get_vec_rotate_right_fn<T>(mid: usize) -> impl FnOnce(&mut Vec<T>) -> asy
 
 //fill
 
-pub fn get_vec_fill_fn<T>(value: T) -> impl FnOnce(&mut Vec<T>) -> async_graphql::Result<&'static str>
+pub fn get_vec_fill_fn<T>(value: T) -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
     where T : Clone
 {
 
@@ -823,7 +817,7 @@ pub fn get_vec_fill_fn<T>(value: T) -> impl FnOnce(&mut Vec<T>) -> async_graphql
 
 //sort
 
-pub fn get_vec_sort_fn<T>() -> impl FnOnce(&mut Vec<T>) -> async_graphql::Result<&'static str>
+pub fn get_vec_sort_fn<T>() -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
     where T : Ord
 {
     
@@ -840,7 +834,7 @@ pub fn get_vec_sort_fn<T>() -> impl FnOnce(&mut Vec<T>) -> async_graphql::Result
 
 //swap
 
-pub fn get_vec_swap_fn<T>(a: usize, b: usize) -> impl FnOnce(&mut Vec<T>) -> async_graphql::Result<&'static str>
+pub fn get_vec_swap_fn<T>(a: usize, b: usize) -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
     where T : Ord
 {
 
@@ -875,7 +869,7 @@ pub fn get_vec_swap_fn<T>(a: usize, b: usize) -> impl FnOnce(&mut Vec<T>) -> asy
 
 //reverse
 
-pub fn get_vec_reverse_fn<T>() -> impl FnOnce(&mut Vec<T>) -> async_graphql::Result<&'static str>
+pub fn get_vec_reverse_fn<T>() -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
 {
     
     move |col: &mut Vec<T>|
@@ -893,7 +887,7 @@ pub fn get_vec_reverse_fn<T>() -> impl FnOnce(&mut Vec<T>) -> async_graphql::Res
 
 //
 
-pub fn get_vec_retrieve_contents_fn<T>() -> impl FnOnce(&mut Vec<T>) -> async_graphql::Result<Vec<T>>
+pub fn get_vec_retrieve_contents_fn<T>() -> impl FnOnce(&mut Vec<T>) -> Result<Vec<T>>
 {
 
     move |col: &mut Vec<T>|

@@ -8,6 +8,8 @@ use crate::types::{get_ok_value_str};
 
 use std::mem::replace;
 
+use anyhow::Result;
+
 //Non-async methods are appended with "_non_async" - features will probably be used actually
 
 pub struct HashMapNamespace<K, V>
@@ -36,7 +38,7 @@ impl<K, V> HashMapNamespace<K, V>
 
     }
 
-    pub async fn insert(&self, key: K, value: V) -> async_graphql::Result<&'static str>
+    pub async fn insert(&self, key: K, value: V) -> Result<&'static str>
     {
         
         let res = self.map.insert_async(key, value);
@@ -52,7 +54,7 @@ impl<K, V> HashMapNamespace<K, V>
 
     }
 
-    pub async fn update(&self, key: &K, value: V) -> async_graphql::Result<&'static str>
+    pub async fn update(&self, key: &K, value: V) -> Result<&'static str>
     {
 
         let res = self.map.update_async(key, |_, v| { *v = value; });
@@ -83,10 +85,10 @@ impl<K, V> HashMapNamespace<K, V>
 
     //calling functions etc
 
-    //updater must return async_graphql::Result<R>
+    //updater must return Result<R>
 
-    pub async fn update_fn<R, FN>(&self, key: &K, mut updater: FN) -> async_graphql::Result<R>
-        where FN: FnOnce(&mut V) -> async_graphql::Result<R>
+    pub async fn update_fn<R, FN>(&self, key: &K, mut updater: FN) -> Result<R>
+        where FN: FnOnce(&mut V) -> Result<R>
     {
 
         let res = self.map.update_async(&key, |_, v| { updater(v) });
@@ -102,8 +104,8 @@ impl<K, V> HashMapNamespace<K, V>
 
     }
 
-    pub async fn update_kv_fn<R, FN>(&self, key: &K, mut updater: FN) -> async_graphql::Result<R>
-        where FN: FnOnce(&K, &mut V) -> async_graphql::Result<R>
+    pub async fn update_kv_fn<R, FN>(&self, key: &K, mut updater: FN) -> Result<R>
+        where FN: FnOnce(&K, &mut V) -> Result<R>
     {
 
         let res = self.map.update_async(&key, |k, v| { updater(k, v) });
@@ -118,7 +120,7 @@ impl<K, V> HashMapNamespace<K, V>
 
     }
 
-    pub async fn remove(&self, key: &K) -> async_graphql::Result<&'static str>
+    pub async fn remove(&self, key: &K) -> Result<&'static str>
     {
 
         let res = self.map.remove_async(key);
@@ -152,10 +154,10 @@ impl<K, V> HashMapNamespace<K, V>
 
     //read - calling functions
 
-    //reader must return async_graphql::Result<R>
+    //reader must return Result<R>
 
-    pub async fn read_fn<R, FN>(&self, key: &K, reader:FN) -> async_graphql::Result<R>
-        where FN: FnOnce(&V) -> async_graphql::Result<R>
+    pub async fn read_fn<R, FN>(&self, key: &K, reader:FN) -> Result<R>
+        where FN: FnOnce(&V) -> Result<R>
     {
 
         let res = self.map.read_async(&key, |_, v| { reader(v) });
@@ -171,8 +173,8 @@ impl<K, V> HashMapNamespace<K, V>
 
     }
 
-    pub async fn read_kv_fn<R, FN>(&self, key: &K, reader: FN) -> async_graphql::Result<R>
-        where FN: FnOnce(&K, &V) -> async_graphql::Result<R>
+    pub async fn read_kv_fn<R, FN>(&self, key: &K, reader: FN) -> Result<R>
+        where FN: FnOnce(&K, &V) -> Result<R>
     {
 
         let res = self.map.read_async(&key, |k, v| { reader(k, v) });
@@ -238,7 +240,7 @@ impl<K, V> HashMapNamespace<K, V>
 
     //
 
-    pub async fn upsert(&self, key: K, value: V) -> async_graphql::Result<&'static str>
+    pub async fn upsert(&self, key: K, value: V) -> Result<&'static str>
     {
 
         let value_ref = &value; 
@@ -249,7 +251,7 @@ impl<K, V> HashMapNamespace<K, V>
 
     }
 
-    pub async fn read(&self, key: &K) -> async_graphql::Result<V>
+    pub async fn read(&self, key: &K) -> Result<V>
     {
 
         let res = self.map.read_async(key, |_, v| v.clone());
@@ -305,7 +307,7 @@ impl<K, V> HashMapNamespace<K, V>
           V: 'static + Sync + Default + Copy + Clone
 {
 
-    pub async fn upsert_copy(&self, key: K, value: V) -> async_graphql::Result<&'static str>
+    pub async fn upsert_copy(&self, key: K, value: V) -> Result<&'static str>
     {
 
         let value_ref = &value; 
@@ -316,7 +318,7 @@ impl<K, V> HashMapNamespace<K, V>
 
     }
 
-    pub async fn read_copy(&self, key: &K) -> async_graphql::Result<V>
+    pub async fn read_copy(&self, key: &K) -> Result<V>
     {
 
         let res = self.map.read_async(key, |_, v| *v);
@@ -348,7 +350,7 @@ impl<K, V> HashMapNamespace<K, V>
           V: 'static + Sync + Default + Clone
 {
 
-    pub async fn upsert_clone(&self, key: K, value: V) -> async_graphql::Result<&'static str>
+    pub async fn upsert_clone(&self, key: K, value: V) -> Result<&'static str>
     {
 
         let value_ref = &value; 
@@ -359,7 +361,7 @@ impl<K, V> HashMapNamespace<K, V>
 
     }
 
-    pub async fn read_clone(&self, key: &K) -> async_graphql::Result<V>
+    pub async fn read_clone(&self, key: &K) -> Result<V>
     {
 
         let res = self.map.read_async(key, |_, v| v.clone());

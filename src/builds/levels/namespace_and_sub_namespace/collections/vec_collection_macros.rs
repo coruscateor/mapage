@@ -27,7 +27,7 @@ macro_rules! impl_vec_insert_new
 
         //[<$type_name _vec_new>]
 
-        pub async fn insert_new(&self, key: $key_type) -> async_graphql::Result<&'static str>
+        pub async fn insert_new(&self, key: $key_type) -> Result<&'static str>
         {
 
             let my_vec = vec_new();
@@ -47,7 +47,7 @@ macro_rules! impl_vec_insert_with_capacity
     ($key_type:ty) =>
     {
 
-        pub async fn insert_with_capacity(&self, key: $key_type, capacity: usize) -> async_graphql::Result<&'static str>
+        pub async fn insert_with_capacity(&self, key: $key_type, capacity: usize) -> Result<&'static str>
         {
 
             let my_vec = vec_with_capacity(capacity);
@@ -67,7 +67,7 @@ macro_rules! impl_vec_insert_with_no_capacity
     ($key_type:ty) =>
     {
 
-        pub async fn insert_with_no_capacity(&self, key: $key_type) -> async_graphql::Result<&'static str>
+        pub async fn insert_with_no_capacity(&self, key: $key_type) -> Result<&'static str>
         {
 
             let my_vec = vec_with_no_capacity();
@@ -89,7 +89,7 @@ macro_rules! impl_vec_read_capacity
     ($key_type:ty) =>
     {
 
-        pub async fn read_capacity(&self, key: &$key_type) -> async_graphql::Result<usize>
+        pub async fn read_capacity(&self, key: &$key_type) -> Result<usize>
         {
 
             let my_fn = get_vec_capacity_fn();
@@ -109,7 +109,7 @@ macro_rules! impl_vec_read_len
     ($key_type:ty) =>
     {
 
-        pub async fn read_len(&self, key: &$key_type) -> async_graphql::Result<usize>
+        pub async fn read_len(&self, key: &$key_type) -> Result<usize>
         {
 
             let my_fn = get_vec_len_fn();
@@ -129,7 +129,7 @@ macro_rules! impl_vec_read_is_empty
     ($key_type:ty) =>
     {
 
-        pub async fn read_is_empty(&self, key: &$key_type) -> async_graphql::Result<bool>
+        pub async fn read_is_empty(&self, key: &$key_type) -> Result<bool>
         {
 
             let my_fn = get_vec_is_empty_fn();
@@ -149,7 +149,7 @@ macro_rules! impl_vec_read_first
     ($key_type:ty, $value_type:ty) =>
     {
 
-        pub async fn read_first(&self, key: &$key_type) -> async_graphql::Result<Option<$value_type>>
+        pub async fn read_first(&self, key: &$key_type) -> Result<Option<$value_type>>
         {
 
             let my_fn = get_vec_first_fn();
@@ -169,7 +169,7 @@ macro_rules! impl_vec_read_last
     ($key_type:ty, $value_type:ty) =>
     {
 
-        pub async fn read_last(&self, key: &$key_type) -> async_graphql::Result<Option<$value_type>>
+        pub async fn read_last(&self, key: &$key_type) -> Result<Option<$value_type>>
         {
 
             let my_fn = get_vec_last_fn();
@@ -182,21 +182,6 @@ macro_rules! impl_vec_read_last
 
 }
 
-/*
-implementation of `FnOnce` is not general enough
-`impl FnOnce(&'2 Vec<bool>) -> std::result::Result<usize, async_graphql::Error>` must implement `FnOnce<(&'1 Vec<bool>,)>`, for any lifetime `'1`...
-...but it actually implements `FnOnce<(&'2 Vec<bool>,)>`, for some specific lifetime `'2`rustcClick for full compiler diagnostic
-vec_collection_macros.rs(818, 9): Error originated from macro call here
-bool_vec_namespace.rs(96, 5): Error originated from macro call here
-mismatched types
-expected associated type `<impl FnOnce(&Vec<bool>) -> std::result::Result<usize, async_graphql::Error> as FnOnce<(&Vec<bool>,)>>::Output`
-   found associated type `<impl FnOnce(&Vec<bool>) -> std::result::Result<usize, async_graphql::Error> as FnOnce<(&Vec<bool>,)>>::Output`rustcClick for full compiler diagnostic
-vec_collection_macros.rs(818, 9): Error originated from macro call here
-bool_vec_namespace.rs(96, 5): Error originated from macro call here
-hashmap_namespace.rs(158, 33): the lifetime requirement is introduced here
-No quick fixes available
-*/
-
 //Requres Ord
 
 #[macro_export]
@@ -206,7 +191,7 @@ macro_rules! impl_vec_read_binary_search
     ($key_type:ty, $value_type:ty) =>
     {
 
-        pub async fn read_binary_search(&self, key: &$key_type, x: $value_type) -> async_graphql::Result<usize> //&'static //'static 
+        pub async fn read_binary_search(&self, key: &$key_type, x: $value_type) -> Result<usize>
         {
 
             let my_fn = get_vec_binary_search_fn(x);
@@ -226,7 +211,7 @@ macro_rules! impl_vec_read_index
     ($key_type:ty, $value_type:ty) =>
     {
 
-        pub async fn read_index(&self, key: &$key_type, index: usize) -> async_graphql::Result<$value_type>
+        pub async fn read_index(&self, key: &$key_type, index: usize) -> Result<$value_type>
         {
 
             let my_fn = get_vec_index_fn::<$value_type>(index);
@@ -250,7 +235,7 @@ macro_rules! impl_vec_update_index_mut
     ($key_type:ty, $value_type:ty) =>
     {
 
-        pub async fn update_index_mut(&self, key: &$key_type, index: usize, value: $value_type) -> async_graphql::Result<&'static str>
+        pub async fn update_index_mut(&self, key: &$key_type, index: usize, value: $value_type) -> Result<&'static str>
         {
 
             let my_fn = get_vec_index_mut_fn::<$value_type>(index, value);
@@ -272,7 +257,7 @@ macro_rules! impl_vec_update_reserve
     ($key_type:ty) =>
     {
 
-        pub async fn update_reserve(&self, key: &$key_type, additional: usize) -> async_graphql::Result<&'static str>
+        pub async fn update_reserve(&self, key: &$key_type, additional: usize) -> Result<&'static str>
         {
 
             let my_fn = get_vec_reserve_fn(additional);
@@ -294,7 +279,7 @@ macro_rules! impl_vec_update_reserve_exact
     ($key_type:ty) =>
     {
 
-        pub async fn update_reserve_exact(&self, key: &$key_type, additional: usize) -> async_graphql::Result<&'static str>
+        pub async fn update_reserve_exact(&self, key: &$key_type, additional: usize) -> Result<&'static str>
         {
 
             let my_fn = get_vec_reserve_exact_fn(additional);
@@ -316,7 +301,7 @@ macro_rules! impl_vec_update_try_reserve
     ($key_type:ty) =>
     {
 
-        pub async fn update_try_reserve(&self, key: &$key_type, additional: usize) -> async_graphql::Result<&'static str>
+        pub async fn update_try_reserve(&self, key: &$key_type, additional: usize) -> Result<&'static str>
         {
 
             let my_fn = get_vec_try_reserve_fn(additional);
@@ -338,7 +323,7 @@ macro_rules! impl_vec_update_try_reserve_exact
     ($key_type:ty) =>
     {
 
-        pub async fn update_try_reserve_exact(&self, key: &$key_type, additional: usize) -> async_graphql::Result<&'static str>
+        pub async fn update_try_reserve_exact(&self, key: &$key_type, additional: usize) -> Result<&'static str>
         {
 
             let my_fn = get_vec_try_reserve_exact_fn(additional);
@@ -360,7 +345,7 @@ macro_rules! impl_vec_update_shrink_to_fit
     ($key_type:ty) =>
     {
 
-        pub async fn update_shrink_to_fit(&self, key: &$key_type) -> async_graphql::Result<&'static str>
+        pub async fn update_shrink_to_fit(&self, key: &$key_type) -> Result<&'static str>
         {
 
             let my_fn = get_vec_shrink_to_fit_fn();
@@ -382,7 +367,7 @@ macro_rules! impl_vec_update_shrink_to
     ($key_type:ty) =>
     {
 
-        pub async fn update_shrink_to(&self, key: &$key_type, min_capacity: usize) -> async_graphql::Result<&'static str>
+        pub async fn update_shrink_to(&self, key: &$key_type, min_capacity: usize) -> Result<&'static str>
         {
 
             let my_fn = get_vec_shrink_to_fn(min_capacity);
@@ -404,7 +389,7 @@ macro_rules! impl_vec_update_truncate
     ($key_type:ty) =>
     {
 
-        pub async fn update_truncate(&self, key: &$key_type, len: usize) -> async_graphql::Result<&'static str>
+        pub async fn update_truncate(&self, key: &$key_type, len: usize) -> Result<&'static str>
         {
 
             let my_fn = get_vec_truncate_fn(len);
@@ -426,7 +411,7 @@ macro_rules! impl_vec_update_insert
     ($key_type:ty, $value_type:ty) =>
     {
 
-        pub async fn update_insert(&self, key: &$key_type, index: usize, element: $value_type) -> async_graphql::Result<&'static str>
+        pub async fn update_insert(&self, key: &$key_type, index: usize, element: $value_type) -> Result<&'static str>
         {
 
             let my_fn = get_vec_insert_fn(index, element);
@@ -450,7 +435,7 @@ macro_rules! impl_vec_update_push
     ($key_type:ty, $value_type:ty) =>
     {
 
-        pub async fn update_push(&self, key: &$key_type, value: $value_type) -> async_graphql::Result<&'static str>
+        pub async fn update_push(&self, key: &$key_type, value: $value_type) -> Result<&'static str>
         {
 
             let my_fn = get_vec_push_fn(value);
@@ -474,7 +459,7 @@ macro_rules! impl_vec_update_pop
     ($key_type:ty, $value_type:ty) =>
     {
 
-        pub async fn update_pop(&self, key: &$key_type) -> async_graphql::Result<Option<$value_type>>
+        pub async fn update_pop(&self, key: &$key_type) -> Result<Option<$value_type>>
         {
 
             let my_fn = get_vec_pop_fn();
@@ -497,7 +482,7 @@ macro_rules! impl_vec_append_method
     ($key_type:ty, $value_type:ty) =>
     {
 
-        pub async fn append_method(&self, key: &$key_type, value: &'static mut Vec<$value_type>) -> async_graphql::Result<&'static str>
+        pub async fn append_method(&self, key: &$key_type, value: &'static mut Vec<$value_type>) -> Result<&'static str>
         {
 
             let my_fn = get_vec_append_fn(value); //<'static, $value_type>
@@ -511,32 +496,6 @@ macro_rules! impl_vec_append_method
 */
 
 /*
-`value` does not live long enough
-borrowed value does not live long enoughrustcClick for full compiler diagnostic
-vec_collection_macros.rs(795, 9): Error originated from macro call here
-bool_vec_namespace.rs(96, 5): Error originated from macro call here
-vec_collection_macros.rs(476, 9): `value` dropped here while still borrowed
-vec_collection_macros.rs(469, 60): binding `value` declared here
-vec_collection_macros.rs(472, 25): argument requires that `value` is borrowed for `'static`
-hashmap_namespace.rs(89, 19): due to current limitations in the borrow checker, this implies a `'static` lifetime
-No quick fixes available
- */
-
- /*
- implementation of `FnOnce` is not general enough
-`impl FnOnce(&'2 mut Vec<bool>) -> std::result::Result<&'static str, async_graphql::Error>` must implement `FnOnce<(&'1 mut Vec<bool>,)>`, for any lifetime `'1`...
-...but it actually implements `FnOnce<(&'2 mut Vec<bool>,)>`, for some specific lifetime `'2`rustcClick for full compiler diagnostic
-vec_collection_macros.rs(795, 9): Error originated from macro call here
-bool_vec_namespace.rs(96, 5): Error originated from macro call here
-mismatched types
-expected associated type `<impl FnOnce(&mut Vec<bool>) -> std::result::Result<&'static str, async_graphql::Error> as FnOnce<(&mut Vec<bool>,)>>::Output`
-   found associated type `<impl FnOnce(&mut Vec<bool>) -> std::result::Result<&'static str, async_graphql::Error> as FnOnce<(&mut Vec<bool>,)>>::Output`rustcClick for full compiler diagnostic
-vec_collection_macros.rs(795, 9): Error originated from macro call here
-bool_vec_namespace.rs(96, 5): Error originated from macro call here
-hashmap_namespace.rs(89, 37): the lifetime requirement is introduced here
-No quick fixes available
-*/
-/*
 #[macro_export]
 macro_rules! impl_vec_append_method
 {
@@ -544,7 +503,7 @@ macro_rules! impl_vec_append_method
     ($key_type:ty, $value_type:ty) =>
     {
 
-        pub async fn append_method(&self, key: &$key_type, value: Vec<$value_type>) -> async_graphql::Result<&'static str>
+        pub async fn append_method(&self, key: &$key_type, value: Vec<$value_type>) -> Result<&'static str>
         {
 
             let my_fn = get_vec_append_fn(&mut value);
@@ -564,7 +523,7 @@ macro_rules! impl_vec_update_append
     ($key_type:ty, $value_type:ty) =>
     {
 
-        pub async fn update_append(&self, key: &$key_type, value: Vec<$value_type>) -> async_graphql::Result<&'static str>
+        pub async fn update_append(&self, key: &$key_type, value: Vec<$value_type>) -> Result<&'static str>
         {
 
             let my_fn = get_vec_append_fn(value);
@@ -587,7 +546,7 @@ macro_rules! impl_vec_append_method_ref
     ($key_type:ty, $value_type:ty) =>
     {
 
-        pub async fn append_method(&self, key: &$key_type, value: MoveOnly<&mut Vec<$value_type>>) -> async_graphql::Result<&'static str>
+        pub async fn append_method(&self, key: &$key_type, value: MoveOnly<&mut Vec<$value_type>>) -> Result<&'static str>
         {
 
             let my_fn = get_vec_append_ref_fn(value);
@@ -610,7 +569,7 @@ macro_rules! impl_vec_update_clear
     ($key_type:ty, $value_type:ty) =>
     {
 
-        pub async fn update_clear(&self, key: &$key_type) -> async_graphql::Result<&'static str>
+        pub async fn update_clear(&self, key: &$key_type) -> Result<&'static str>
         {
 
             let my_fn = get_vec_clear_fn();
@@ -632,7 +591,7 @@ macro_rules! impl_vec_update_split_off
     ($key_type:ty, $value_type:ty) =>
     {
 
-        pub async fn update_split_off(&self, key: &$key_type, at: usize) -> async_graphql::Result<Vec<$value_type>>
+        pub async fn update_split_off(&self, key: &$key_type, at: usize) -> Result<Vec<$value_type>>
         {
 
             let my_fn = get_vec_split_off_fn::<$value_type>(at);
@@ -654,7 +613,7 @@ macro_rules! impl_vec_update_resize
     ($key_type:ty, $value_type:ty) =>
     {
 
-        pub async fn update_resize(&self, key: &$key_type, new_len: usize, value: $value_type) -> async_graphql::Result<&'static str>
+        pub async fn update_resize(&self, key: &$key_type, new_len: usize, value: $value_type) -> Result<&'static str>
         {
 
             let my_fn = get_vec_resize_fn(new_len, value);
@@ -680,7 +639,7 @@ macro_rules! impl_vec_update_dedup
     ($key_type:ty) =>
     {
 
-        pub async fn update_dedup(&self, key: &$key_type) -> async_graphql::Result<&'static str>
+        pub async fn update_dedup(&self, key: &$key_type) -> Result<&'static str>
         {
 
             let my_fn = get_vec_dedup_fn();
@@ -704,7 +663,7 @@ macro_rules! impl_vec_update_sort_unstable
     ($key_type:ty) =>
     {
 
-        pub async fn update_sort_unstable(&self, key: &$key_type) -> async_graphql::Result<&'static str>
+        pub async fn update_sort_unstable(&self, key: &$key_type) -> Result<&'static str>
         {
 
             let my_fn = get_vec_sort_unstable_fn();
@@ -728,7 +687,7 @@ macro_rules! impl_vec_update_rotate_left
     ($key_type:ty) =>
     {
 
-        pub async fn update_rotate_left(&self, key: &$key_type, mid: usize) -> async_graphql::Result<&'static str>
+        pub async fn update_rotate_left(&self, key: &$key_type, mid: usize) -> Result<&'static str>
         {
 
             let my_fn = get_vec_rotate_left_fn(mid);
@@ -752,7 +711,7 @@ macro_rules! impl_vec_update_rotate_right
     ($key_type:ty) =>
     {
 
-        pub async fn update_rotate_right(&self, key: &$key_type, mid: usize) -> async_graphql::Result<&'static str>
+        pub async fn update_rotate_right(&self, key: &$key_type, mid: usize) -> Result<&'static str>
         {
 
             let my_fn = get_vec_rotate_right_fn(mid);
@@ -774,7 +733,7 @@ macro_rules! impl_vec_update_fill
     ($key_type:ty, $value_type:ty) =>
     {
 
-        pub async fn update_fill(&self, key: &$key_type, value: $value_type) -> async_graphql::Result<&'static str>
+        pub async fn update_fill(&self, key: &$key_type, value: $value_type) -> Result<&'static str>
         {
 
             let my_fn = get_vec_fill_fn(value);
@@ -798,7 +757,7 @@ macro_rules! impl_vec_update_sort
     ($key_type:ty) =>
     {
 
-        pub async fn update_sort(&self, key: &$key_type) -> async_graphql::Result<&'static str>
+        pub async fn update_sort(&self, key: &$key_type) -> Result<&'static str>
         {
 
             let my_fn = get_vec_sort_fn();
@@ -822,7 +781,7 @@ macro_rules! impl_vec_update_swap
     ($key_type:ty) =>
     {
 
-        pub async fn update_swap(&self, key: &$key_type, a: usize, b: usize) -> async_graphql::Result<&'static str>
+        pub async fn update_swap(&self, key: &$key_type, a: usize, b: usize) -> Result<&'static str>
         {
 
             let my_fn = get_vec_swap_fn(a, b);
@@ -844,7 +803,7 @@ macro_rules! impl_vec_update_retrieve_contents
     ($key_type:ty, $value_type:ty) =>
     {
 
-        pub async fn update_retrieve_contents(&self, key: &$key_type) -> async_graphql::Result<Vec<$value_type>>
+        pub async fn update_retrieve_contents(&self, key: &$key_type) -> Result<Vec<$value_type>>
         {
 
             let my_fn = get_vec_retrieve_contents_fn();

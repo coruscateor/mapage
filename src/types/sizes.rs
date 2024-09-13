@@ -4,11 +4,13 @@ use std::mem::{size_of, size_of_val};
 
 //use super::{async_graphql_values::{Whatever, SelectedType}};
 
+/*
 #[cfg(any(feature = "all_types", feature = "Whatever"))]
 use super::async_graphql_values::Whatever;
 
 #[cfg(any(feature = "all_types", feature = "SelectedType"))]
 use super::async_graphql_values::SelectedType;
+*/
 
 //unit_value::*,
 
@@ -170,6 +172,7 @@ pub fn size_of_len_combined(val: &String) -> usize
 
 }
 
+/*
 #[cfg(any(feature = "all_types", feature = "Whatever"))]
 pub fn size_of_whatever() -> usize
 {
@@ -185,6 +188,7 @@ pub fn size_of_selected_type() -> usize
     size_of::<SelectedType>()
 
 }
+*/
 
 #[macro_export]
 macro_rules! impl_get_type_sizes
