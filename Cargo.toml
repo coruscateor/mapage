@@ -20,13 +20,13 @@ tokio = { version = "1.40", features = ["macros", "rt-multi-thread"] } #, "rt", 
 corlib = { path="../corlib" } #Do not remove
 #corlib = "0.1.0"
 #act_rusty = { path="../act_rusty" }
-#act_rs = { path="../act_rs" } #Do not remove
+act_rs = { path="../act_rs", features = ["tokio"] } #Do not remove
 #act_rs = "0.1.0"
 #scc = "0.11.*"
 scc = "2.*" #"1.0.*"
 #async-trait = "0.1.57"
 serde = { version = "1.0.*", features = ["derive"] } #"1.0.144"
-paste = "1.*" #.0.11"
+paste = "1.0.15" #.0.11"
 dashmap = "5.5.0"
 cfg-if = "1.0.0"
 delegate = "0.10.0"
@@ -34,9 +34,17 @@ delegate = "0.10.0"
 #WebSockets
 
 axum = "0.7.*"
-fastwebsockets = { version = "0.8.*", features = ["upgrade", "with_axum"] }
+fastwebsockets = { version = "0.8.*", features = ["upgrade", "with_axum", "unstable-split"] }
 
 anyhow = "1.0.88"
+
+hyper = "1.4.1"
+
+hyper-util = { version = "0.1.8", features = ["tokio"] }
+
+libsync = { path="../libsync", features = ["std", "crossbeam", "tokio"] }
+
+crossbeam = "0.8.4"
 
 [features]
 

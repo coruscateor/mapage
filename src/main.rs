@@ -16,7 +16,7 @@ pub use store::*;
 
 mod errors;
 
-mod websocket_actors;
+mod actors;
 
 mod simple_websocket_pipeline;
 
