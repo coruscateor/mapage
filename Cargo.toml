@@ -34,6 +34,7 @@ delegate = "0.10.0"
 #WebSockets
 
 axum = "0.7.*"
+
 fastwebsockets = { version = "0.8.*", features = ["upgrade", "with_axum", "unstable-split"] }
 
 anyhow = "1.0.88"
@@ -45,6 +46,8 @@ hyper-util = { version = "0.1.8", features = ["tokio"] }
 libsync = { path="../libsync", features = ["std", "crossbeam", "tokio"] }
 
 crossbeam = "0.8.4"
+
+bytes = "1.7.1"
 
 [features]
 

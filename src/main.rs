@@ -26,6 +26,10 @@ mod websocket_reader_and_writer;
 
 pub use websocket_reader_and_writer::*;
 
+mod owned_frame;
+
+pub use owned_frame::*;
+
 #[tokio::main]
 async fn main()
 {

@@ -17,6 +17,7 @@ pub type WebSocketReadHalf = WebSocketRead<ReadHalf<TokioIo<Upgraded>>>;
 pub type WebSocketWriteHalf = WebSocketWrite<WriteHalf<TokioIo<Upgraded>>>;
 
 //#[derive(Debug)]
+//#[derive(Clone)]
 pub enum WebSocketReader
 {
 
