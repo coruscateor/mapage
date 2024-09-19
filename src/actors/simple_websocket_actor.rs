@@ -1,12 +1,17 @@
 use std::sync::Arc;
 
+use libsync::ReceiveResult;
+use tokio::time::{Duration, Instant};
+
 use crossbeam::queue::ArrayQueue;
+
 use fastwebsockets::upgrade::{IncomingUpgrade, UpgradeFut};
 
 use fastwebsockets::{FragmentCollectorRead, Frame, OpCode, WebSocketError};
+
 use tokio::select;
 
-use crate::{OwnedFrame, Store};
+use crate::{owned_frame, OwnedFrame, Store};
 
 use crate::WebSocketReader;
 
@@ -20,20 +25,37 @@ use tokio::task::JoinHandle; //For impl_mac_task_actor_built_state
 
 use libsync::crossbeam::mpmc::tokio::array_queue::{Sender, Receiver, channel};
 
+use tokio::time::timeout_at;
+
 //Actor IO 
 
 use super::array_queue::{ActorIOClient, ActorIOServer, actor_io};
+
 use super::SimpleWebSocketActorInputMessage;
 
 pub struct SimpleWebSocketActorStateBuilder
 {
 
-    upgrade_fut: UpgradeFut
+    upgrade_fut: UpgradeFut,
+    actor_io_server: ActorIOServer<OwnedFrame, OwnedFrame>
 
 }
 
 impl SimpleWebSocketActorStateBuilder
 {
+
+    pub fn new(upgrade_fut: UpgradeFut, actor_io_server: ActorIOServer<OwnedFrame, OwnedFrame>) -> Self
+    {
+
+        Self
+        {
+
+            upgrade_fut,
+            actor_io_server
+
+        }
+
+    }
 
     pub async fn build_async(self) -> Option<SimpleWebSocketActorState>
     {
@@ -44,11 +66,13 @@ impl SimpleWebSocketActorStateBuilder
             Ok(res) =>
             {
 
+                //Build the SimpleWebSocketActorState
+
                 let (read, write) = res.split(tokio::io::split);
 
                 let reader = WebSocketReader::FragmentCollectorRead(FragmentCollectorRead::new(read));
 
-                Some(SimpleWebSocketActorState::new(reader, write))
+                Some(SimpleWebSocketActorState::new(reader, write, self.actor_io_server))
 
             }
             Err(err) =>
@@ -75,13 +99,16 @@ pub struct SimpleWebSocketActorState
     writer: WebSocketWriteHalf,
     //reader_actor_recevier: Receiver<()>
     //reader_actor_sender: Sender<()>
-    reader_actor_io_client: ActorIOClient<(), SimpleWebSocketActorInputMessage>
+    reader_actor_io_client: ActorIOClient<(), SimpleWebSocketActorInputMessage>,
+    //actor_io_server: ActorIOServer<OwnedFrame, OwnedFrame>
+    actor_io_receiver: Receiver<OwnedFrame> //External input
+
 }
 
 impl SimpleWebSocketActorState
 {
 
-    pub fn new(reader: WebSocketReader, writer: WebSocketWriteHalf) -> Self
+    pub fn new(reader: WebSocketReader, writer: WebSocketWriteHalf, actor_io_server: ActorIOServer<OwnedFrame, OwnedFrame>) -> Self //(Self, ActorIOClient<OwnedFrame, OwnedFrame>)
     {
 
         //let arc_writer = Arc::new(writer); //.clone();
@@ -90,7 +117,9 @@ impl SimpleWebSocketActorState
 
         //The SimpleWebSocketReaderActor recever needs to be part of this object.
 
-        let reader_actor_io_client = SimpleWebSocketReaderActorState::spawn(reader);
+        //let (io_client, io_server) = actor_io(50, 50);
+
+        let reader_actor_io_client = SimpleWebSocketReaderActorState::spawn(reader, actor_io_server.output_sender().clone());
 
         Self
         {
@@ -99,9 +128,24 @@ impl SimpleWebSocketActorState
             writer,
             //reader_actor_recevier
             //reader_actor_sender
-            reader_actor_io_client
+            reader_actor_io_client,
+            actor_io_receiver: actor_io_server.input_receiver().clone()
             
-        }
+        } //,
+        //io_client)
+
+    }
+
+    pub fn spawn(upgrade_fut: UpgradeFut) -> ActorIOClient<OwnedFrame, OwnedFrame>
+    {
+
+        let (io_client, io_server) = actor_io(50, 50);
+
+        let state_builder = SimpleWebSocketActorStateBuilder::new(upgrade_fut, io_server);
+
+        SimpleWebSocketActor::spawn(state_builder);
+
+        io_client
 
     }
 
@@ -112,9 +156,246 @@ impl SimpleWebSocketActorState
 
         //Get frame from previous stage
 
+        enum SelectResult
+        {
 
+            WriteFrame(Option<OwnedFrame>),
+            FromSimpleWebSocketReaderActor(Option<SimpleWebSocketActorInputMessage>)
 
-        true
+        }
+
+        let reader_actor_io_client_recv = self.reader_actor_io_client.output_receiver().recv();
+
+        let write_frame_future = self.actor_io_receiver.recv();
+
+        let select_result;
+
+        select!
+        {
+
+            biased;
+
+            res = reader_actor_io_client_recv =>
+            {
+
+                select_result = SelectResult::FromSimpleWebSocketReaderActor(res);
+
+            }
+            res = write_frame_future =>
+            {
+
+                select_result = SelectResult::WriteFrame(res);
+
+            }
+
+        }
+
+        match select_result
+        {
+
+            SelectResult::WriteFrame(opt_owned_frame) =>
+            {
+
+                if let Some(mut owned_frame) = opt_owned_frame
+                {
+
+                    if owned_frame.opcode == OpCode::Close
+                    {
+
+                        //Re-evaluate how this is done.
+
+                        let now = Instant::now();
+
+                        let soon = now.checked_add(Duration::from_secs(10)).expect("Error: Instant problems");            
+
+                        let reader_actor_io_client_recv = self.reader_actor_io_client.output_receiver().recv();
+
+                        match timeout_at(soon, reader_actor_io_client_recv).await
+                        {
+
+                            Ok(opt_res) =>
+                            {
+
+                                if let Some(res) = opt_res
+                                {
+
+                                    match res
+                                    {
+
+                                        SimpleWebSocketActorInputMessage::Disconnect => {}
+                                        SimpleWebSocketActorInputMessage::WriteFrame(mut owned_frame) =>
+                                        {
+
+                                            let mut opcode = owned_frame.opcode;
+
+                                            let frame = owned_frame.new_frame_to_be_written();
+
+                                            if let Err(err) = self.writer.write_frame(frame).await
+                                            {
+
+                                                print!("{}", err);
+
+                                            }
+
+                                            loop
+                                            {
+
+                                                if opcode != OpCode::Close
+                                                {
+
+                                                    //If you don't have the close frame yet, find the close frame with the OwnedFrames you have available.
+
+                                                    if let ReceiveResult::Ok(message) = self.reader_actor_io_client.output_receiver().try_recv()
+                                                    {
+
+                                                        match message
+                                                        {
+
+                                                            SimpleWebSocketActorInputMessage::Disconnect =>
+                                                            { 
+                                                                
+                                                                break;
+
+                                                            }
+                                                            SimpleWebSocketActorInputMessage::WriteFrame(mut owned_frame) =>
+                                                            {
+
+                                                                let frame = owned_frame.new_frame_to_be_written();
+
+                                                                if let Err(err) = self.writer.write_frame(frame).await
+                                                                {
+            
+                                                                    print!("{}", err);
+
+                                                                    break;
+            
+                                                                }
+
+                                                                opcode = owned_frame.opcode;
+
+                                                                //Cache OwnedFrame
+
+                                                                /*
+                                                                if opcode == OpCode::Close
+                                                                {
+
+                                                                    //Close OpCode received now exit.
+
+                                                                    break;
+
+                                                                }
+                                                                */
+
+                                                            }
+
+                                                        }
+
+                                                    }
+    
+                                                }
+                                                else
+                                                {
+                                                    
+                                                    break;
+
+                                                }
+
+                                            }
+                                            
+                                        }
+
+                                    }
+
+                                }
+
+                            }
+                            Err(err) =>
+                            {
+
+                                print!("{}", err);
+
+                            }
+
+                        }
+
+                        return false;
+
+                    }
+
+                    let frame = owned_frame.new_frame_to_be_written();
+
+                    if let Err(err) = self.writer.write_frame(frame).await
+                    {
+
+                        print!("{}", err);
+
+                    }
+                    else
+                    {
+
+                        //Cache OwnedFrame
+
+                        return true;
+                        
+                    }
+
+                }
+
+            }
+            SelectResult::FromSimpleWebSocketReaderActor(opt_simple_web_socket_actor_input_message) =>
+            {
+
+                if let Some(input_message) = opt_simple_web_socket_actor_input_message
+                {
+
+                    match input_message
+                    {
+
+                        SimpleWebSocketActorInputMessage::Disconnect => {}
+                        SimpleWebSocketActorInputMessage::WriteFrame(mut owned_frame) =>
+                        {
+
+                            let frame = owned_frame.new_frame_to_be_written();
+
+                            if let Err(err) = self.writer.write_frame(frame).await
+                            {
+        
+                                print!("{}", err);
+        
+                            }
+                            else
+                            {
+
+                                let opcode = owned_frame.opcode;
+
+                                //Cache OwnedFrame
+
+                                if opcode == OpCode::Close
+                                {
+
+                                    //Close frames have been sent and received.
+
+                                    let _ = self.reader_actor_io_client.input_sender().send(());
+
+                                    return false;
+
+                                }
+        
+                                return true;
+                                
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        false
 
     }
 
@@ -131,13 +412,14 @@ pub struct SimpleWebSocketReaderActorState
     //input_receiver: Receiver<()>
     io_server: ActorIOServer<(), SimpleWebSocketActorInputMessage>,
     obligated_send_frame_holder: Arc<ArrayQueue<OwnedFrame>>,
+    actor_io_sender: Sender<OwnedFrame> //External, from SimpleWebSocketActorState, output.
     
 }
 
 impl SimpleWebSocketReaderActorState
 {
 
-    pub fn new(reader: WebSocketReader) -> (Self, ActorIOClient<(), SimpleWebSocketActorInputMessage>) //, input_receiver: Receiver<()>, 
+    pub fn new(reader: WebSocketReader, actor_io_sender: Sender<OwnedFrame>) -> (Self, ActorIOClient<(), SimpleWebSocketActorInputMessage>) //, input_receiver: Receiver<()>, 
     {
 
         let (io_client, io_server) = actor_io(1, 1);
@@ -148,7 +430,8 @@ impl SimpleWebSocketReaderActorState
             reader,
             //input_receiver
             io_server,
-            obligated_send_frame_holder: Arc::new(ArrayQueue::new(1))
+            obligated_send_frame_holder: Arc::new(ArrayQueue::new(1)),
+            actor_io_sender
 
 
         },
@@ -156,12 +439,12 @@ impl SimpleWebSocketReaderActorState
 
     }
 
-    pub fn spawn(reader: WebSocketReader) -> ActorIOClient<(), SimpleWebSocketActorInputMessage>//Sender<()> //Receiver<()>
+    pub fn spawn(reader: WebSocketReader, actor_io_sender: Sender<OwnedFrame>) -> ActorIOClient<(), SimpleWebSocketActorInputMessage>//Sender<()> //Receiver<()>
     {
 
         //let (input_sender, input_receiver) = channel(1);
 
-        let (state, actor_io_client) = SimpleWebSocketReaderActorState::new(reader); //, input_receiver
+        let (state, actor_io_client) = SimpleWebSocketReaderActorState::new(reader, actor_io_sender); //, input_receiver
 
         SimpleWebSocketReaderActor::spawn(state);
 
@@ -261,7 +544,7 @@ impl SimpleWebSocketReaderActorState
                         if let Err(_err) = self.io_server.output_sender().send(SimpleWebSocketActorInputMessage::WriteFrame(of)).await
                         {
         
-                            return false;
+                            break;
         
                         }
                         
@@ -276,7 +559,7 @@ impl SimpleWebSocketReaderActorState
                         if let Err(_err) = self.io_server.output_sender().send(SimpleWebSocketActorInputMessage::WriteFrame(of)).await
                         {
         
-                            return false;
+                            break;
         
                         }
 
@@ -284,22 +567,16 @@ impl SimpleWebSocketReaderActorState
                     OpCode::Continuation | OpCode::Text | OpCode::Binary | OpCode::Pong =>
                     {
 
-                        //If for some reason you get another type of frame...
+                        //If for some reason you get another type of frame, or a Pong...
 
                         //Send next
                         
-                        /*
-                        let message = ReadFrameProcessorActorInputMessage::Frame(of);
-    
-                        let counted_message = self.pipeline_message_counter.increment_with_message_mut(message);
-    
-                        if let Err(_err) = self.read_frame_processor_actor_io_sender.send(counted_message).await
+                        if let Err(_err) = self.io_server.output_sender().send(SimpleWebSocketActorInputMessage::WriteFrame(of)).await
                         {
 
-                            return false;
+                            break;
 
                         }
-                        */
     
                     }
     
@@ -327,6 +604,13 @@ impl SimpleWebSocketReaderActorState
 
                             //Send next
 
+                            if let Err(_err) = self.actor_io_sender.send(of).await
+                            {
+
+                                break;
+    
+                            }
+
                         }
                         Err(err) =>
                         {
@@ -339,10 +623,11 @@ impl SimpleWebSocketReaderActorState
 
                     }
 
-
                 }
                 SelectResult::Connection(_input_opt) =>
                 {
+
+                    //You should get this branch after the connection closure procedure has been completed.
 
                     break;
 

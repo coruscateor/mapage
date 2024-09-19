@@ -10,4 +10,10 @@ mod web_socket_actor_messages;
 
 pub use web_socket_actor_messages::*;
 
+mod ingress_actor;
 
+pub use ingress_actor::*;
+
+mod command;
+
+pub use command::*;

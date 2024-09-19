@@ -99,10 +99,10 @@ pub mod array_queue
 
         }
 
-        pub fn input_receiver(&mut self) -> &mut Receiver<IM>
+        pub fn input_receiver(&self) -> &Receiver<IM>
         {
 
-            &mut self.actor_input_receiver
+            &self.actor_input_receiver
 
         }
 
@@ -228,10 +228,10 @@ pub mod seg_queue
 
         }
 
-        pub fn input_receiver(&mut self) -> &mut Receiver<IM>
+        pub fn input_receiver(&mut self) -> &Receiver<IM>
         {
 
-            &mut self.actor_input_receiver
+            &self.actor_input_receiver
 
         }
 

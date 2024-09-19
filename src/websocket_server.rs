@@ -8,7 +8,7 @@ use upgrade::{UpgradeFut, IncomingUpgrade};
 
 use std::sync::Arc;
 
-use crate::Store;
+use crate::{SimpleWebSocketPipeline, Store};
 
 pub struct WebSocketServer ();
 
@@ -123,6 +123,9 @@ async fn ws_handler(ws: IncomingUpgrade, State(store): State<Arc<Store>>) -> imp
 
     let (response, fut) = ws.upgrade().unwrap();
 
+    SimpleWebSocketPipeline::new( fut, store);
+
+    /*
     task::spawn(async move {
 
         if let Err(e) = handle_client(fut).await
@@ -133,6 +136,7 @@ async fn ws_handler(ws: IncomingUpgrade, State(store): State<Arc<Store>>) -> imp
         }
 
     });
+    */
 
     //Maybe log the response somewhere.
 
