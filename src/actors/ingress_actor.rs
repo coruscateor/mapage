@@ -1,3 +1,5 @@
+use core::str;
+
 use act_rs::{impl_default_end_async, impl_default_start_and_end_async, impl_default_start_async, impl_mac_task_actor};
 
 use libsync::crossbeam::mpmc::tokio::array_queue::{Sender, Receiver, channel};
@@ -10,29 +12,31 @@ use tokio::task::JoinHandle;
 
 use fastwebsockets::OpCode;
 
-use serde_json::json;
+use serde_json::{from_str, json, Value};
 
-use super::array_queue::ActorIOClient;
+use super::{array_queue::ActorIOClient, ParsedInput};
+
+//Converts the OwnedFrames payload into an in-memory representation of the desired format and passes it on. 
 
 pub struct IngressActorState
 {
 
-    websocket_actor_io_client: ActorIOClient<OwnedFrame, OwnedFrame>
-    //actor_io_reciver: Receiver<OwnedFrame>
+    websocket_actor_io_client: ActorIOClient<OwnedFrame, OwnedFrame>,
+    command_processor_sender: Sender<ParsedInput>
 
 }
 
 impl IngressActorState
 {
 
-    pub fn new(websocket_actor_io_client: &ActorIOClient<OwnedFrame, OwnedFrame>) -> Self //actor_io_reciver: Receiver<OwnedFrame>) -> Self
+    pub fn new(websocket_actor_io_client: &ActorIOClient<OwnedFrame, OwnedFrame>, command_processor_sender: Sender<ParsedInput>) -> Self //actor_io_reciver: Receiver<OwnedFrame>) -> Self
     {
 
         Self
         {
 
-            websocket_actor_io_client: websocket_actor_io_client.clone()
-            //actor_io_reciver
+            websocket_actor_io_client: websocket_actor_io_client.clone(),
+            command_processor_sender
 
         }
 
@@ -47,13 +51,15 @@ impl IngressActorState
 
     impl_default_start_and_end_async!();
 
+    //JSON
+
     async fn run_async(&mut self) -> bool
     {
 
-        if let Some(mut res) = self.websocket_actor_io_client.output_receiver().recv().await //actor_io_reciver.recv().await
+        if let Some(mut of_res) = self.websocket_actor_io_client.output_receiver().recv().await //actor_io_reciver.recv().await
         {
 
-            match res.opcode
+            match of_res.opcode
             {
 
                 OpCode::Continuation =>
@@ -67,7 +73,78 @@ impl IngressActorState
                 OpCode::Text =>
                 {
 
-                    
+                    let con_res = str::from_utf8(&of_res.payload);
+
+                    match con_res
+                    {
+
+                        Ok(res) =>
+                        {
+
+                            let json_res = from_str::<Value>(res);
+
+                            match json_res
+                            {
+
+                                Ok(json_obj) =>
+                                {
+
+                                    if let Err(_err) = self.command_processor_sender.send(json_obj).await
+                                    {
+
+                                        return false;
+
+                                    }
+
+                                    //Cache of_res
+
+                                }
+                                Err(err) =>
+                                {
+
+                                    //Should probabaly go through the EgressActor...
+
+                                    let error_message = format!(r#"
+                                       {{ "error": "{}" }}
+                                    "#, err);
+
+                                    of_res.text_setup();
+
+                                    of_res.set_payload_from_str(&error_message);
+
+                                    if let Err(_err) = self.websocket_actor_io_client.input_sender().send(of_res).await
+                                    {
+
+                                        return false;
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+                        Err(err) =>
+                        {
+
+                            let error_message = format!(r#"
+                                {{ "error": "{}" }}
+                            "#, err);
+
+                            of_res.text_setup();
+
+                            of_res.set_payload_from_str(&error_message);
+
+                            if let Err(_err) = self.websocket_actor_io_client.input_sender().send(of_res).await
+                            {
+
+                                return false;
+
+                            }
+
+                        }
+
+                    }
 
                 }
                 OpCode::Binary =>
@@ -77,16 +154,18 @@ impl IngressActorState
                                                     "error": "The binary OpCode is not supported."
                                                 }"#;
 
-                    res.text_setup();
+                    of_res.text_setup();
 
-                    res.set_payload_from_str(error_message);
+                    of_res.set_payload_from_str(error_message);
 
-                    if let Err(_err) = self.websocket_actor_io_client.input_sender().send(res).await
+                    if let Err(_err) = self.websocket_actor_io_client.input_sender().send(of_res).await
                     {
 
                         return false;
 
                     }
+
+                    //To ResultProcessorActor... or not...
 
                 }
                 OpCode::Close =>
