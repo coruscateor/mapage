@@ -14,9 +14,9 @@ mod ingress_actor;
 
 pub use ingress_actor::*;
 
-mod command;
+//mod command;
 
-pub use command::*;
+//pub use command::*;
 
 mod command_processor_actor;
 

@@ -9,11 +9,11 @@ use std::error::Error;
 
 use serde::{Deserialize, Serialize};
 
-use serde_json::{Number, Value};
+use serde_json::{Map, Number, Value};
 
 use corlib::text::SendableText;
 
-use corlib::inc_dec::{self, IncrementsSelf};
+use corlib::inc_dec::{self, IncDecSelf}; //, IntIncDecSelf};
 
 use crate::types::Whatever;
 
@@ -208,21 +208,91 @@ pub struct CommandError
 {
 
     id: Option<u32>,
-    message: SendableText
+    message: SendableText,
+    field: Option<&'static str>,
+    index: Option<usize>,
+    sub_index: Option<usize>
 
 }
 
 impl CommandError
 {
 
-    pub fn new(message: SendableText, id: Option<u32>) -> Self
+    pub fn new(message: SendableText, id: Option<u32>, field: Option<&'static str>) -> Self
     {
 
         Self
         {
 
             id,
-            message
+            message,
+            field,
+            index: None,
+            sub_index: None
+
+        }
+
+    }
+
+    pub fn with_index(message: SendableText, id: Option<u32>, field: Option<&'static str>, index: usize) -> Self
+    {
+
+        Self
+        {
+
+            id,
+            message,
+            field: field,
+            index: Some(index),
+            sub_index: None
+
+        }
+
+    }
+
+    pub fn with_sub_index(message: SendableText, id: Option<u32>, field: Option<&'static str>, index: usize, sub_index: usize) -> Self
+    {
+
+        Self
+        {
+
+            id,
+            message,
+            field: field,
+            index: Some(index),
+            sub_index: Some(sub_index)
+
+        }
+
+    }
+
+    pub fn with_index_opt(message: SendableText, id: Option<u32>, field: Option<&'static str>, index: Option<usize>) -> Self
+    {
+
+        Self
+        {
+
+            id,
+            message,
+            field,
+            index,
+            sub_index: None
+
+        }
+
+    }
+
+    pub fn with_sub_index_opt(message: SendableText, id: Option<u32>, field: Option<&'static str>, index: Option<usize>, sub_index: Option<usize>) -> Self
+    {
+
+        Self
+        {
+
+            id,
+            message,
+            field,
+            index,
+            sub_index
 
         }
 
@@ -271,7 +341,7 @@ impl Error for CommandError
 
 //JSON
 
-fn convert_number_from_vec(number: Number, index: usize, command: &Command) -> Result<TypeInstance, CommandError>
+fn convert_number_from_vec(number: Number, index: usize, command: &Command, field: Option<&'static str>) -> Result<TypeInstance, CommandError>
 {
 
 
@@ -290,7 +360,7 @@ fn convert_number_from_vec(number: Number, index: usize, command: &Command) -> R
             None =>
             {
 
-                Err(CommandError::new(SendableText::String(format!("Unexpected error converting param at index: {} to f64.", index)), command.id))
+                Err(CommandError::new(SendableText::String(format!("Unexpected error converting param at index: {} to f64.", index)), command.id, field))
 
             }
 
@@ -312,7 +382,7 @@ fn convert_number_from_vec(number: Number, index: usize, command: &Command) -> R
             None =>
             {
 
-                Err(CommandError::new(SendableText::String(format!("Unexpected error converting param at index: {} to i64.", index)), command.id))
+                Err(CommandError::new(SendableText::String(format!("Unexpected error converting param at index: {} to i64.", index)), command.id, field))
 
             }
 
@@ -334,7 +404,7 @@ fn convert_number_from_vec(number: Number, index: usize, command: &Command) -> R
             None =>
             {
 
-                Err(CommandError::new(SendableText::String(format!("Unexpected error converting param at index: {} to u64.", index)), command.id))
+                Err(CommandError::new(SendableText::String(format!("Unexpected error converting param at index: {} to u64.", index)), command.id, field))
 
             }
 
@@ -344,7 +414,435 @@ fn convert_number_from_vec(number: Number, index: usize, command: &Command) -> R
     else
     {
 
-        Err(CommandError::new(SendableText::String(format!("Internal error converting param at index: {} to unknown.", index)), command.id))
+        Err(CommandError::new(SendableText::String(format!("Internal error converting param at index: {} to unknown.", index)), command.id, field))
+        
+    }
+
+}
+
+fn convert_number(number: Number, command: &Command, field: Option<&'static str>) -> Result<TypeInstance, CommandError>
+{
+
+    if number.is_f64()
+    {
+
+        match number.as_f64()
+        {
+
+            Some(val) =>
+            {
+
+                Ok(TypeInstance::F64(val))
+
+            }
+            None =>
+            {
+
+                Err(CommandError::new(SendableText::Str("Unexpected error converting param to f64."), command.id, field))
+
+            }
+
+        }
+
+    }
+    else if number.is_i64()
+    {
+
+        match number.as_i64()
+        {
+
+            Some(val) =>
+            {
+
+                Ok(TypeInstance::I64(val))
+
+            }
+            None =>
+            {
+
+                Err(CommandError::new(SendableText::Str("Unexpected error converting param to i64."), command.id, field))
+
+            }
+
+        }
+
+    }
+    else if number.is_u64()
+    {
+
+        match number.as_u64()
+        {
+
+            Some(val) =>
+            {
+
+                Ok(TypeInstance::U64(val))
+
+            }
+            None =>
+            {
+
+                Err(CommandError::new(SendableText::Str("Unexpected error converting param to u64."), command.id, field))
+
+            }
+
+        }
+        
+    }
+    else
+    {
+
+        Err(CommandError::new(SendableText::Str("Internal error converting param to unknown."), command.id, field))
+        
+    }
+
+}
+
+//Sub Vec/Array
+
+fn convert_number_from_sub_vec(number: Number, index: usize, command: &Command, field: Option<&'static str>) -> Result<Whatever, CommandError>
+{
+
+
+    if number.is_f64()
+    {
+
+        match number.as_f64()
+        {
+
+            Some(val) =>
+            {
+
+                Ok(Whatever::F64(val))
+
+            }
+            None =>
+            {
+
+                Err(CommandError::new(SendableText::String(format!("Unexpected error converting param at index: {} to f64.", index)), command.id, field))
+
+            }
+
+        }
+
+    }
+    else if number.is_i64()
+    {
+
+        match number.as_i64()
+        {
+
+            Some(val) =>
+            {
+
+                Ok(Whatever::I64(val))
+
+            }
+            None =>
+            {
+
+                Err(CommandError::new(SendableText::String(format!("Unexpected error converting param at index: {} to i64.", index)), command.id, field))
+
+            }
+
+        }
+
+    }
+    else if number.is_u64()
+    {
+
+        match number.as_u64()
+        {
+
+            Some(val) =>
+            {
+
+                Ok(Whatever::U64(val))
+
+            }
+            None =>
+            {
+
+                Err(CommandError::new(SendableText::String(format!("Unexpected error converting param at index: {} to u64.", index)), command.id, field))
+
+            }
+
+        }
+        
+    }
+    else
+    {
+
+        Err(CommandError::new(SendableText::String(format!("Internal error converting param at index: {} to unknown.", index)), command.id, field))
+        
+    }
+
+}
+
+fn process_map(map: Map<String, Value>, index_opt: Option<usize>, command: &Command, field: Option<&'static str>) -> Result<TypeInstance, CommandError>
+{
+
+    if !map.is_empty()
+    {
+
+        let res: Whatever;
+
+        for (key, mut value) in map
+        {
+
+            match key.trim()
+            {
+    
+                "type_bool" => 
+                {
+
+                    
+
+                }
+                "type_char" => 
+                {
+
+                    
+
+                }
+                "type_f32" => 
+                {
+
+
+
+                }
+                "type_f64" => 
+                {
+
+                    
+
+                }
+                "type_i8" => 
+                {
+
+                    
+
+                }
+                "type_i16" => 
+                {
+
+                    
+
+                }
+                "type_i32" => 
+                {
+
+                    
+
+                }
+                "type_i64" => 
+                {
+
+                    
+
+                }
+                "type_i128" => 
+                {
+
+                    
+
+                }
+                "type_isize" => 
+                {
+
+                    
+
+                }
+                "type_u8" => 
+                {
+
+                    
+
+                }
+                "type_u16" => 
+                {
+
+                    
+
+                }
+                "type_u32" => 
+                {
+
+                    
+
+                }
+                "type_u64" => 
+                {
+
+                    
+
+                }
+                "type_u128" => 
+                {
+
+                    
+
+                }
+                "type_usize" => 
+                {
+
+                    
+
+                }
+                "type_string" => 
+                {
+
+                    
+
+                }
+                "type_whatever" => 
+                {
+
+                    
+
+                }
+                "type_vec_bool" => 
+                {
+
+                    
+
+                }
+                "type_vec_char" => 
+                {
+
+                    
+
+                }
+                "type_vec_f32" => 
+                {
+
+                    
+
+                }
+                "type_vec_f64" => 
+                {
+
+                    
+
+                }
+                "type_vec_i8" => 
+                {
+
+                    
+
+                }
+                "type_vec_i16" => 
+                {
+
+                    
+
+                }
+                "type_vec_i32" => 
+                {
+
+                    
+
+                }
+                "type_vec_i64" => 
+                {
+
+                    
+
+                }
+                "type_vec_i128" => 
+                {
+
+                    
+
+                }
+                "type_vec_isize" => 
+                {
+
+                    
+
+                }
+                "type_vec_u8" => 
+                {
+
+                    
+
+                }
+                "type_vec_u16" => 
+                {
+
+                    
+
+                }
+                "type_vec_u32" => 
+                {
+
+                    
+
+                }
+                "type_vec_u64" => 
+                {
+
+                    
+
+                }
+                "type_vec_u128" => 
+                {
+
+                    
+
+                }
+                "type_vec_usize" => 
+                {
+
+                    
+
+                }
+                "type_vec_string" => 
+                {
+
+                    
+
+                }
+                "type_vec_whatever" => 
+                {
+
+                    
+
+                }
+                _ =>
+                {
+    
+                    match index_opt
+                    {
+    
+                        Some(index) =>
+                        {
+    
+                            return Err(CommandError::new(SendableText::String(format!("Internal error converting param at index: {} to unknown.", index)), command.id, field));
+    
+                        }
+                        None =>
+                        {
+    
+                            return Err(CommandError::new(SendableText::Str("Internal error converting param at index to unknown."), command.id, field));
+    
+                        }
+                        
+                    }
+    
+                }
+                
+            }
+    
+        }    
+
+        Ok(res)
+
+    }
+    else
+    {
+
+        Err(CommandError::new(SendableText::Str("Empty Map not expected."), command.id, field))
         
     }
 
@@ -395,7 +893,9 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
 
             //let id_opt = map.get("id");
 
-            let id_opt = map.remove("id");
+            let field = "id";
+
+            let id_opt = map.remove(field);
 
             if let Some(val) = id_opt
             {
@@ -419,7 +919,7 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
                         None =>
                         {
 
-                            return Err(CommandError::new(SendableText::Str("Integer expected in id field."), None));
+                            return Err(CommandError::new(SendableText::Str("Integer expected in id field."), None, Some(field)));
 
                         }
 
@@ -429,7 +929,7 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
                 else
                 {
 
-                    return Err(CommandError::new(SendableText::Str("Integer expected in id field."), None));                    
+                    return Err(CommandError::new(SendableText::Str("Integer expected in id field."), None, Some(field)));                    
                     
                 }
 
@@ -437,7 +937,9 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
 
             //let command_opt = map.get("command");
 
-            let command_opt = map.remove("command");
+            let field = "command";
+
+            let command_opt = map.remove(field);
 
             if let Some(val) = command_opt
             {
@@ -454,7 +956,7 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
                     _ =>
                     {
 
-                        return Err(CommandError::new(SendableText::Str("The command field must be a String."), command.id));  
+                        return Err(CommandError::new(SendableText::Str("The command field must be a String."), command.id, Some(field)));  
 
                     }
                     
@@ -478,11 +980,13 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
             else
             {
 
-                return Err(CommandError::new(SendableText::Str("Command field not found."), command.id));     
+                return Err(CommandError::new(SendableText::Str("Command field not found."), command.id, Some(field)));     
                 
             }
 
-            let type_opt = map.remove("type");
+            let field = "type";
+
+            let type_opt = map.remove(field);
 
             {
 
@@ -513,7 +1017,7 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
                                 Err(err) =>
                                 {
 
-                                    return Err(CommandError::new(err, command.id));
+                                    return Err(CommandError::new(err, command.id, Some(field)));
 
                                     //return Err(SendableText::Str(err)); 
 
@@ -525,18 +1029,17 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
                         _ =>
                         {
 
-                            return Err(CommandError::new(SendableText::Str("The command field must be a String."), command.id));  
+                            return Err(CommandError::new(SendableText::Str("The command field must be a String."), command.id, Some(field)));  
 
                         }
                         
                     }
 
-
                 }
                 else
                 {
 
-                    return Err(CommandError::new(SendableText::Str("A type must be specified."), command.id));  
+                    return Err(CommandError::new(SendableText::Str("A type must be specified."), command.id, Some(field)));  
                     
                 }
 
@@ -544,7 +1047,9 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
 
             //Params array...
 
-            let params_opt = map.remove("params");
+            let field = "params";
+
+            let params_opt = map.remove(field);
 
             match params_opt
             {
@@ -561,22 +1066,36 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
                             command.params = None;
 
                         }
-                        Value::Bool(_) =>
+                        Value::Bool(val) =>
                         {
 
-                            return Err(CommandError::new(SendableText::Str("The params field cannot be a bool value."), command.id));  
+                            let mut params_vec = Vec::with_capacity(1);
+
+                            params_vec.push(Some(TypeInstance::Bool(val)));
+
+                            command.params = Some(params_vec);
+
+                            //return Err(CommandError::new(SendableText::Str("The params field cannot be a bool value."), command.id));  
 
                         }
-                        Value::Number(_) =>
+                        Value::Number(val) =>
                         {
 
-                            return Err(CommandError::new(SendableText::Str("The params field cannot be a number value."), command.id));  
+                            let mut params_vec = Vec::with_capacity(1);
+
+                            let number = convert_number(val, &command, Some(field))?;
+
+                            params_vec.push(Some(number));
+
+                            command.params = Some(params_vec);
+
+                            //return Err(CommandError::new(SendableText::Str("The params field cannot be a number value."), command.id));  
 
                         }
                         Value::String(_) =>
                         {
 
-                            return Err(CommandError::new(SendableText::Str("The params field cannot be a String."), command.id));  
+                            return Err(CommandError::new(SendableText::Str("The params field cannot be a String."), command.id, Some(field)));  
 
                         }
                         Value::Array(vec) =>
@@ -618,7 +1137,7 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
                                         Value::Number(number) =>
                                         {
 
-                                            match convert_number_from_vec(number, index, &command)
+                                            match convert_number_from_vec(number, index, &command, Some(field))
                                             {
 
                                                 Ok(res) =>
@@ -715,6 +1234,8 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
                                         Value::Array(vec_val) =>
                                         {
 
+                                            //Sub array
+
                                             let mut vec_param = Vec::with_capacity(vec_val.len());
 
                                             let mut sub_index: usize = 0;
@@ -736,13 +1257,13 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
                                                     Value::Bool(val) =>
                                                     {
 
-                                                        vec_param.push(Some(TypeInstance::Bool(val)));
+                                                        vec_param.push(Some(Whatever::Bool(val)));
 
                                                     }
                                                     Value::Number(number) =>
                                                     {
 
-                                                        match convert_number_from_vec(number, index, &command)
+                                                        match convert_number_from_sub_vec(number, index, &command, Some(field))
                                                         {
             
                                                             Ok(res) =>
@@ -764,19 +1285,19 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
                                                     Value::String(val) =>
                                                     {
 
-                                                        vec_param.push(Some(TypeInstance::String(val)));
+                                                        vec_param.push(Some(Whatever::String(val)));
 
                                                     }
                                                     Value::Array(_vec) =>
                                                     {
 
-                                                        return Err(CommandError::new(SendableText::String(format!("Array at param index: {}, sub-index: {}. Arrays of arrays are not supported.", index, sub_index)), command.id));
+                                                        return Err(CommandError::new(SendableText::String(format!("Array at param index: {}, sub-index: {}. Arrays of arrays are not supported.", index, sub_index)), command.id, Some(field)));
 
                                                     }
                                                     Value::Object(_map) =>
                                                     {
 
-                                                        return Err(CommandError::new(SendableText::String(format!("Map at param index: {}, sub-index: {}. Map params are not supported.", index, sub_index)), command.id));
+                                                        return Err(CommandError::new(SendableText::String(format!("Map at param index: {}, sub-index: {}. Map params are not supported.", index, sub_index)), command.id, Some(field)));
 
                                                     }
 
@@ -784,15 +1305,17 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
 
                                                 sub_index.pp();
 
+                                                //sub_index.overflowing_pp();
+
                                             }
 
-                                            params_vec.push(Some(TypeInstance))
+                                            params_vec.push(Some(TypeInstance::VecOptionWhatever(vec_param)))
 
                                         }
-                                        Value::Object(_map) =>
+                                        Value::Object(map) =>
                                         {
 
-                                            return Err(CommandError::new(SendableText::String(format!("Map at param index: {}. Map params are not supported.", index)), command.id));
+                                            //return Err(CommandError::new(SendableText::String(format!("Map at param index: {}. Map params are not supported.", index)), command.id));
 
                                         }
 
@@ -810,7 +1333,7 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
                         Value::Object(map) =>
                         {
 
-                            return Err(CommandError::new(SendableText::Str("The params field cannot be an Object."), command.id)); 
+                            //return Err(CommandError::new(SendableText::Str("The params field cannot be an Object."), command.id)); 
 
                         }
 
@@ -825,7 +1348,7 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
                 None =>
                 {
 
-
+                    //if let?
 
                 }
 
@@ -839,6 +1362,6 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
 
     //Ok(command)
 
-    Err(CommandError::new(SendableText::Str(error_message), None))
+    Err(CommandError::new(SendableText::Str(error_message), None, None))
 
 }
