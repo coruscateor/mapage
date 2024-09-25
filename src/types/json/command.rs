@@ -17,6 +17,8 @@ use corlib::inc_dec::{self, IncDecSelf}; //, IntIncDecSelf};
 
 use crate::types::Whatever;
 
+use super::conversion::{into_bool, into_char};
+
 #[derive(Debug, Default)]
 pub enum SupportedType
 {
@@ -211,7 +213,8 @@ pub struct CommandError
     message: SendableText,
     field: Option<&'static str>,
     index: Option<usize>,
-    sub_index: Option<usize>
+    sub_index: Option<usize>,
+    sub_index_2: Option<usize>
 
 }
 
@@ -228,7 +231,8 @@ impl CommandError
             message,
             field,
             index: None,
-            sub_index: None
+            sub_index: None,
+            sub_index_2: None
 
         }
 
@@ -244,7 +248,8 @@ impl CommandError
             message,
             field: field,
             index: Some(index),
-            sub_index: None
+            sub_index: None,
+            sub_index_2: None
 
         }
 
@@ -260,7 +265,25 @@ impl CommandError
             message,
             field: field,
             index: Some(index),
-            sub_index: Some(sub_index)
+            sub_index: Some(sub_index),
+            sub_index_2: None
+
+        }
+
+    }
+
+    pub fn with_sub_index_2(message: SendableText, id: Option<u32>, field: Option<&'static str>, index: usize, sub_index: usize, sub_index_2: usize) -> Self
+    {
+
+        Self
+        {
+
+            id,
+            message,
+            field: field,
+            index: Some(index),
+            sub_index: Some(sub_index),
+            sub_index_2: Some(sub_index_2)
 
         }
 
@@ -276,7 +299,8 @@ impl CommandError
             message,
             field,
             index,
-            sub_index: None
+            sub_index: None,
+            sub_index_2: None
 
         }
 
@@ -292,7 +316,25 @@ impl CommandError
             message,
             field,
             index,
-            sub_index
+            sub_index,
+            sub_index_2: None
+
+        }
+
+    }
+
+    pub fn with_sub_index_2_opt(message: SendableText, id: Option<u32>, field: Option<&'static str>, index: Option<usize>, sub_index: Option<usize>, sub_index_2: Option<usize>) -> Self
+    {
+
+        Self
+        {
+
+            id,
+            message,
+            field,
+            index,
+            sub_index,
+            sub_index_2
 
         }
 
@@ -579,15 +621,17 @@ fn convert_number_from_sub_vec(number: Number, index: usize, command: &Command, 
 
 }
 
-fn process_map(map: Map<String, Value>, index_opt: Option<usize>, command: &Command, field: Option<&'static str>) -> Result<TypeInstance, CommandError>
+fn process_map(map: Map<String, Value>, index_opt: Option<usize>, command: &Command, field: Option<&'static str>) -> Result<Vec<TypeInstance>, CommandError>
 {
 
     if !map.is_empty()
     {
 
-        let res: Whatever;
+        let mut res_vec = Vec::with_capacity(map.len());
 
-        for (key, mut value) in map
+        let mut index: usize = 0;
+
+        for (key, value) in map
         {
 
             match key.trim()
@@ -596,13 +640,13 @@ fn process_map(map: Map<String, Value>, index_opt: Option<usize>, command: &Comm
                 "type_bool" => 
                 {
 
-                    
+                    res_vec.push(into_bool(value, command.id, field, index_opt, Some(index))?);
 
                 }
                 "type_char" => 
                 {
 
-                    
+                    res_vec.push(into_char(value, command.id, field, index_opt, Some(index))?);
 
                 }
                 "type_f32" => 
@@ -811,7 +855,10 @@ fn process_map(map: Map<String, Value>, index_opt: Option<usize>, command: &Comm
                 }
                 _ =>
                 {
+
+                    return Err(CommandError::with_index_opt(SendableText::Str("Internal error converting param at index to unknown."), command.id, field, index_opt));
     
+                    /*
                     match index_opt
                     {
     
@@ -829,14 +876,17 @@ fn process_map(map: Map<String, Value>, index_opt: Option<usize>, command: &Comm
                         }
                         
                     }
+                    */
     
                 }
                 
             }
-    
-        }    
 
-        Ok(res)
+            index.pp();
+    
+        }  
+
+        Ok(res_vec)
 
     }
     else
@@ -1063,11 +1113,15 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
                         Value::Null =>
                         {
 
+                            //Single parameter
+
                             command.params = None;
 
                         }
                         Value::Bool(val) =>
                         {
+
+                            //Single parameter
 
                             let mut params_vec = Vec::with_capacity(1);
 
@@ -1081,6 +1135,8 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
                         Value::Number(val) =>
                         {
 
+                            //Single parameter
+
                             let mut params_vec = Vec::with_capacity(1);
 
                             let number = convert_number(val, &command, Some(field))?;
@@ -1092,14 +1148,24 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
                             //return Err(CommandError::new(SendableText::Str("The params field cannot be a number value."), command.id));  
 
                         }
-                        Value::String(_) =>
+                        Value::String(val) =>
                         {
 
-                            return Err(CommandError::new(SendableText::Str("The params field cannot be a String."), command.id, Some(field)));  
+                            //Single parameter
+
+                            let mut params_vec = Vec::with_capacity(1);
+
+                            params_vec.push(Some(TypeInstance::String(val)));
+
+                            command.params = Some(params_vec);
+
+                            //return Err(CommandError::new(SendableText::Str("The params field cannot be a String."), command.id, Some(field)));  
 
                         }
                         Value::Array(vec) =>
                         {
+
+                            //Multiple parameters (maybe)
 
                             if vec.is_empty()
                             {
@@ -1231,11 +1297,14 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
                                             params_vec.push(Some(TypeInstance::String(val)));
 
                                         }
-                                        Value::Array(vec_val) =>
+                                        Value::Array(_vec_val) =>
                                         {
+
+                                            return Err(CommandError::new(SendableText::Str("Processing arrays without accompanying type information is not supported."), command.id, Some(field)));
 
                                             //Sub array
 
+                                            /*
                                             let mut vec_param = Vec::with_capacity(vec_val.len());
 
                                             let mut sub_index: usize = 0;
@@ -1291,7 +1360,7 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
                                                     Value::Array(_vec) =>
                                                     {
 
-                                                        return Err(CommandError::new(SendableText::String(format!("Array at param index: {}, sub-index: {}. Arrays of arrays are not supported.", index, sub_index)), command.id, Some(field)));
+                                                        //return Err(CommandError::new(SendableText::String(format!("Array at param index: {}, sub-index: {}. Arrays of arrays are not supported.", index, sub_index)), command.id, Some(field)));
 
                                                     }
                                                     Value::Object(_map) =>
@@ -1310,10 +1379,15 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
                                             }
 
                                             params_vec.push(Some(TypeInstance::VecOptionWhatever(vec_param)))
+                                            */
 
                                         }
                                         Value::Object(map) =>
                                         {
+
+                                            //Multiple type annotated Values in addition to any other Value objects.
+
+
 
                                             //return Err(CommandError::new(SendableText::String(format!("Map at param index: {}. Map params are not supported.", index)), command.id));
 
@@ -1332,6 +1406,10 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
                         }
                         Value::Object(map) =>
                         {
+
+                            //Multiple type annotated Values only.
+
+
 
                             //return Err(CommandError::new(SendableText::Str("The params field cannot be an Object."), command.id)); 
 
