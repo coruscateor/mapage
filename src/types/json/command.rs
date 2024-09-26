@@ -156,7 +156,7 @@ pub enum TypeInstance
     U64(u64),
 
     U128(u128),
-    USize(usize),
+    Usize(usize),
 
     //Collections
 
@@ -188,9 +188,127 @@ pub enum TypeInstance
 
     VecString(Vec<String>),
     VecWhatever(Vec<Whatever>),
-    VecOptionWhatever(Vec<Option<Whatever>>),
+    //VecOptionWhatever(Vec<Option<Whatever>>),
 
 }
+
+impl TypeInstance
+{
+
+    pub fn into_whatever(self, command_id: Option<u32>, field: Option<&'static str>, index: Option<usize>, sub_index: Option<usize>) -> Result<Whatever, CommandError>
+    {
+
+        match self
+        {
+
+            TypeInstance::Bool(val) => Ok(Whatever::Bool(val)),
+            TypeInstance::Char(val) => Ok(Whatever::Char(val)),
+            TypeInstance::F32(val)  => Ok(Whatever::F32(val)),
+            TypeInstance::F64(val) => Ok(Whatever::F64(val)),
+            TypeInstance::I8(val) => Ok(Whatever::I8(val)),
+            TypeInstance::I16(val) => Ok(Whatever::I16(val)),
+            TypeInstance::I32(val) => Ok(Whatever::I32(val)),
+            TypeInstance::I64(val) => Ok(Whatever::I64(val)),
+            TypeInstance::I128(val) => Ok(Whatever::I128(val)),
+            TypeInstance::Isize(val) => Ok(Whatever::Isize(val)),
+            TypeInstance::U8(val) => Ok(Whatever::U8(val)),
+            TypeInstance::U16(val) => Ok(Whatever::U16(val)),
+            TypeInstance::U32(val) => Ok(Whatever::U32(val)),
+            TypeInstance::U64(val) => Ok(Whatever::U64(val)),
+            TypeInstance::U128(val) => Ok(Whatever::U128(val)),
+            TypeInstance::Usize(val) => Ok(Whatever::USize(val)),
+            TypeInstance::String(val) => Ok(Whatever::String(val)),
+            TypeInstance::VecBool(vec) => Ok(Whatever::VecBool(vec)),
+            TypeInstance::VecChar(vec) => Ok(Whatever::VecChar(vec)),
+            TypeInstance::VecF32(vec) => Ok(Whatever::VecF32(vec)),
+            TypeInstance::VecF64(vec) => Ok(Whatever::VecF64(vec)),
+            TypeInstance::VecI8(vec) => Ok(Whatever::VecI8(vec)),
+            TypeInstance::VecI16(vec) => Ok(Whatever::VecI16(vec) ),
+            TypeInstance::VecI32(vec) => Ok(Whatever::VecI32(vec)),
+            TypeInstance::VecI64(vec) => Ok(Whatever::VecI64(vec)),
+            TypeInstance::VecI128(vec) => Ok(Whatever::VecI128(vec)),
+            TypeInstance::VecISize(vec) => Ok(Whatever::VecISize(vec) ),
+            TypeInstance::VecU8(vec) => Ok(Whatever::VecU8(vec)),
+            TypeInstance::VecU16(vec) => Ok(Whatever::VecU16(vec)),
+            TypeInstance::VecU32(vec) => Ok(Whatever::VecU32(vec)),
+            TypeInstance::VecU64(vec) => Ok(Whatever::VecU64(vec)),
+            TypeInstance::VecU128(vec) => Ok(Whatever::VecU128(vec) ),
+            TypeInstance::VecUSize(vec) => Ok(Whatever::VecUSize(vec)),
+            TypeInstance::VecString(vec) => Ok(Whatever::VecString(vec)),
+            _ =>
+            {
+
+                Err(CommandError::with_sub_index_opt(SendableText::Str("Conversion Error"), command_id, field, index, sub_index))
+
+            }
+
+        }
+
+    }
+
+}
+
+
+/*
+impl TryFrom<Whatever> for TypeInstance
+{
+
+    type Error = &'static str;
+
+    fn try_from(value: Whatever) -> Result<Self, Self::Error>
+    {
+
+        match value
+        {
+            Whatever::Bool(val) => Ok(TypeInstance::Bool(val)),
+            Whatever::Char(val) => Ok(TypeInstance::Char(val)),
+            Whatever::F32(val) => Ok(TypeInstance::F32(val)),
+            Whatever::F64(val) => Ok(TypeInstance::F64(val)),
+            Whatever::I8(val) => Ok(TypeInstance::I8(val)),
+            Whatever::I16(val) => Ok(TypeInstance::I16(val)),
+            Whatever::I32(val) => Ok(TypeInstance::I32(val)),
+            Whatever::I64(val) => Ok(TypeInstance::I64(val)),
+            Whatever::I128(val) => Ok(TypeInstance::I128(val)),
+            Whatever::Isize(val) => Ok(TypeInstance::Isize(val)),
+            Whatever::U8(val) => Ok(TypeInstance::U8(val)),
+            Whatever::U16(val) => Ok(TypeInstance::U16(val)),
+            Whatever::U32(val) => Ok(TypeInstance::U32(val)),
+            Whatever::U64(val) => Ok(TypeInstance::U64(val)),
+            Whatever::U128(val) => Ok(TypeInstance::U128(val)),
+            Whatever::USize(val) => Ok(TypeInstance::Usize(val)),
+            Whatever::String(val) => Ok(TypeInstance::String(val)),
+            Whatever::VecBool(vec) => Ok(TypeInstance::VecBool(vec)),
+            Whatever::VecChar(vec) => Ok(TypeInstance::VecChar(vec)),
+            Whatever::VecF32(vec) => Ok(TypeInstance::VecF32(vec)),
+            Whatever::VecF64(vec) => Ok(TypeInstance::VecF64(vec)),
+            Whatever::VecI8(vec) => Ok(TypeInstance::VecI8(vec)),
+            Whatever::VecI16(vec) => Ok(TypeInstance::VecI16(vec)),
+            Whatever::VecI32(vec) => Ok(TypeInstance::VecI32(vec)),
+            Whatever::VecI64(vec) => Ok(TypeInstance::VecI64(vec)),
+            Whatever::VecI128(vec) => Ok(TypeInstance::VecI128(vec)),
+            Whatever::VecISize(vec) => Ok(TypeInstance::VecISize(vec)),
+            Whatever::VecU8(vec) => Ok(TypeInstance::VecU8(vec)),
+            Whatever::VecU16(vec) => Ok(TypeInstance::VecU16(vec)),
+            Whatever::VecU32(vec) => Ok(TypeInstance::VecU32(vec)),
+            Whatever::VecU64(vec) => Ok(TypeInstance::VecU64(vec)),
+            Whatever::VecU128(vec) => Ok(TypeInstance::VecU128(vec)),
+            Whatever::VecUSize(vec) => Ok(TypeInstance::VecUSize(vec)),
+            Whatever::VecString(vec) => Ok(TypeInstance::VecString(vec)),
+            _ =>
+            {
+
+                Err("Conversion Error")
+
+            }
+
+        }
+        
+    }
+
+}
+*/
+
+
 
 //#[derive(Serialize, Deserialize, Debug)]
 #[derive(Debug, Default)]
@@ -620,6 +738,8 @@ fn convert_number_from_sub_vec(number: Number, index: usize, command: &Command, 
     }
 
 }
+
+//Process a Map as a set of parameters for a command.
 
 fn process_map(map: Map<String, Value>, index_opt: Option<usize>, command: &Command, field: Option<&'static str>) -> Result<Vec<TypeInstance>, CommandError>
 {
