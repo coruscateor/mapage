@@ -149,14 +149,14 @@ pub enum TypeInstance
     I64(i64),
 
     I128(i128),
-    Isize(isize),
+    //Isize(isize),
     U8(u8),
     U16(u16),
     U32(u32),
     U64(u64),
 
     U128(u128),
-    Usize(usize),
+    //Usize(usize),
 
     //Collections
 
@@ -177,14 +177,14 @@ pub enum TypeInstance
     VecI64(Vec<i64>),
 
     VecI128(Vec<i128>),
-    VecISize(Vec<isize>),
+    //VecISize(Vec<isize>),
     VecU8(Vec<u8>),
     VecU16(Vec<u16>),
     VecU32(Vec<u32>),
     VecU64(Vec<u64>),
 
     VecU128(Vec<i128>),
-    VecUSize(Vec<usize>),
+    //VecUSize(Vec<usize>),
 
     VecString(Vec<String>),
     VecWhatever(Vec<Whatever>),
@@ -210,13 +210,13 @@ impl TypeInstance
             TypeInstance::I32(val) => Ok(Whatever::I32(val)),
             TypeInstance::I64(val) => Ok(Whatever::I64(val)),
             TypeInstance::I128(val) => Ok(Whatever::I128(val)),
-            TypeInstance::Isize(val) => Ok(Whatever::Isize(val)),
+            //TypeInstance::Isize(val) => Ok(Whatever::Isize(val)),
             TypeInstance::U8(val) => Ok(Whatever::U8(val)),
             TypeInstance::U16(val) => Ok(Whatever::U16(val)),
             TypeInstance::U32(val) => Ok(Whatever::U32(val)),
             TypeInstance::U64(val) => Ok(Whatever::U64(val)),
             TypeInstance::U128(val) => Ok(Whatever::U128(val)),
-            TypeInstance::Usize(val) => Ok(Whatever::USize(val)),
+            //TypeInstance::Usize(val) => Ok(Whatever::USize(val)),
             TypeInstance::String(val) => Ok(Whatever::String(val)),
             TypeInstance::VecBool(vec) => Ok(Whatever::VecBool(vec)),
             TypeInstance::VecChar(vec) => Ok(Whatever::VecChar(vec)),
@@ -227,13 +227,13 @@ impl TypeInstance
             TypeInstance::VecI32(vec) => Ok(Whatever::VecI32(vec)),
             TypeInstance::VecI64(vec) => Ok(Whatever::VecI64(vec)),
             TypeInstance::VecI128(vec) => Ok(Whatever::VecI128(vec)),
-            TypeInstance::VecISize(vec) => Ok(Whatever::VecISize(vec) ),
+            //TypeInstance::VecISize(vec) => Ok(Whatever::VecISize(vec) ),
             TypeInstance::VecU8(vec) => Ok(Whatever::VecU8(vec)),
             TypeInstance::VecU16(vec) => Ok(Whatever::VecU16(vec)),
             TypeInstance::VecU32(vec) => Ok(Whatever::VecU32(vec)),
             TypeInstance::VecU64(vec) => Ok(Whatever::VecU64(vec)),
             TypeInstance::VecU128(vec) => Ok(Whatever::VecU128(vec) ),
-            TypeInstance::VecUSize(vec) => Ok(Whatever::VecUSize(vec)),
+            //TypeInstance::VecUSize(vec) => Ok(Whatever::VecUSize(vec)),
             TypeInstance::VecString(vec) => Ok(Whatever::VecString(vec)),
             _ =>
             {
@@ -501,9 +501,9 @@ impl Error for CommandError
 
 //JSON
 
+/*
 fn convert_number_from_vec(number: Number, index: usize, command: &Command, field: Option<&'static str>) -> Result<TypeInstance, CommandError>
 {
-
 
     if number.is_f64()
     {
@@ -579,6 +579,7 @@ fn convert_number_from_vec(number: Number, index: usize, command: &Command, fiel
     }
 
 }
+*/
 
 fn convert_number(number: Number, command: &Command, field: Option<&'static str>) -> Result<TypeInstance, CommandError>
 {
@@ -811,12 +812,14 @@ fn process_map(map: Map<String, Value>, index_opt: Option<usize>, command: &Comm
                     
 
                 }
+                /*
                 "type_isize" => 
                 {
 
                     
 
                 }
+                */
                 "type_u8" => 
                 {
 
@@ -847,12 +850,14 @@ fn process_map(map: Map<String, Value>, index_opt: Option<usize>, command: &Comm
                     
 
                 }
+                /*
                 "type_usize" => 
                 {
 
                     
 
                 }
+                */
                 "type_string" => 
                 {
 
@@ -919,12 +924,14 @@ fn process_map(map: Map<String, Value>, index_opt: Option<usize>, command: &Comm
                     
 
                 }
+                /*
                 "type_vec_isize" => 
                 {
 
                     
 
                 }
+                */
                 "type_vec_u8" => 
                 {
 
@@ -955,12 +962,14 @@ fn process_map(map: Map<String, Value>, index_opt: Option<usize>, command: &Comm
                     
 
                 }
+                /*
                 "type_vec_usize" => 
                 {
 
                     
 
                 }
+                */
                 "type_vec_string" => 
                 {
 

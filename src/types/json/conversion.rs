@@ -266,6 +266,8 @@ into_type_instance_number!(i32, I32);
 
 into_type_instance_number!(i64, I64);
 
+//Can be a String.
+
 pub fn into_i128(value: Value, command_id: Option<u32>, field: Option<&'static str>, index: Option<usize>, sub_index: Option<usize>) -> Result<TypeInstance, CommandError>
 {
 
@@ -329,7 +331,7 @@ pub fn into_i128(value: Value, command_id: Option<u32>, field: Option<&'static s
 
 }
 
-into_type_instance_number!(isize, Isize);
+//into_type_instance_number!(isize, Isize);
 
 into_type_instance_number!(u8, U8);
 
@@ -338,6 +340,8 @@ into_type_instance_number!(u16, U16);
 into_type_instance_number!(u32, U32);
 
 into_type_instance_number!(u64, U64);
+
+//Can be a String.
 
 pub fn into_u128(value: Value, command_id: Option<u32>, field: Option<&'static str>, index: Option<usize>, sub_index: Option<usize>) -> Result<TypeInstance, CommandError>
 {
@@ -402,7 +406,7 @@ pub fn into_u128(value: Value, command_id: Option<u32>, field: Option<&'static s
 
 }
 
-into_type_instance_number!(usize, Usize);
+//into_type_instance_number!(usize, Usize);
 
 //Collections etc...
 
@@ -500,19 +504,21 @@ pub fn into_whatever(value: Value, command_id: Option<u32>, field: Option<&'stat
 
                 }
 
+                let whatever;
+
                 match entry.0.as_str()
                 {
 
                     "type_bool" => 
                     {
 
-                        let res =  into_bool(entry.1, command_id, field, index, sub_index)?;
+                        let res = into_bool(entry.1, command_id, field, index, sub_index)?;
 
                         //let whatever: Whatever = res.try_into();
 
-                        let whatever = res.into_whatever(command_id, field, index, sub_index)?;
+                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
 
-                        Ok(TypeInstance::Whatever(whatever))
+                        //Ok(TypeInstance::Whatever(whatever))
 
                         /*
                         match res.into_whatever(command_id, field, index, sub_index)
@@ -532,14 +538,158 @@ pub fn into_whatever(value: Value, command_id: Option<u32>, field: Option<&'stat
                         //Ok(TypeInstance::Whatever(Whatever::Bool(entry.1)))
 
                     }
+                    "type_char" =>
+                    {
+
+                        let res = into_char(entry.1, command_id, field, index, sub_index)?;
+
+                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+
+                        //Ok(TypeInstance::Whatever(whatever))
+
+                    }
+                    "type_f32" =>
+                    {
+
+                        let res = into_f32(entry.1, command_id, field, index, sub_index)?;
+
+                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+
+                        //Ok(TypeInstance::Whatever(whatever))
+
+                    }
+                    "type_f64" =>
+                    {
+
+                        let res = into_f64(entry.1, command_id, field, index, sub_index)?;
+
+                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+
+                    }
+                    "type_i8" =>
+                    {
+
+                        let res = into_i8(entry.1, command_id, field, index, sub_index)?;
+
+                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+
+                    }
+                    "type_i16" =>
+                    {
+
+                        let res = into_i16(entry.1, command_id, field, index, sub_index)?;
+
+                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+
+                    }
+                    "type_i32" =>
+                    {
+
+                        let res = into_i32(entry.1, command_id, field, index, sub_index)?;
+
+                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+
+                    }
+                    "type_i64" =>
+                    {
+
+                        let res = into_i64(entry.1, command_id, field, index, sub_index)?;
+
+                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+
+                    }
+                    "type_i128" =>
+                    {
+
+                        let res = into_i128(entry.1, command_id, field, index, sub_index)?;
+
+                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+
+                    }
+                    /*
+                    "type_isize" =>
+                    {
+
+                        let res = into_isize(entry.1, command_id, field, index, sub_index)?;
+
+                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+
+                    }
+                    */
+                    "type_u8" =>
+                    {
+
+                        let res = into_u8(entry.1, command_id, field, index, sub_index)?;
+
+                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+
+                    }
+                    "type_u16" =>
+                    {
+
+                        let res = into_u16(entry.1, command_id, field, index, sub_index)?;
+
+                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+
+                    }
+                    "type_u32" =>
+                    {
+
+                        let res = into_u32(entry.1, command_id, field, index, sub_index)?;
+
+                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+
+                    }
+                    "type_u64" =>
+                    {
+
+                        let res = into_u64(entry.1, command_id, field, index, sub_index)?;
+
+                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+
+                    }
+                    "type_u128" =>
+                    {
+
+                        let res = into_u128(entry.1, command_id, field, index, sub_index)?;
+
+                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+
+                    }
+                    "type_string" =>
+                    {
+
+                        let res = into_string(entry.1, command_id, field, index, sub_index)?;
+
+                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+
+                    }
+                    "type_whatever" =>
+                    {
+
+                        let res = into_whatever(entry.1, command_id, field, index, sub_index)?;
+
+                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+
+                    }
+                    "type_vec_bool" => 
+                    {
+    
+                        let res = into_vec_bool(entry.1, command_id, field, index, sub_index)?;
+
+                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+    
+                    }
                     _ =>
                     {
 
-                        Err(CommandError::with_sub_index_opt(SendableText::Str("Invalid type metadata provided."), command_id, field, index, sub_index))
+                        return Err(CommandError::with_sub_index_opt(SendableText::Str("Invalid type metadata provided."), command_id, field, index, sub_index));
 
                     }
                     
                 }
+
+                Ok(TypeInstance::Whatever(whatever))
 
                //let item = map[0];
 
@@ -557,5 +707,33 @@ pub fn into_whatever(value: Value, command_id: Option<u32>, field: Option<&'stat
 
     }
 
+}
 
+pub fn into_vec_bool(value: Value, command_id: Option<u32>, field: Option<&'static str>, index: Option<usize>, sub_index: Option<usize>) -> Result<TypeInstance, CommandError>
+{
+
+    if let Value::Array(arr)= value
+    {
+
+        let new_vec = Vec::with_capacity(arr.len());
+
+        for item in arr
+        {
+
+            let res = into_bool(item, command_id, field, index, sub_index);
+
+            new_vec.push(value);
+
+        }
+
+        Ok(TypeInstance::VecBool(val))
+
+    }
+    else
+    {
+
+        Err(CommandError::with_sub_index_opt(SendableText::Str("Bool convertion failed"), command_id, field, index, sub_index))
+        
+    }
+    
 }
