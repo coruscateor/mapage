@@ -19,6 +19,8 @@ use crate::types::Whatever;
 
 use super::conversion::{into_bool, into_char};
 
+use corlib::collections::StackedVec;
+
 #[derive(Debug, Default)]
 pub enum SupportedType
 {
@@ -330,9 +332,12 @@ pub struct CommandError
     id: Option<u32>,
     message: SendableText,
     field: Option<&'static str>,
+    indexs: StackedVec<usize, 4>
+    /*
     index: Option<usize>,
     sub_index: Option<usize>,
     sub_index_2: Option<usize>
+    */
 
 }
 
@@ -348,10 +353,12 @@ impl CommandError
             id,
             message,
             field,
+            indexs: StackedVec::new()
+            /*
             index: None,
             sub_index: None,
             sub_index_2: None
-
+            */
         }
 
     }
@@ -359,20 +366,47 @@ impl CommandError
     pub fn with_index(message: SendableText, id: Option<u32>, field: Option<&'static str>, index: usize) -> Self
     {
 
+        let mut indexs = StackedVec::new();
+
+        if indexs.push(index).is_some()
+        {
+
+            panic!("This should've worked!");
+
+        }
+
         Self
         {
 
             id,
             message,
-            field: field,
+            field, //: field,
+            indexs
+            /*
             index: Some(index),
             sub_index: None,
             sub_index_2: None
+            */
+        }
+
+    }
+
+    pub fn with_indexs(message: SendableText, id: Option<u32>, field: Option<&'static str>, indexs: StackedVec<usize, 4>) -> Self
+    {
+
+        Self
+        {
+
+            id,
+            message,
+            field,
+            indexs
 
         }
 
     }
 
+    /*
     pub fn with_sub_index(message: SendableText, id: Option<u32>, field: Option<&'static str>, index: usize, sub_index: usize) -> Self
     {
 
@@ -457,6 +491,7 @@ impl CommandError
         }
 
     }
+    */
 
 }
 
