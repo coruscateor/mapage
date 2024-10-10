@@ -1,3 +1,4 @@
+use core::num;
 use std::fmt::Display;
 use std::{default, string};
 
@@ -332,7 +333,8 @@ pub struct CommandError
     id: Option<u32>,
     message: SendableText,
     field: Option<&'static str>,
-    indexs: StackedVec<usize, 4>
+    //indexs: StackedVec<usize, 4>
+    indices: Option<Indices>
     /*
     index: Option<usize>,
     sub_index: Option<usize>,
@@ -344,8 +346,22 @@ pub struct CommandError
 impl CommandError
 {
 
-    pub fn new(message: SendableText, id: Option<u32>, field: Option<&'static str>) -> Self
+    pub fn new(message: SendableText, id: Option<u32>, field: Option<&'static str>, indices: Option<&Indices>) -> Self
     {
+
+        let actual_indices;
+
+        match indices
+        {
+            Some(val) =>
+            {
+
+                actual_indices = Some(val.clone());
+
+            }
+            None => actual_indices = None
+
+        }
 
         Self
         {
@@ -353,7 +369,9 @@ impl CommandError
             id,
             message,
             field,
-            indexs: StackedVec::new()
+            indices: actual_indices
+            //indices: None
+            //indexs: StackedVec::new()
             /*
             index: None,
             sub_index: None,
@@ -363,12 +381,13 @@ impl CommandError
 
     }
 
+    /*
     pub fn with_index(message: SendableText, id: Option<u32>, field: Option<&'static str>, index: usize) -> Self
     {
 
-        let mut indexs = StackedVec::new();
+        let mut indices = StackedVec::new();
 
-        if indexs.push(index).is_some()
+        if indices.push(index).is_some()
         {
 
             panic!("This should've worked!");
@@ -381,7 +400,7 @@ impl CommandError
             id,
             message,
             field, //: field,
-            indexs
+            indices: Some(indices)
             /*
             index: Some(index),
             sub_index: None,
@@ -391,7 +410,7 @@ impl CommandError
 
     }
 
-    pub fn with_indexs(message: SendableText, id: Option<u32>, field: Option<&'static str>, indexs: StackedVec<usize, 4>) -> Self
+    pub fn with_indexs(message: SendableText, id: Option<u32>, field: Option<&'static str>, indices: &StackedVec<usize, 4>) -> Self
     {
 
         Self
@@ -400,11 +419,12 @@ impl CommandError
             id,
             message,
             field,
-            indexs
+            indices: Some(indices.clone())
 
         }
 
     }
+    */
 
     /*
     pub fn with_sub_index(message: SendableText, id: Option<u32>, field: Option<&'static str>, index: usize, sub_index: usize) -> Self
@@ -616,7 +636,7 @@ fn convert_number_from_vec(number: Number, index: usize, command: &Command, fiel
 }
 */
 
-fn convert_number(number: Number, command: &Command, field: Option<&'static str>) -> Result<TypeInstance, CommandError>
+fn convert_number(number: Number, command: &Command, field: Option<&'static str>, indices: Option<&Indices>) -> Result<TypeInstance, CommandError>
 {
 
     if number.is_f64()
@@ -1062,8 +1082,18 @@ fn process_map(map: Map<String, Value>, index_opt: Option<usize>, command: &Comm
 
 }
 
+//pub static sv_size: usize = 4; 
+
+pub const SV_SIZE: usize = 4;
+
+pub type Indices = StackedVec::<usize, SV_SIZE>;
+
+//Start here
+
 pub fn into_command(input: Value) -> Result<Command, CommandError>
 {
+
+    let indices = Indices::new(); //StackedVec::<usize, SV_SIZE>::new(); //For error reporting
 
     let error_message;
 
@@ -1367,7 +1397,9 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
                                         Value::Number(number) =>
                                         {
 
-                                            match convert_number_from_vec(number, index, &command, Some(field))
+                                            //indices.push(number);
+
+                                            match convert_number(number, &command, Some(field)) //convert_number_from_vec(number, index, &command, Some(field))
                                             {
 
                                                 Ok(res) =>
