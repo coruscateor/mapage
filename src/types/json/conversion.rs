@@ -8,13 +8,13 @@ use serde_json::Value;
 
 use crate::types::Whatever;
 
-use super::{CommandError, TypeInstance};
+use super::{CommandError, Indices, TypeInstance};
 
 use paste::paste;
 
 use std::str::FromStr;
 
-pub fn into_bool(value: Value, command_id: Option<u32>, field: Option<&'static str>, index: Option<usize>, sub_index: Option<usize>) -> Result<TypeInstance, CommandError>
+pub fn into_bool(value: Value, command_id: Option<u32>, field: Option<&'static str>, indices: &Option<Indices>) -> Result<TypeInstance, CommandError> //, index: Option<usize>, sub_index: Option<usize>
 {
 
     if let Value::Bool(val) = value
@@ -26,13 +26,13 @@ pub fn into_bool(value: Value, command_id: Option<u32>, field: Option<&'static s
     else
     {
 
-        Err(CommandError::with_sub_index_opt(SendableText::Str("Bool convertion failed"), command_id, field, index, sub_index))
+        Err(CommandError::new(SendableText::Str("Bool convertion failed"), command_id, field, indices.clone())) //with_sub_index_opt(SendableText::Str("Bool convertion failed"), command_id, field, index, sub_index))
         
     }
     
 }
 
-pub fn into_char(value: Value, command_id: Option<u32>, field: Option<&'static str>, index: Option<usize>, sub_index: Option<usize>) -> Result<TypeInstance, CommandError>
+pub fn into_char(value: Value, command_id: Option<u32>, field: Option<&'static str>, indices: &Option<Indices>) -> Result<TypeInstance, CommandError> //, index: Option<usize>, sub_index: Option<usize>
 {
 
     if let Value::String(val) = value
@@ -41,7 +41,7 @@ pub fn into_char(value: Value, command_id: Option<u32>, field: Option<&'static s
         if val.is_empty()
         {
 
-            return Err(CommandError::with_sub_index_opt(SendableText::Str("Char conversion failed: the provided String must have at least one value."), command_id, field, index, sub_index))
+            return Err(CommandError::new(SendableText::Str("Char conversion failed: the provided String must have at least one value."), command_id, field, indices.clone())) //with_sub_index_opt(SendableText::Str("Char conversion failed: the provided String must have at least one value."), command_id, field, index, sub_index))
 
         }
 
@@ -66,13 +66,13 @@ pub fn into_char(value: Value, command_id: Option<u32>, field: Option<&'static s
     else
     {
 
-        Err(CommandError::with_sub_index_opt(SendableText::Str("Char conversion failed"), command_id, field, index, sub_index))
+        Err(CommandError::new(SendableText::Str("Char conversion failed"), command_id, field, indices.clone())) //CommandError::with_sub_index_opt(SendableText::Str("Char conversion failed"), command_id, field, index, sub_index))
         
     }
     
 }
 
-pub fn into_f32(value: Value, command_id: Option<u32>, field: Option<&'static str>, index: Option<usize>, sub_index: Option<usize>) -> Result<TypeInstance, CommandError>
+pub fn into_f32(value: Value, command_id: Option<u32>, field: Option<&'static str>, indices: &Option<Indices>) -> Result<TypeInstance, CommandError> //index: Option<usize>, sub_index: Option<usize>
 {
 
     if let Value::Number(val) = value
@@ -101,7 +101,7 @@ pub fn into_f32(value: Value, command_id: Option<u32>, field: Option<&'static st
         else
         {
 
-            Err(CommandError::with_sub_index_opt(SendableText::Str("F32 conversion failed"), command_id, field, index, sub_index))    
+            Err(CommandError::new(SendableText::Str("F32 conversion failed"), command_id, field, indices.clone()))  //CommandError::with_sub_index_opt(SendableText::Str("F32 conversion failed"), command_id, field, index, sub_index))    
             
         }
 
@@ -109,13 +109,15 @@ pub fn into_f32(value: Value, command_id: Option<u32>, field: Option<&'static st
     else
     {
 
-        Err(CommandError::with_sub_index_opt(SendableText::Str("F32 conversion failed"), command_id, field, index, sub_index))
+        Err(CommandError::new(SendableText::Str("F32 conversion failed"), command_id, field, indices.clone()))
+
+        //Err(CommandError::with_sub_index_opt(SendableText::Str("F32 conversion failed"), command_id, field, index, sub_index))
         
     }
 
 }
 
-pub fn into_f64(value: Value, command_id: Option<u32>, field: Option<&'static str>, index: Option<usize>, sub_index: Option<usize>) -> Result<TypeInstance, CommandError>
+pub fn into_f64(value: Value, command_id: Option<u32>, field: Option<&'static str>, indices: &Option<Indices>) -> Result<TypeInstance, CommandError> //index: Option<usize>, sub_index: Option<usize>
 {
 
     if let Value::Number(val) = value
@@ -142,7 +144,9 @@ pub fn into_f64(value: Value, command_id: Option<u32>, field: Option<&'static st
         else
         {
 
-            Err(CommandError::with_sub_index_opt(SendableText::Str("F32 conversion failed"), command_id, field, index, sub_index))    
+            Err(CommandError::new(SendableText::Str("F64 conversion failed"), command_id, field, indices.clone()))
+
+            //Err(CommandError::with_sub_index_opt(SendableText::Str("F32 conversion failed"), command_id, field, index, sub_index))    
             
         }
 
@@ -150,13 +154,15 @@ pub fn into_f64(value: Value, command_id: Option<u32>, field: Option<&'static st
     else
     {
 
-        Err(CommandError::with_sub_index_opt(SendableText::Str("F32 conversion failed"), command_id, field, index, sub_index))
+        Err(CommandError::new(SendableText::Str("F64 conversion failed"), command_id, field, indices.clone()))
+
+        //Err(CommandError::with_sub_index_opt(SendableText::Str("F32 conversion failed"), command_id, field, index, sub_index))
         
     }
 
 }
 
-pub fn into_i8(value: Value, command_id: Option<u32>, field: Option<&'static str>, index: Option<usize>, sub_index: Option<usize>) -> Result<TypeInstance, CommandError>
+pub fn into_i8(value: Value, command_id: Option<u32>, field: Option<&'static str>, indices: &Option<Indices>) -> Result<TypeInstance, CommandError> //index: Option<usize>, sub_index: Option<usize>
 {
 
     if let Value::Number(val) = value
@@ -183,7 +189,9 @@ pub fn into_i8(value: Value, command_id: Option<u32>, field: Option<&'static str
         else
         {
 
-            Err(CommandError::with_sub_index_opt(SendableText::Str("F32 conversion failed"), command_id, field, index, sub_index))    
+            Err(CommandError::new(SendableText::Str("I8 conversion failed"), command_id, field, indices.clone()))
+
+            //Err(CommandError::with_sub_index_opt(SendableText::Str("F32 conversion failed"), command_id, field, index, sub_index))    
             
         }
 
@@ -191,7 +199,9 @@ pub fn into_i8(value: Value, command_id: Option<u32>, field: Option<&'static str
     else
     {
 
-        Err(CommandError::with_sub_index_opt(SendableText::Str("F32 conversion failed"), command_id, field, index, sub_index))
+        Err(CommandError::new(SendableText::Str("I8 conversion failed"), command_id, field, indices.clone()))
+
+        //Err(CommandError::with_sub_index_opt(SendableText::Str("F32 conversion failed"), command_id, field, index, sub_index))
         
     }
 
@@ -207,7 +217,7 @@ macro_rules! into_type_instance_number
         paste!
         {
 
-            pub fn [<into_ $number_type>](value: Value, command_id: Option<u32>, field: Option<&'static str>, index: Option<usize>, sub_index: Option<usize>) -> Result<TypeInstance, CommandError>
+            pub fn [<into_ $number_type>](value: Value, command_id: Option<u32>, field: Option<&'static str>, indices: &Option<Indices>) -> Result<TypeInstance, CommandError> //index: Option<usize>, sub_index: Option<usize>
             {
 
                 use TypeInstance::*;
@@ -240,7 +250,9 @@ macro_rules! into_type_instance_number
                     else
                     {
 
-                        Err(CommandError::with_sub_index_opt(SendableText::Str("$ti_number_type conversion failed"), command_id, field, index, sub_index))    
+                        Err(CommandError::new(SendableText::Str("$ti_number_type conversion failed"), command_id, field, indices.clone()))
+
+                        //Err(CommandError::with_sub_index_opt(SendableText::Str("$ti_number_type conversion failed"), command_id, field, index, sub_index))    
                         
                     }
 
@@ -248,7 +260,9 @@ macro_rules! into_type_instance_number
                 else
                 {
 
-                    Err(CommandError::with_sub_index_opt(SendableText::Str("$ti_number_type conversion failed"), command_id, field, index, sub_index))
+                    Err(CommandError::new(SendableText::Str("$ti_number_type conversion failed"), command_id, field, indices.clone()))
+
+                    //Err(CommandError::with_sub_index_opt(SendableText::Str("$ti_number_type conversion failed"), command_id, field, index, sub_index))
                     
                 }
 
@@ -268,7 +282,7 @@ into_type_instance_number!(i64, I64);
 
 //Can be a String.
 
-pub fn into_i128(value: Value, command_id: Option<u32>, field: Option<&'static str>, index: Option<usize>, sub_index: Option<usize>) -> Result<TypeInstance, CommandError>
+pub fn into_i128(value: Value, command_id: Option<u32>, field: Option<&'static str>, indices: &Option<Indices>) -> Result<TypeInstance, CommandError> //index: Option<usize>, sub_index: Option<usize>
 {
 
     if let Value::Number(val) = value
@@ -295,7 +309,9 @@ pub fn into_i128(value: Value, command_id: Option<u32>, field: Option<&'static s
         else
         {
 
-            Err(CommandError::with_sub_index_opt(SendableText::Str("I128 conversion failed"), command_id, field, index, sub_index))    
+            Err(CommandError::new(SendableText::Str("I128 conversion failed"), command_id, field, indices.clone()))
+
+            //Err(CommandError::with_sub_index_opt(SendableText::Str("I128 conversion failed"), command_id, field, index, sub_index))    
             
         }
 
@@ -315,7 +331,9 @@ pub fn into_i128(value: Value, command_id: Option<u32>, field: Option<&'static s
             Err(err) =>
             {
 
-                Err(CommandError::with_sub_index_opt(SendableText::String(err.to_string()), command_id, field, index, sub_index))    
+                Err(CommandError::new(SendableText::String(err.to_string()), command_id, field, indices.clone()))
+
+                //Err(CommandError::with_sub_index_opt(SendableText::String(err.to_string()), command_id, field, index, sub_index))    
 
             }
 
@@ -325,7 +343,9 @@ pub fn into_i128(value: Value, command_id: Option<u32>, field: Option<&'static s
     else
     {
 
-        Err(CommandError::with_sub_index_opt(SendableText::Str("I128 conversion failed"), command_id, field, index, sub_index))
+        Err(CommandError::new(SendableText::Str("I128 conversion failed"), command_id, field, indices.clone()))
+
+        //Err(CommandError::with_sub_index_opt(SendableText::Str("I128 conversion failed"), command_id, field, index, sub_index))
         
     }
 
@@ -343,7 +363,7 @@ into_type_instance_number!(u64, U64);
 
 //Can be a String.
 
-pub fn into_u128(value: Value, command_id: Option<u32>, field: Option<&'static str>, index: Option<usize>, sub_index: Option<usize>) -> Result<TypeInstance, CommandError>
+pub fn into_u128(value: Value, command_id: Option<u32>, field: Option<&'static str>, indices: &Option<Indices>) -> Result<TypeInstance, CommandError> //index: Option<usize>, sub_index: Option<usize>
 {
 
     if let Value::Number(val) = value
@@ -370,7 +390,9 @@ pub fn into_u128(value: Value, command_id: Option<u32>, field: Option<&'static s
         else
         {
 
-            Err(CommandError::with_sub_index_opt(SendableText::Str("I128 conversion failed"), command_id, field, index, sub_index))    
+            Err(CommandError::new(SendableText::Str("I128 conversion failed"), command_id, field, indices.clone()))
+
+            //Err(CommandError::with_sub_index_opt(SendableText::Str("I128 conversion failed"), command_id, field, index, sub_index))    
             
         }
 
@@ -390,7 +412,9 @@ pub fn into_u128(value: Value, command_id: Option<u32>, field: Option<&'static s
             Err(err) =>
             {
 
-                Err(CommandError::with_sub_index_opt(SendableText::String(err.to_string()), command_id, field, index, sub_index))    
+                Err(CommandError::new(SendableText::String(err.to_string()), command_id, field, indices.clone()))
+
+                //Err(CommandError::with_sub_index_opt(SendableText::String(err.to_string()), command_id, field, index, sub_index))    
 
             }
 
@@ -400,7 +424,9 @@ pub fn into_u128(value: Value, command_id: Option<u32>, field: Option<&'static s
     else
     {
 
-        Err(CommandError::with_sub_index_opt(SendableText::Str("U128 conversion failed"), command_id, field, index, sub_index))
+        Err(CommandError::new(SendableText::Str("I128 conversion failed"), command_id, field, indices.clone()))
+
+        //Err(CommandError::with_sub_index_opt(SendableText::Str("U128 conversion failed"), command_id, field, index, sub_index))
         
     }
 
@@ -410,7 +436,7 @@ pub fn into_u128(value: Value, command_id: Option<u32>, field: Option<&'static s
 
 //Collections etc...
 
-pub fn into_string(value: Value, command_id: Option<u32>, field: Option<&'static str>, index: Option<usize>, sub_index: Option<usize>) -> Result<TypeInstance, CommandError>
+pub fn into_string(value: Value, command_id: Option<u32>, field: Option<&'static str>, indices: &Option<Indices>) -> Result<TypeInstance, CommandError> //index: Option<usize>, sub_index: Option<usize>
 {
 
     if let Value::String(val) = value
@@ -422,13 +448,15 @@ pub fn into_string(value: Value, command_id: Option<u32>, field: Option<&'static
     else
     {
 
-        Err(CommandError::with_sub_index_opt(SendableText::Str("String conversion failed"), command_id, field, index, sub_index))
+        Err(CommandError::new(SendableText::Str("String conversion failed"), command_id, field, indices.clone()))
+
+        //Err(CommandError::with_sub_index_opt(SendableText::Str("String conversion failed"), command_id, field, index, sub_index))
         
     }
     
 }
 
-pub fn into_whatever(value: Value, command_id: Option<u32>, field: Option<&'static str>, index: Option<usize>, sub_index: Option<usize>) -> Result<TypeInstance, CommandError>
+pub fn into_whatever(value: Value, command_id: Option<u32>, field: Option<&'static str>, indices: &Option<Indices>) -> Result<TypeInstance, CommandError> //index: Option<usize>, sub_index: Option<usize>
 {
 
     match value
@@ -437,7 +465,9 @@ pub fn into_whatever(value: Value, command_id: Option<u32>, field: Option<&'stat
         Value::Null =>
         {
 
-            Err(CommandError::with_sub_index_opt(SendableText::Str("Whatevers cannot be converted from Null values."), command_id, field, index, sub_index))
+            Err(CommandError::new(SendableText::Str("Whatevers cannot be converted from Null values."), command_id, field, indices.clone()))
+
+            //Err(CommandError::with_sub_index_opt(SendableText::Str("Whatevers cannot be converted from Null values."), command_id, field, index, sub_index))
 
         }
         Value::Bool(val) =>
@@ -470,7 +500,9 @@ pub fn into_whatever(value: Value, command_id: Option<u32>, field: Option<&'stat
             else
             {
     
-                Err(CommandError::with_sub_index_opt(SendableText::Str("Whatever number conversion failed."), command_id, field, index, sub_index))    
+                Err(CommandError::new(SendableText::Str("Whatever number conversion failed."), command_id, field, indices.clone()))
+
+                //Err(CommandError::with_sub_index_opt(SendableText::Str("Whatever number conversion failed."), command_id, field, index, sub_index))    
                 
             }
 
@@ -484,7 +516,9 @@ pub fn into_whatever(value: Value, command_id: Option<u32>, field: Option<&'stat
         Value::Array(_vec) =>
         {
 
-            Err(CommandError::with_sub_index_opt(SendableText::Str("Conversion failed: Whatever objects cannot contain collections of Whatever objects."), command_id, field, index, sub_index))    
+            Err(CommandError::new(SendableText::Str("Conversion failed: Whatever objects cannot contain collections of Whatever objects."), command_id, field, indices.clone()))
+
+            //Err(CommandError::with_sub_index_opt(SendableText::Str("Conversion failed: Whatever objects cannot contain collections of Whatever objects."), command_id, field, index, sub_index))    
 
         }
         Value::Object(map) =>
@@ -512,11 +546,11 @@ pub fn into_whatever(value: Value, command_id: Option<u32>, field: Option<&'stat
                     "type_bool" => 
                     {
 
-                        let res = into_bool(entry.1, command_id, field, index, sub_index)?;
+                        let res = into_bool(entry.1, command_id, field, indices)?; //index, sub_index)?;
 
                         //let whatever: Whatever = res.try_into();
 
-                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+                        whatever = res.into_whatever(command_id, field, indices)?; //index, sub_index)?;
 
                         //Ok(TypeInstance::Whatever(whatever))
 
@@ -541,9 +575,9 @@ pub fn into_whatever(value: Value, command_id: Option<u32>, field: Option<&'stat
                     "type_char" =>
                     {
 
-                        let res = into_char(entry.1, command_id, field, index, sub_index)?;
+                        let res = into_char(entry.1, command_id, field, indices)?; //index, sub_index)?;
 
-                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+                        whatever = res.into_whatever(command_id, field, indices)?; //index, sub_index)?;
 
                         //Ok(TypeInstance::Whatever(whatever))
 
@@ -551,9 +585,9 @@ pub fn into_whatever(value: Value, command_id: Option<u32>, field: Option<&'stat
                     "type_f32" =>
                     {
 
-                        let res = into_f32(entry.1, command_id, field, index, sub_index)?;
+                        let res = into_f32(entry.1, command_id, field, indices)?; //index, sub_index)?;
 
-                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+                        whatever = res.into_whatever(command_id, field, indices)?; //index, sub_index)?;
 
                         //Ok(TypeInstance::Whatever(whatever))
 
@@ -561,49 +595,49 @@ pub fn into_whatever(value: Value, command_id: Option<u32>, field: Option<&'stat
                     "type_f64" =>
                     {
 
-                        let res = into_f64(entry.1, command_id, field, index, sub_index)?;
+                        let res = into_f64(entry.1, command_id, field, indices)?; //index, sub_index)?;
 
-                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+                        whatever = res.into_whatever(command_id, field, indices)?; //index, sub_index)?;
 
                     }
                     "type_i8" =>
                     {
 
-                        let res = into_i8(entry.1, command_id, field, index, sub_index)?;
+                        let res = into_i8(entry.1, command_id, field, indices)?; //index, sub_index)?;
 
-                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+                        whatever = res.into_whatever(command_id, field, indices)?; //index, sub_index)?;
 
                     }
                     "type_i16" =>
                     {
 
-                        let res = into_i16(entry.1, command_id, field, index, sub_index)?;
+                        let res = into_i16(entry.1, command_id, field, indices)?; //index, sub_index)?;
 
-                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+                        whatever = res.into_whatever(command_id, field, indices)?; //index, sub_index)?;
 
                     }
                     "type_i32" =>
                     {
 
-                        let res = into_i32(entry.1, command_id, field, index, sub_index)?;
+                        let res = into_i32(entry.1, command_id, field, indices)?; //index, sub_index)?;
 
-                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+                        whatever = res.into_whatever(command_id, field, indices)?; //index, sub_index)?;
 
                     }
                     "type_i64" =>
                     {
 
-                        let res = into_i64(entry.1, command_id, field, index, sub_index)?;
+                        let res = into_i64(entry.1, command_id, field, indices)?; //index, sub_index)?;
 
-                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+                        whatever = res.into_whatever(command_id, field, indices)?; //index, sub_index)?;
 
                     }
                     "type_i128" =>
                     {
 
-                        let res = into_i128(entry.1, command_id, field, index, sub_index)?;
+                        let res = into_i128(entry.1, command_id, field, indices)?; //index, sub_index)?;
 
-                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+                        whatever = res.into_whatever(command_id, field, indices)?; //index, sub_index)?;
 
                     }
                     /*
@@ -619,71 +653,73 @@ pub fn into_whatever(value: Value, command_id: Option<u32>, field: Option<&'stat
                     "type_u8" =>
                     {
 
-                        let res = into_u8(entry.1, command_id, field, index, sub_index)?;
+                        let res = into_u8(entry.1, command_id, field, indices)?; //index, sub_index)?;
 
-                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+                        whatever = res.into_whatever(command_id, field, indices)?; //index, sub_index)?;
 
                     }
                     "type_u16" =>
                     {
 
-                        let res = into_u16(entry.1, command_id, field, index, sub_index)?;
+                        let res = into_u16(entry.1, command_id, field, indices)?; //index, sub_index)?;
 
-                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+                        whatever = res.into_whatever(command_id, field, indices)?; //index, sub_index)?;
 
                     }
                     "type_u32" =>
                     {
 
-                        let res = into_u32(entry.1, command_id, field, index, sub_index)?;
+                        let res = into_u32(entry.1, command_id, field, indices)?; //index, sub_index)?;
 
-                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+                        whatever = res.into_whatever(command_id, field, indices)?; //index, sub_index)?;
 
                     }
                     "type_u64" =>
                     {
 
-                        let res = into_u64(entry.1, command_id, field, index, sub_index)?;
+                        let res = into_u64(entry.1, command_id, field, indices)?; //index, sub_index)?;
 
-                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+                        whatever = res.into_whatever(command_id, field, indices)?;//index, sub_index)?;
 
                     }
                     "type_u128" =>
                     {
 
-                        let res = into_u128(entry.1, command_id, field, index, sub_index)?;
+                        let res = into_u128(entry.1, command_id, field, indices)?; //index, sub_index)?;
 
-                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+                        whatever = res.into_whatever(command_id, field, indices)?; //index, sub_index)?;
 
                     }
                     "type_string" =>
                     {
 
-                        let res = into_string(entry.1, command_id, field, index, sub_index)?;
+                        let res = into_string(entry.1, command_id, field, indices)?; //index, sub_index)?;
 
-                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+                        whatever = res.into_whatever(command_id, field, indices)?; //index, sub_index)?;
 
                     }
                     "type_whatever" =>
                     {
 
-                        let res = into_whatever(entry.1, command_id, field, index, sub_index)?;
+                        let res = into_whatever(entry.1, command_id, field, indices)?; //index, sub_index)?;
 
-                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+                        whatever = res.into_whatever(command_id, field, indices)?; //index, sub_index)?;
 
                     }
                     "type_vec_bool" => 
                     {
     
-                        let res = into_vec_bool(entry.1, command_id, field, index, sub_index)?;
+                        let res = into_vec_bool(entry.1, command_id, field, indices)?; //index, sub_index)?;
 
-                        whatever = res.into_whatever(command_id, field, index, sub_index)?;
+                        whatever = res.into_whatever(command_id, field, indices)?; //index, sub_index)?;
     
                     }
                     _ =>
                     {
 
-                        return Err(CommandError::with_sub_index_opt(SendableText::Str("Invalid type metadata provided."), command_id, field, index, sub_index));
+                        return Err(CommandError::new(SendableText::Str("Invalid type metadata provided."), command_id, field, indices.clone()))?;
+
+                        //return Err(CommandError::with_sub_index_opt(SendableText::Str("Invalid type metadata provided."), command_id, field, indices)?; //index, sub_index));
 
                     }
                     
@@ -699,7 +735,9 @@ pub fn into_whatever(value: Value, command_id: Option<u32>, field: Option<&'stat
             else
             {
 
-                Err(CommandError::with_sub_index_opt(SendableText::Str("A Map with at least one entry expected."), command_id, field, index, sub_index))
+                return Err(CommandError::new(SendableText::Str("A Map with at least one entry expected."), command_id, field, indices.clone()))?;
+
+                //Err(CommandError::with_sub_index_opt(SendableText::Str("A Map with at least one entry expected."), command_id, field, index, sub_index))
                 
             }
 
@@ -709,30 +747,32 @@ pub fn into_whatever(value: Value, command_id: Option<u32>, field: Option<&'stat
 
 }
 
-pub fn into_vec_bool(value: Value, command_id: Option<u32>, field: Option<&'static str>, index: Option<usize>, sub_index: Option<usize>) -> Result<TypeInstance, CommandError>
+pub fn into_vec_bool(value: Value, command_id: Option<u32>, field: Option<&'static str>, indices: &Option<Indices>) -> Result<TypeInstance, CommandError> //index: Option<usize>, sub_index: Option<usize>
 {
 
-    if let Value::Array(arr)= value
+    if let Value::Array(arr) = value
     {
 
-        let new_vec = Vec::with_capacity(arr.len());
+        let mut new_vec = Vec::with_capacity(arr.len());
 
         for item in arr
         {
 
-            let res = into_bool(item, command_id, field, index, sub_index);
+            let res = into_bool(item, command_id, field, indices)?; //index, sub_index);
 
-            new_vec.push(value);
+            new_vec.push(res.into());
 
         }
 
-        Ok(TypeInstance::VecBool(val))
+        Ok(TypeInstance::VecBool(new_vec))
 
     }
     else
     {
 
-        Err(CommandError::with_sub_index_opt(SendableText::Str("Bool convertion failed"), command_id, field, index, sub_index))
+        Err(CommandError::new(SendableText::Str("Bool convertion failed"), command_id, field, indices.clone()))
+
+        //Err(CommandError::with_sub_index_opt(SendableText::Str("Bool convertion failed"), command_id, field, index, sub_index))
         
     }
     
