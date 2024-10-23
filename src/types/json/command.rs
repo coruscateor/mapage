@@ -18,7 +18,7 @@ use corlib::inc_dec::{self, IncDecSelf}; //, IntIncDecSelf};
 
 use crate::types::Whatever;
 
-use super::conversion::{into_bool, into_char};
+use super::conversion::*;
 
 use corlib::collections::StackedVec;
 
@@ -1046,43 +1046,43 @@ fn process_map(map: Map<String, Value>, command: &Command, field: Option<&'stati
                 "type_f32" => 
                 {
 
-
+                    res_vec.push(into_f32(value, command.id, field, indices)?);
 
                 }
                 "type_f64" => 
                 {
 
-                    
+                    res_vec.push(into_f64(value, command.id, field, indices)?);
 
                 }
                 "type_i8" => 
                 {
 
-                    
+                    res_vec.push(into_i8(value, command.id, field, indices)?);
 
                 }
                 "type_i16" => 
                 {
 
-                    
+                    res_vec.push(into_i16(value, command.id, field, indices)?);
 
                 }
                 "type_i32" => 
                 {
 
-                    
+                    res_vec.push(into_i32(value, command.id, field, indices)?);
 
                 }
                 "type_i64" => 
                 {
 
-                    
+                    res_vec.push(into_i64(value, command.id, field, indices)?);
 
                 }
                 "type_i128" => 
                 {
 
-                    
+                    res_vec.push(into_i128(value, command.id, field, indices)?);
 
                 }
                 /*
@@ -1096,31 +1096,31 @@ fn process_map(map: Map<String, Value>, command: &Command, field: Option<&'stati
                 "type_u8" => 
                 {
 
-                    
+                    res_vec.push(into_u8(value, command.id, field, indices)?);
 
                 }
                 "type_u16" => 
                 {
 
-                    
+                    res_vec.push(into_u16(value, command.id, field, indices)?);
 
                 }
                 "type_u32" => 
                 {
 
-                    
+                    res_vec.push(into_u32(value, command.id, field, indices)?);
 
                 }
                 "type_u64" => 
                 {
 
-                    
+                    res_vec.push(into_u64(value, command.id, field, indices)?);
 
                 }
                 "type_u128" => 
                 {
 
-                    
+                    res_vec.push(into_u128(value, command.id, field, indices)?);
 
                 }
                 /*
@@ -1134,31 +1134,33 @@ fn process_map(map: Map<String, Value>, command: &Command, field: Option<&'stati
                 "type_string" => 
                 {
 
-                    
+                    res_vec.push(into_string(value, command.id, field, indices)?);
 
                 }
                 "type_whatever" => 
                 {
 
-                    
+                    res_vec.push(into_whatever(value, command.id, field, indices)?);
 
                 }
                 "type_vec_bool" => 
                 {
 
-                    
+                    res_vec.push(into_vec_bool(value, command.id, field, indices)?);
 
                 }
+                /*
                 "type_vec_char" => 
                 {
 
-                    
+                    res_vec.push(into_vec_char(value, command.id, field, indices)?);
 
                 }
+                */
                 "type_vec_f32" => 
                 {
 
-                    
+                    res_vec.push(into_vec_f32(value, command.id, field, indices)?);
 
                 }
                 "type_vec_f64" => 
