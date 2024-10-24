@@ -770,10 +770,96 @@ pub fn into_vec_bool(value: Value, command_id: Option<u32>, field: Option<&'stat
     else
     {
 
-        Err(CommandError::new(SendableText::Str("Bool convertion failed"), command_id, field, indices.clone()))
+        Err(CommandError::new(SendableText::Str("Array expected"), command_id, field, indices.clone()))
 
         //Err(CommandError::with_sub_index_opt(SendableText::Str("Bool convertion failed"), command_id, field, index, sub_index))
         
     }
     
 }
+
+//ti = Type Instance
+
+#[macro_export]
+macro_rules! into_type_instance_vec_type
+{
+
+    //$vec_type:ident,
+
+    //
+
+    ($lc_item_type:ident, $ti_vec_type:ident) =>
+    {
+
+        paste!
+        {
+
+            pub fn [<into_vec_ $lc_item_type>](value: Value, command_id: Option<u32>, field: Option<&'static str>, indices: &Option<Indices>) -> Result<TypeInstance, CommandError> //index: Option<usize>, sub_index: Option<usize>
+            {
+
+                //use TypeInstance::*;
+
+                if let Value::Array(arr) = value
+                {
+            
+                    let mut new_vec = Vec::with_capacity(arr.len());
+            
+                    for item in arr
+                    {
+            
+                        let res = [<into_ $lc_item_type>](item, command_id, field, indices)?;
+            
+                        new_vec.push(res.into());
+            
+                    }
+                    
+                    Ok(TypeInstance:: $ti_vec_type (new_vec))
+            
+                }
+                else
+                {
+            
+                    Err(CommandError::new(SendableText::Str("Array expected"), command_id, field, indices.clone()))
+                    
+                }
+
+            }
+
+        }
+
+    } 
+
+}
+
+//Skip vec_char
+
+into_type_instance_vec_type!(f32, VecF32);
+
+into_type_instance_vec_type!(f64, VecF64);
+
+into_type_instance_vec_type!(i8, VecI8);
+
+into_type_instance_vec_type!(i16, VecI16);
+
+into_type_instance_vec_type!(i32, VecI32);
+
+into_type_instance_vec_type!(i64, VecI64);
+
+into_type_instance_vec_type!(i128, VecI128);
+
+into_type_instance_vec_type!(u8, VecU8);
+
+into_type_instance_vec_type!(u16, VecU16);
+
+into_type_instance_vec_type!(u32, VecU32);
+
+into_type_instance_vec_type!(u64, VecU64);
+
+into_type_instance_vec_type!(u128, VecU128);
+
+into_type_instance_vec_type!(string, VecString);
+
+into_type_instance_vec_type!(whatever, VecWhatever);
+
+
+

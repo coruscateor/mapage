@@ -274,6 +274,103 @@ impl From<TypeInstance> for bool
 
 }
 
+macro_rules! from_type_instance_type
+{
+
+    ($lc_ti_type:ident, $ti_type:ident) =>
+    {
+
+        impl From<TypeInstance> for $lc_ti_type
+        {
+            
+            fn from(value: TypeInstance) -> Self
+            {
+
+                if let TypeInstance:: $ti_type (val) = value
+                {
+
+                    val
+                    
+                }
+                else
+                {
+
+                    panic!("Error: Invalid conversion");
+                    
+                }
+            
+            }
+
+        }
+
+    }
+
+}
+
+from_type_instance_type!(char, Char);
+
+from_type_instance_type!(f32, F32);
+
+from_type_instance_type!(f64, F64);
+
+from_type_instance_type!(i8, I8);
+
+from_type_instance_type!(i16, I16);
+
+from_type_instance_type!(i32, I32);
+
+from_type_instance_type!(i64, I64);
+
+from_type_instance_type!(i128, I128);
+
+from_type_instance_type!(u8, U8);
+
+from_type_instance_type!(u16, U16);
+
+from_type_instance_type!(u32, U32);
+
+from_type_instance_type!(u64, U64);
+
+from_type_instance_type!(u128, U128);
+
+macro_rules! from_type_instance_type_uc
+{
+
+    ($ti_type:ident) =>
+    {
+
+        impl From<TypeInstance> for $ti_type
+        {
+            
+            fn from(value: TypeInstance) -> Self
+            {
+
+                if let TypeInstance:: $ti_type (val) = value
+                {
+
+                    val
+                    
+                }
+                else
+                {
+
+                    panic!("Error: Invalid conversion");
+                    
+                }
+            
+            }
+
+        }
+
+    }
+
+}
+
+from_type_instance_type_uc!(String);
+
+from_type_instance_type_uc!(Whatever);
+
+/*
 impl From<bool> for TypeInstance
 {
 
@@ -465,6 +562,7 @@ impl From<Whatever> for TypeInstance
     }
 
 }
+*/
 
 /*
 impl TryFrom<Whatever> for TypeInstance
@@ -1015,74 +1113,80 @@ fn convert_number_from_sub_vec(number: Number, index: usize, command: &Command, 
 
 //Process a Map as a set of parameters for a command.
 
-fn process_map(map: Map<String, Value>, command: &Command, field: Option<&'static str>, indices: &Option<Indices>) -> Result<Vec<TypeInstance>, CommandError> //index_opt: Option<usize>, 
+fn process_map(map: Map<String, Value>, command: &Command, field: Option<&'static str>, indices: &Option<Indices>, parsed_params: &mut Vec<Option<TypeInstance>>) -> Result<(), CommandError> //Result<Vec<TypeInstance>, CommandError> //index_opt: Option<usize>, 
 {
 
     if !map.is_empty()
     {
 
-        let mut res_vec = Vec::with_capacity(map.len());
+        //let mut res_vec = Vec::with_capacity(map.len());
 
         let mut index: usize = 0;
 
         for (key, value) in map
         {
 
-            match key.trim()
+            match key.as_str() //.trim()
             {
     
+                "none" =>
+                {
+
+                    parsed_params.push(None);
+
+                }
                 "type_bool" => 
                 {
 
-                    res_vec.push(into_bool(value, command.id, field, indices)?); //index_opt, Some(index))?);
+                    parsed_params.push(Some(into_bool(value, command.id, field, indices)?)); //index_opt, Some(index))?);
 
                 }
                 "type_char" => 
                 {
 
-                    res_vec.push(into_char(value, command.id, field, indices)?); //index_opt, Some(index))?);
+                    parsed_params.push(Some(into_char(value, command.id, field, indices)?)); //index_opt, Some(index))?);
 
                 }
                 "type_f32" => 
                 {
 
-                    res_vec.push(into_f32(value, command.id, field, indices)?);
+                    parsed_params.push(Some(into_f32(value, command.id, field, indices)?));
 
                 }
                 "type_f64" => 
                 {
 
-                    res_vec.push(into_f64(value, command.id, field, indices)?);
+                    parsed_params.push(Some(into_f64(value, command.id, field, indices)?));
 
                 }
                 "type_i8" => 
                 {
 
-                    res_vec.push(into_i8(value, command.id, field, indices)?);
+                    parsed_params.push(Some(into_i8(value, command.id, field, indices)?));
 
                 }
                 "type_i16" => 
                 {
 
-                    res_vec.push(into_i16(value, command.id, field, indices)?);
+                    parsed_params.push(Some(into_i16(value, command.id, field, indices)?));
 
                 }
                 "type_i32" => 
                 {
 
-                    res_vec.push(into_i32(value, command.id, field, indices)?);
+                    parsed_params.push(Some(into_i32(value, command.id, field, indices)?));
 
                 }
                 "type_i64" => 
                 {
 
-                    res_vec.push(into_i64(value, command.id, field, indices)?);
+                    parsed_params.push(Some(into_i64(value, command.id, field, indices)?));
 
                 }
                 "type_i128" => 
                 {
 
-                    res_vec.push(into_i128(value, command.id, field, indices)?);
+                    parsed_params.push(Some(into_i128(value, command.id, field, indices)?));
 
                 }
                 /*
@@ -1096,31 +1200,31 @@ fn process_map(map: Map<String, Value>, command: &Command, field: Option<&'stati
                 "type_u8" => 
                 {
 
-                    res_vec.push(into_u8(value, command.id, field, indices)?);
+                    parsed_params.push(Some(into_u8(value, command.id, field, indices)?));
 
                 }
                 "type_u16" => 
                 {
 
-                    res_vec.push(into_u16(value, command.id, field, indices)?);
+                    parsed_params.push(Some(into_u16(value, command.id, field, indices)?));
 
                 }
                 "type_u32" => 
                 {
 
-                    res_vec.push(into_u32(value, command.id, field, indices)?);
+                    parsed_params.push(Some(into_u32(value, command.id, field, indices)?));
 
                 }
                 "type_u64" => 
                 {
 
-                    res_vec.push(into_u64(value, command.id, field, indices)?);
+                    parsed_params.push(Some(into_u64(value, command.id, field, indices)?));
 
                 }
                 "type_u128" => 
                 {
 
-                    res_vec.push(into_u128(value, command.id, field, indices)?);
+                    parsed_params.push(Some(into_u128(value, command.id, field, indices)?));
 
                 }
                 /*
@@ -1134,69 +1238,69 @@ fn process_map(map: Map<String, Value>, command: &Command, field: Option<&'stati
                 "type_string" => 
                 {
 
-                    res_vec.push(into_string(value, command.id, field, indices)?);
+                    parsed_params.push(Some(into_string(value, command.id, field, indices)?));
 
                 }
                 "type_whatever" => 
                 {
 
-                    res_vec.push(into_whatever(value, command.id, field, indices)?);
+                    parsed_params.push(Some(into_whatever(value, command.id, field, indices)?));
 
                 }
                 "type_vec_bool" => 
                 {
 
-                    res_vec.push(into_vec_bool(value, command.id, field, indices)?);
+                    parsed_params.push(Some(into_vec_bool(value, command.id, field, indices)?));
 
                 }
                 /*
                 "type_vec_char" => 
                 {
 
-                    res_vec.push(into_vec_char(value, command.id, field, indices)?);
+                    parsed_params.push(into_vec_char(value, command.id, field, indices)?);
 
                 }
                 */
                 "type_vec_f32" => 
                 {
 
-                    res_vec.push(into_vec_f32(value, command.id, field, indices)?);
+                    parsed_params.push(Some(into_vec_f32(value, command.id, field, indices)?));
 
                 }
                 "type_vec_f64" => 
                 {
 
-                    
+                    parsed_params.push(Some(into_vec_f64(value, command.id, field, indices)?));
 
                 }
                 "type_vec_i8" => 
                 {
 
-                    
+                    parsed_params.push(Some(into_vec_i8(value, command.id, field, indices)?));
 
                 }
                 "type_vec_i16" => 
                 {
 
-                    
+                    parsed_params.push(Some(into_vec_i16(value, command.id, field, indices)?));
 
                 }
                 "type_vec_i32" => 
                 {
 
-                    
+                    parsed_params.push(Some(into_vec_i32(value, command.id, field, indices)?));
 
                 }
                 "type_vec_i64" => 
                 {
 
-                    
+                    parsed_params.push(Some(into_vec_i64(value, command.id, field, indices)?));
 
                 }
                 "type_vec_i128" => 
                 {
 
-                    
+                    parsed_params.push(Some(into_vec_i128(value, command.id, field, indices)?));
 
                 }
                 /*
@@ -1210,31 +1314,31 @@ fn process_map(map: Map<String, Value>, command: &Command, field: Option<&'stati
                 "type_vec_u8" => 
                 {
 
-                    
+                    parsed_params.push(Some(into_vec_u8(value, command.id, field, indices)?));
 
                 }
                 "type_vec_u16" => 
                 {
 
-                    
+                    parsed_params.push(Some(into_vec_u16(value, command.id, field, indices)?));
 
                 }
                 "type_vec_u32" => 
                 {
 
-                    
+                    parsed_params.push(Some(into_vec_u32(value, command.id, field, indices)?));
 
                 }
                 "type_vec_u64" => 
                 {
 
-                    
+                    parsed_params.push(Some(into_vec_u64(value, command.id, field, indices)?));
 
                 }
                 "type_vec_u128" => 
                 {
 
-                    
+                    parsed_params.push(Some(into_vec_u128(value, command.id, field, indices)?));
 
                 }
                 /*
@@ -1248,19 +1352,19 @@ fn process_map(map: Map<String, Value>, command: &Command, field: Option<&'stati
                 "type_vec_string" => 
                 {
 
-                    
+                    parsed_params.push(Some(into_vec_string(value, command.id, field, indices)?));
 
                 }
                 "type_vec_whatever" => 
                 {
 
-                    
+                    parsed_params.push(Some(into_vec_whatever(value, command.id, field, indices)?));
 
                 }
                 _ =>
                 {
 
-                    return Err(CommandError::new(SendableText::Str("Internal error converting param at index to unknown."), command.id, field, indices.clone()));
+                    return Err(CommandError::new(SendableText::Str("Internal error connot convert a parameter at index to unknown type."), command.id, field, indices.clone()));
 
                     //return Err(CommandError::with_index_opt(SendableText::Str("Internal error converting param at index to unknown."), command.id, field, index_opt));
     
@@ -1290,9 +1394,11 @@ fn process_map(map: Map<String, Value>, command: &Command, field: Option<&'stati
 
             index.pp();
     
-        }  
+        } 
 
-        Ok(res_vec)
+        Ok(())
+
+        //Ok(parsed_params)
 
     }
     else
@@ -1807,7 +1913,9 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
 
                                             //Multiple type annotated Values in addition to any other Value objects.
 
-                                            process_map(map, &command, Some(field), &Some(indices))?; //index_opt, 
+                                            //Should probably adjust the capacity.
+
+                                            process_map(map, &command, Some(field), &Some(indices), &mut params_vec)?; //index_opt, 
 
                                             //return Err(CommandError::new(SendableText::String(format!("Map at param index: {}. Map params are not supported.", index)), command.id));
 
@@ -1831,9 +1939,13 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
                         Value::Object(map) =>
                         {
 
+                            let mut params_vec = Vec::with_capacity(map.len());
+
                             //Multiple type annotated Values only.
 
-                            process_map(map, &command, Some(field), &Some(indices))?;
+                            process_map(map, &command, Some(field), &Some(indices), &mut params_vec)?;
+
+                            command.params = Some(params_vec);
 
                             //return Err(CommandError::new(SendableText::Str("The params field cannot be an Object."), command.id)); 
 
@@ -1841,7 +1953,7 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
 
                     }
 
-                    let parsed_params: Vec<Option<TypeInstance>> = Vec::new();
+                    //let parsed_params: Vec<Option<TypeInstance>> = Vec::new();
 
 
 
@@ -1849,13 +1961,17 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
                 None =>
                 {
 
+                    command.params = None;
+
                     //if let?
 
                 }
 
             }
 
-            error_message = "";
+            return Ok(command);
+
+            //error_message = "I don't know WTF happened.";
 
         }
 
