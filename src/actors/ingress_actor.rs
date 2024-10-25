@@ -23,6 +23,7 @@ pub struct IngressActorState
 
     websocket_actor_io_client: ActorIOClient<OwnedFrame, OwnedFrame>,
     command_processor_sender: Sender<ParsedInput>
+    //egress_actor_sender
 
 }
 
@@ -42,10 +43,10 @@ impl IngressActorState
 
     }
 
-    pub fn spawn() //-> Receiver<()>
+    pub fn spawn(websocket_actor_io_client: &ActorIOClient<OwnedFrame, OwnedFrame>, command_processor_sender: Sender<ParsedInput>) //-> Receiver<()>
     {
 
-
+        IngressActor::spawn(IngressActorState::new(websocket_actor_io_client, command_processor_sender));
 
     }
 
@@ -210,3 +211,4 @@ impl IngressActorState
 }
 
 impl_mac_task_actor!(IngressActor);
+

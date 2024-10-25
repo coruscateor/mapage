@@ -4,7 +4,7 @@ use act_rs::{impl_default_end_async, impl_default_start_and_end_async, impl_defa
 
 use libsync::crossbeam::mpmc::tokio::array_queue::{Sender, Receiver, channel};
 
-use crate::OwnedFrame;
+use crate::{types::json::Command, OwnedFrame};
 
 use paste::paste;
 
@@ -16,6 +16,8 @@ use serde_json::{from_str, json, Value};
 
 use super::array_queue::ActorIOClient;
 
+use crate::types::json::into_command;
+
 //JSON
 
 pub type ParsedInput = Value;
@@ -25,20 +27,22 @@ pub type ParsedInput = Value;
 pub struct CommandProcessorActorState
 {
 
-    command_processor_reciver: Receiver<ParsedInput>
+    command_processor_reciver: Receiver<ParsedInput>,
+    command_exector_sender: Sender<Command>
 
 }
 
 impl CommandProcessorActorState
 {
 
-    pub fn new(command_processor_reciver: Receiver<ParsedInput>, /* Egress Sender */) -> Self
+    pub fn new(command_processor_reciver: Receiver<ParsedInput>, command_exector_sender: Sender<Command> /* Egress Sender */) -> Self
     {
 
         Self
         {
 
-            command_processor_reciver
+            command_processor_reciver,
+            command_exector_sender
 
         }
 
@@ -61,7 +65,28 @@ impl CommandProcessorActorState
         if let Some(parsed_input) = self.command_processor_reciver.recv().await
         {
 
-            
+            match into_command(parsed_input)
+            {
+
+                Ok(res) =>
+                {
+
+                    if let Err(_err) = self.command_exector_sender.send(res).await
+                    {
+
+                        return false;
+
+                    }
+
+                }
+                Err(err) =>
+                {
+
+                    //To EgressActor
+
+                }
+
+            }
 
         }
         else
@@ -76,4 +101,6 @@ impl CommandProcessorActorState
     }
 
 }
+
+impl_mac_task_actor!(CommandProcessorActor);
 

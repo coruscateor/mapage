@@ -22,7 +22,7 @@ use super::conversion::*;
 
 use corlib::collections::StackedVec;
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone, Copy)]
 pub enum SupportedType
 {
 
@@ -630,11 +630,11 @@ impl TryFrom<Whatever> for TypeInstance
 pub struct Command
 {
 
-    id: Option<u32>,
-    command: String, //Optional when namespaces get added.
-    type_name: SupportedType,
+    pub id: Option<u32>,
+    pub command: String, //Optional when namespaces get added.
+    pub type_name: Option<SupportedType>,
     //namespace: Option<String>,
-    params: Option<Vec<Option<TypeInstance>>>
+    pub params: Option<Vec<Option<TypeInstance>>>
     
 }
 
@@ -642,11 +642,11 @@ pub struct Command
 pub struct CommandError
 {
 
-    id: Option<u32>,
-    message: SendableText,
-    field: Option<&'static str>,
+    pub id: Option<u32>,
+    pub message: SendableText,
+    pub field: Option<&'static str>,
     //indexs: StackedVec<usize, 4>
-    indices: Option<Indices>
+    pub indices: Option<Indices>
     /*
     index: Option<usize>,
     sub_index: Option<usize>,
@@ -1583,7 +1583,7 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
                                 Ok(st) =>
                                 {
 
-                                    command.type_name = st;
+                                    command.type_name = Some(st);
 
                                 }
                                 Err(err) =>
@@ -1596,6 +1596,12 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
                                 }
 
                             }
+
+                        }
+                        Value::Null =>
+                        {
+
+                            command.type_name = None;
 
                         }
                         _ =>
@@ -1611,7 +1617,9 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
                 else
                 {
 
-                    return Err(CommandError::new(SendableText::Str("A type must be specified."), command.id, Some(field), None));  
+                    command.type_name = None;
+
+                    //return Err(CommandError::new(SendableText::Str("A type must be specified."), command.id, Some(field), None));  
                     
                 }
 
