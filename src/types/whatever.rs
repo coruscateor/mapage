@@ -1,4 +1,6 @@
 
+//Primitive and standard types only.
+
 #[derive(Debug)]
 pub enum Whatever
 {

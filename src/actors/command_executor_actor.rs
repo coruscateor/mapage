@@ -1,10 +1,12 @@
 use core::str;
+use std::sync::Arc;
 
 use act_rs::{impl_default_end_async, impl_default_start_and_end_async, impl_default_start_async, impl_mac_task_actor};
 
+use corlib::text::SendableText;
 use libsync::crossbeam::mpmc::tokio::array_queue::{Sender, Receiver, channel};
 
-use crate::{types::json::Command, OwnedFrame};
+use crate::{types::json::{Command, TypeInstance}, CommandResult, OwnedFrame, Store};
 
 use paste::paste;
 
@@ -23,31 +25,33 @@ use crate::types::json::SupportedType;
 pub struct CommandExecutorActorState
 {
 
-    command_exector_reciver: Receiver<Command>
+    command_exector_reciver: Receiver<Command>,
+    store: Arc<Store>
 
 }
 
 impl CommandExecutorActorState
 {
 
-    pub fn new(command_exector_reciver: Receiver<Command>, /* Egress Sender */) -> Self
+    pub fn new(command_exector_reciver: Receiver<Command>, store: Arc<Store>, /* Egress Sender */) -> Self
     {
 
         Self
         {
 
-            command_exector_reciver
+            command_exector_reciver,
+            store
 
         }
 
     }
 
-    pub fn spawn() -> Sender<Command>
+    pub fn spawn(store: Arc<Store>) -> Sender<Command>
     {
 
         let (sender, receiver) = channel(50);
 
-        CommandExecutorActor::spawn(CommandExecutorActorState::new(receiver));
+        CommandExecutorActor::spawn(CommandExecutorActorState::new(receiver, store));
 
         sender
 
@@ -77,7 +81,65 @@ impl CommandExecutorActorState
 
     }
 
-    async fn execute_bool_command(&mut self, command: Command)
+    async fn get_key_param(command: &Command) -> Result<&String, SendableText>
+    {
+
+        if let Some(params) = &command.params
+        {
+
+            if let Some(opt_key) = params.first()
+            {
+
+                if let Some(ti_key) = opt_key
+                {
+
+                    match ti_key
+                    {
+
+                        TypeInstance::String(key) =>
+                        {
+
+                            Ok(key)
+
+                        }
+                        _ =>
+                        {
+
+                            Err(SendableText::Str("The provided key parameter is the wrong type."))
+
+                        }
+                        
+                    }
+
+                }
+                else
+                {
+
+                    Err(SendableText::Str("Key not provided."))
+                    
+                }
+
+            }
+            else
+            {
+
+                //Error: parameter list empty.
+                
+                Err(SendableText::Str("Provided parameter list empty."))
+
+            }
+
+        }
+        else
+        {
+
+            Err(SendableText::Str("No parameter list list provided."))
+            
+        }
+
+    }
+
+    async fn execute_bool_command(&mut self, command: Command) -> Result<(), SendableText>
     {
 
         match command.command.as_str()
@@ -86,19 +148,125 @@ impl CommandExecutorActorState
             "get" =>
             {
 
+                let key = Self::get_key_param(&command).await?;
 
+                let res = self.store.bool_namespace().read(key).await;
+
+                match res
+                {
+
+                    Ok(val) =>
+                    {
+
+                        let res = CommandResult
+                        {
+
+                            id: command.id,
+                            result: TypeInstance::Bool(val),
+                            message: None,
+                            is_error: false,
+                            fin: true
+
+                        };
+
+                        Ok(())
+
+                    }
+                    Err(err) =>
+                    {
+
+                        Err(SendableText::String(err.to_string()))
+
+                    }
+
+                }
+
+                /*
+                if let Some(params) = &command.params
+                {
+
+                    if let Some(opt_key) = params.first()
+                    {
+
+                        if let Some(ti_key) = opt_key
+                        {
+
+                            match ti_key
+                            {
+
+                                TypeInstance::String(key) =>
+                                {
+
+                                    let res = self.store.bool_namespace().read(key).await;
+
+                                    match res
+                                    {
+
+                                        Ok(val) =>
+                                        {
+
+                                            Ok(val)
+
+                                        }
+                                        Err(err) =>
+                                        {
+
+                                            Err(SendableText::String(err.to_string()))
+
+                                        }
+
+                                    }
+
+                                }
+                                _ =>
+                                {
+
+                                    Err(SendableText::Str("The provided key parameter is the wrong type."))
+
+                                }
+                                
+                            }
+
+                        }
+                        else
+                        {
+
+                            Err(SendableText::Str("Key not provided."))
+                            
+                        }
+
+                    }
+                    else
+                    {
+
+                        //Error: parameter list empty.
+                        
+                        Err(SendableText::Str("Provided parameter list empty."))
+
+                    }
+
+                }
+                else
+                {
+
+                    //Error: command has no parameters.
+
+                    Err(SendableText::Str("No parameter list list provided."))
+                    
+                }
+                */
 
             }
             "set" =>
             {
 
-
+                Err(SendableText::Str("Nothng here"))
 
             }
             _ =>
             {
 
-
+                Err(SendableText::Str("Nothng here"))
 
             }
             

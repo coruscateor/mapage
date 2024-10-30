@@ -1,10 +1,11 @@
+use std::process::Command;
 use std::sync::Arc;
 
 use fastwebsockets::upgrade::{IncomingUpgrade, UpgradeFut};
 
 use crate::Store;
 
-use crate::actors::SimpleWebSocketActorState;
+use crate::actors::{CommandExecutorActorState, CommandProcessorActorState, IngressActorState, SimpleWebSocketActorState};
 
 pub struct SimpleWebSocketPipeline
 {
@@ -25,7 +26,11 @@ impl SimpleWebSocketPipeline
 
         //Check if upgrade is successful at some point.
 
-        
+        let cea_sender = CommandExecutorActorState::spawn(store);
+
+        let cpa_sender = CommandProcessorActorState::spawn(cea_sender);
+
+        IngressActorState::spawn(&simple_websoicket_actor_io_client, cpa_sender);
 
     }
 

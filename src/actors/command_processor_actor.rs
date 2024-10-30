@@ -28,35 +28,39 @@ pub struct CommandProcessorActorState
 {
 
     command_processor_reciver: Receiver<ParsedInput>,
-    command_exector_sender: Sender<Command>
+    command_executor_sender: Sender<Command>
 
 }
 
 impl CommandProcessorActorState
 {
 
-    pub fn new(command_processor_reciver: Receiver<ParsedInput>, command_exector_sender: Sender<Command> /* Egress Sender */) -> Self
+    pub fn new(command_processor_reciver: Receiver<ParsedInput>, command_executor_sender: Sender<Command> /* Egress Sender */) -> Self
     {
 
         Self
         {
 
             command_processor_reciver,
-            command_exector_sender
+            command_executor_sender
 
         }
 
     }
 
-    pub fn spawn() //-> Receiver<()>
+    pub fn spawn(command_executor_sender: Sender<Command> /* Egress Sender */) -> Sender<Value>
     {
 
+        let (sender, receiver) = channel(50);
 
+        CommandProcessorActor::spawn(CommandProcessorActorState::new(receiver, command_executor_sender));
+
+        sender
 
     }
 
     impl_default_start_and_end_async!();
-
+    
     //JSON
 
     async fn run_async(&mut self) -> bool
@@ -71,7 +75,7 @@ impl CommandProcessorActorState
                 Ok(res) =>
                 {
 
-                    if let Err(_err) = self.command_exector_sender.send(res).await
+                    if let Err(_err) = self.command_executor_sender.send(res).await
                     {
 
                         return false;

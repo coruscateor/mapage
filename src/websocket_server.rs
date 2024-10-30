@@ -123,7 +123,11 @@ async fn ws_handler(ws: IncomingUpgrade, State(store): State<Arc<Store>>) -> imp
 
     let (response, fut) = ws.upgrade().unwrap();
 
-    SimpleWebSocketPipeline::new( fut, store);
+    task::spawn(async move {
+
+        SimpleWebSocketPipeline::new(fut, store);
+
+    });
 
     /*
     task::spawn(async move {
