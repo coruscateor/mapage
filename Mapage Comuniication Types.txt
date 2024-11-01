@@ -1,0 +1,43 @@
+command:
+
+id
+command
+type_name
+params
+
+command_result:
+
+id
+result
+fin         //Results can be sent piecemeal.
+
+command_error
+
+id
+message
+field       //Field of the provided command.
+indices
+
+error:      //An error in communication
+
+message
+
+info:
+
+message
+
+info_system:
+
+...
+
+status:
+
+...
+
+replication:
+
+...
+
+
+
+

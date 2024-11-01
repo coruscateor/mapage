@@ -34,6 +34,14 @@ mod command_result;
 
 pub use command_result::*;
 
+mod communication_instance;
+
+pub use communication_instance::*;
+
+mod command_error;
+
+pub use command_error::*;
+
 #[tokio::main]
 async fn main()
 {

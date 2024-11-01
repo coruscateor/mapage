@@ -18,9 +18,9 @@ pub use ingress_actor::*;
 
 //pub use command::*;
 
-mod command_processor_actor;
+mod communication_processor_actor;
 
-pub use command_processor_actor::*;
+pub use communication_processor_actor::*;
 
 mod egress_actor;
 
