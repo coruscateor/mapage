@@ -164,11 +164,10 @@ impl CommandExecutorActorState
                             id: command.id,
                             result: TypeInstance::Bool(val),
                             message: None,
-                            is_error: false,
-                            fin: true
+                            done: true
 
                         };
-
+                        
                         Ok(())
 
                     }
@@ -274,7 +273,7 @@ impl CommandExecutorActorState
 
     }
 
-    async fn execute_command(&mut self, command: Command)
+    async fn execute_command(&mut self, command: Command) -> Result<(), SendableText>
     {
 
         if let Some(type_name) = command.type_name
@@ -349,6 +348,8 @@ impl CommandExecutorActorState
                 }
                 
             }
+
+            Ok(())
             
         }
 

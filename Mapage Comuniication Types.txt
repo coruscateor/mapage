@@ -9,9 +9,9 @@ command_result:
 
 id
 result
-fin         //Results can be sent piecemeal.
+done       //Results can be sent piecemeal.
 
-command_error
+command_error:
 
 id
 message

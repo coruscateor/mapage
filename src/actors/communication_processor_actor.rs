@@ -71,6 +71,8 @@ impl CommunicationProcessorActorState
         if let Some(parsed_input) = self.communication_processor_reciver.recv().await
         {
 
+            //What type of communication object is it?
+
             match parsed_input
             {
 
