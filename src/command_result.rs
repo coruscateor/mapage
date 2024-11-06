@@ -2,7 +2,9 @@ use corlib::text::SendableText;
 
 use crate::types::json::TypeInstance;
 
+use serde::Serialize;
 
+#[derive(Serialize)]
 pub struct CommandResult
 {
 

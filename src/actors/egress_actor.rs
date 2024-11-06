@@ -49,7 +49,7 @@ impl Serialize for EgressActorInput
 
                 let mut map= serializer.serialize_map(Some(1))?;
 
-                map.serialize_entry("Error", &interior_entry);
+                map.serialize_entry("Error", &interior_entry.into());
 
                 map.end()
 
@@ -65,7 +65,7 @@ impl Serialize for EgressActorInput
 
                 let mut map= serializer.serialize_map(Some(1))?;
 
-                map.serialize_entry("command_error", &interior_entry);
+                map.serialize_entry("command_error", &interior_entry.into());
 
                 map.end()
 
@@ -81,7 +81,7 @@ impl Serialize for EgressActorInput
 
                 let mut map= serializer.serialize_map(Some(1))?;
 
-                map.serialize_entry("command_result", &interior_entry);
+                map.serialize_entry("command_result", &interior_entry.into());
 
                 map.end()
 

@@ -17,7 +17,7 @@ categories = ["caching"]
 #async-graphql-poem = "6.0.10"
 tokio = { version = "1.40", features = ["macros", "rt-multi-thread"] } #, "rt", "tokio_unstable"] } #24.* #tokio = { version = "1.19.2", features = ["rt", "rt-multi-thread", "sync", "macros", "fs"] }
 #poem = "1.3.*"
-corlib = { path="../corlib" } #Do not remove
+corlib = { path="../corlib", features = ["serde"] } #Do not remove
 #corlib = "0.1.0"
 #act_rusty = { path="../act_rusty" }
 act_rs = { path="../act_rs", features = ["tokio"] } #Do not remove

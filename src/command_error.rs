@@ -1,5 +1,8 @@
 use corlib::text::SendableText;
 
+use serde::Serialize;
+
+#[derive(Serialize)]
 pub struct CommandError
 {
 
