@@ -137,7 +137,7 @@ impl SupportedType
 
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub enum TypeInstance
 {
 

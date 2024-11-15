@@ -5,7 +5,7 @@ use fastwebsockets::upgrade::{IncomingUpgrade, UpgradeFut};
 
 use crate::Store;
 
-use crate::actors::{CommandExecutorActorState, CommunicationProcessorActorState, IngressActorState, SimpleWebSocketActorState};
+use crate::actors::{CommandExecutorActorState, CommunicationProcessorActorState, EgressActorState, IngressActorState, SimpleWebSocketActorState};
 
 pub struct SimpleWebSocketPipeline
 {
@@ -25,6 +25,8 @@ impl SimpleWebSocketPipeline
         //simple_websoicket_actor_io_client.input_sender().re
 
         //Check if upgrade is successful at some point.
+
+        let ea_sender = EgressActorState::spawn(simple_websoicket_actor_io_client.input_sender());
 
         let cea_sender = CommandExecutorActorState::spawn(store);
 

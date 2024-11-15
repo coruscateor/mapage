@@ -16,7 +16,7 @@ use fastwebsockets::OpCode;
 
 use serde_json::{from_str, json, Value};
 
-use super::{array_queue::ActorIOClient, ParsedInput};
+use super::{array_queue::ActorIOClient, EgressActorInput, ParsedInput};
 
 use crate::types::json::SupportedType;
 
@@ -26,32 +26,34 @@ pub struct CommandExecutorActorState
 {
 
     command_exector_reciver: Receiver<Command>,
-    store: Arc<Store>
+    store: Arc<Store>,
+    egress_actor_sender: Sender<EgressActorInput>
 
 }
 
 impl CommandExecutorActorState
 {
 
-    pub fn new(command_exector_reciver: Receiver<Command>, store: Arc<Store>, /* Egress Sender */) -> Self
+    pub fn new(command_exector_reciver: Receiver<Command>, store: Arc<Store>, egress_actor_sender: Sender<EgressActorInput>) -> Self
     {
 
         Self
         {
 
             command_exector_reciver,
-            store
+            store,
+            egress_actor_sender
 
         }
 
     }
 
-    pub fn spawn(store: Arc<Store>) -> Sender<Command>
+    pub fn spawn(store: Arc<Store>, egress_actor_sender: Sender<EgressActorInput>) -> Sender<Command>
     {
 
         let (sender, receiver) = channel(50);
 
-        CommandExecutorActor::spawn(CommandExecutorActorState::new(receiver, store));
+        CommandExecutorActor::spawn(CommandExecutorActorState::new(receiver, store, egress_actor_sender));
 
         sender
 

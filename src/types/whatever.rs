@@ -1,7 +1,9 @@
 
 //Primitive and standard types only.
 
-#[derive(Debug)]
+use serde::Serialize;
+
+#[derive(Debug, Serialize)]
 pub enum Whatever
 {
 

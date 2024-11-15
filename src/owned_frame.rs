@@ -303,6 +303,30 @@ impl OwnedFrame
 
     }
 
+    //ADDED
+
+    pub fn set_payload_from_bytes(&mut self, contents: &[u8])
+    {
+        
+        //Set the payload of the OwnedFrame the right size.
+
+        let payload = &mut self.payload;
+        
+        let cb_len = contents.len();
+
+        if cb_len != payload.len()
+        {
+
+            payload.resize(cb_len, 0);
+
+        }
+
+        //Copy the bytes into the OwnedFrame payload. 
+
+        payload.copy_from_slice(contents);
+
+    }
+
     pub fn clear_payload(&mut self)
     {
 
