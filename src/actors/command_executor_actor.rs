@@ -6,7 +6,7 @@ use act_rs::{impl_default_end_async, impl_default_start_and_end_async, impl_defa
 use corlib::text::SendableText;
 use libsync::crossbeam::mpmc::tokio::array_queue::{Sender, Receiver, channel};
 
-use crate::{types::json::{Command, TypeInstance}, CommandResult, OwnedFrame, Store};
+use crate::{types::json::{Command, TypeInstance}, CommandError, CommandResult, OwnedFrame, Store};
 
 use paste::paste;
 
@@ -20,21 +20,23 @@ use super::{array_queue::ActorIOClient, EgressActorInput, ParsedInput};
 
 use crate::types::json::SupportedType;
 
-//Converts the parsed input into a command or a set of commands.
+type ExecutionResult = Result<CommandResult, CommandError>;
+
+//Executes provided commands on the store.
 
 pub struct CommandExecutorActorState
 {
 
     command_exector_reciver: Receiver<Command>,
     store: Arc<Store>,
-    egress_actor_sender: Sender<EgressActorInput>
+    egress_actor_input_sender: Sender<EgressActorInput>
 
 }
 
 impl CommandExecutorActorState
 {
 
-    pub fn new(command_exector_reciver: Receiver<Command>, store: Arc<Store>, egress_actor_sender: Sender<EgressActorInput>) -> Self
+    pub fn new(command_exector_reciver: Receiver<Command>, store: Arc<Store>, egress_actor_input_sender: &Sender<EgressActorInput>) -> Self
     {
 
         Self
@@ -42,18 +44,18 @@ impl CommandExecutorActorState
 
             command_exector_reciver,
             store,
-            egress_actor_sender
+            egress_actor_input_sender: egress_actor_input_sender.clone()
 
         }
 
     }
 
-    pub fn spawn(store: Arc<Store>, egress_actor_sender: Sender<EgressActorInput>) -> Sender<Command>
+    pub fn spawn(store: Arc<Store>, egress_actor_input_sender: &Sender<EgressActorInput>) -> Sender<Command>
     {
 
         let (sender, receiver) = channel(50);
 
-        CommandExecutorActor::spawn(CommandExecutorActorState::new(receiver, store, egress_actor_sender));
+        CommandExecutorActor::spawn(CommandExecutorActorState::new(receiver, store, egress_actor_input_sender));
 
         sender
 
@@ -83,7 +85,7 @@ impl CommandExecutorActorState
 
     }
 
-    async fn get_key_param(command: &Command) -> Result<&String, SendableText>
+    async fn get_key_param(command: &Command) -> Result<&String, CommandError> //SendableText>
     {
 
         if let Some(params) = &command.params
@@ -107,7 +109,9 @@ impl CommandExecutorActorState
                         _ =>
                         {
 
-                            Err(SendableText::Str("The provided key parameter is the wrong type."))
+                            Err(CommandError::new(command.id, SendableText::Str("The provided key parameter is the wrong type.")))
+
+                            //Err(SendableText::Str("The provided key parameter is the wrong type."))
 
                         }
                         
@@ -117,8 +121,10 @@ impl CommandExecutorActorState
                 else
                 {
 
-                    Err(SendableText::Str("Key not provided."))
-                    
+                    Err(CommandError::new(command.id, SendableText::Str("Key not provided.")))
+
+                    //Err(SendableText::Str("Key not provided."))
+
                 }
 
             }
@@ -127,7 +133,9 @@ impl CommandExecutorActorState
 
                 //Error: parameter list empty.
                 
-                Err(SendableText::Str("Provided parameter list empty."))
+                Err(CommandError::new(command.id, SendableText::Str("Provided parameter list empty.")))
+
+                //Err(SendableText::Str("Provided parameter list empty."))
 
             }
 
@@ -135,13 +143,15 @@ impl CommandExecutorActorState
         else
         {
 
-            Err(SendableText::Str("No parameter list list provided."))
+            Err(CommandError::new(command.id, SendableText::Str("No parameter list list provided.")))
+
+            //Err(SendableText::Str("No parameter list list provided."))
             
         }
 
     }
 
-    async fn execute_bool_command(&mut self, command: Command) -> Result<(), SendableText>
+    async fn execute_bool_command(&mut self, command: Command) -> ExecutionResult
     {
 
         match command.command.as_str()
@@ -170,13 +180,15 @@ impl CommandExecutorActorState
 
                         };
                         
-                        Ok(())
+                        Ok(res)
 
                     }
                     Err(err) =>
                     {
 
-                        Err(SendableText::String(err.to_string()))
+                        Err(CommandError::new(command.id, SendableText::String(err.to_string())))
+
+                        //Err(SendableText::String(err.to_string()))
 
                     }
 
@@ -261,13 +273,17 @@ impl CommandExecutorActorState
             "set" =>
             {
 
-                Err(SendableText::Str("Nothng here"))
+                Err(CommandError::new(command.id, SendableText::Str("Not implemented")))
+
+                //Err(SendableText::Str("Nothng here"))
 
             }
             _ =>
             {
 
-                Err(SendableText::Str("Nothng here"))
+                Err(CommandError::new(command.id, SendableText::Str("Invalid command for the specified type.")))
+
+                //Err(SendableText::Str("Nothng here"))
 
             }
             
@@ -275,7 +291,7 @@ impl CommandExecutorActorState
 
     }
 
-    async fn execute_command(&mut self, command: Command) -> Result<(), SendableText>
+    async fn execute_command(&mut self, command: Command) -> ExecutionResult //Result<(), SendableText>
     {
 
         if let Some(type_name) = command.type_name

@@ -10,3 +10,21 @@ pub struct CommandError
     pub message: SendableText
 
 }
+
+impl CommandError
+{
+
+    pub fn new(id: Option<u32>, message: SendableText) -> Self
+    {
+
+        Self
+        {
+
+            id,
+            message
+
+        }
+
+    }
+
+}

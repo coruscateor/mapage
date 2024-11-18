@@ -28,11 +28,11 @@ impl SimpleWebSocketPipeline
 
         let ea_sender = EgressActorState::spawn(simple_websoicket_actor_io_client.input_sender());
 
-        let cea_sender = CommandExecutorActorState::spawn(store);
+        let cea_sender = CommandExecutorActorState::spawn(store, &ea_sender);
 
-        let cpa_sender = CommunicationProcessorActorState::spawn(cea_sender);
+        let cpa_sender = CommunicationProcessorActorState::spawn(cea_sender, &ea_sender);
 
-        IngressActorState::spawn(&simple_websoicket_actor_io_client, cpa_sender);
+        IngressActorState::spawn(simple_websoicket_actor_io_client.output_receiver(), cpa_sender, &ea_sender);
 
     }
 

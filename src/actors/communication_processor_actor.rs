@@ -14,7 +14,7 @@ use fastwebsockets::OpCode;
 
 use serde_json::{from_str, json, Value};
 
-use super::array_queue::ActorIOClient;
+use super::{array_queue::ActorIOClient, EgressActorInput};
 
 use crate::types::json::into_command;
 
@@ -30,32 +30,34 @@ pub struct CommunicationProcessorActorState
 {
 
     communication_processor_reciver: Receiver<ParsedInput>,
-    command_executor_sender: Sender<Command>
+    command_executor_sender: Sender<Command>,
+    egress_actor_input_sender: Sender<EgressActorInput>
 
 }
 
 impl CommunicationProcessorActorState
 {
 
-    pub fn new(communication_processor_reciver: Receiver<ParsedInput>, command_executor_sender: Sender<Command> /* Egress Sender */) -> Self
+    pub fn new(communication_processor_reciver: Receiver<ParsedInput>, command_executor_sender: Sender<Command>, egress_actor_input_sender: &Sender<EgressActorInput>) -> Self
     {
-
+        
         Self
         {
 
             communication_processor_reciver,
-            command_executor_sender
+            command_executor_sender,
+            egress_actor_input_sender: egress_actor_input_sender.clone()
 
         }
-
+        
     }
 
-    pub fn spawn(communication_executor_sender: Sender<Command> /* Egress Sender */) -> Sender<Value>
+    pub fn spawn(communication_executor_sender: Sender<Command>, egress_actor_input_sender: &Sender<EgressActorInput>) -> Sender<Value>
     {
 
         let (sender, receiver) = channel(50);
 
-        CommunicationProcessorActor::spawn(CommunicationProcessorActorState::new(receiver, communication_executor_sender));
+        CommunicationProcessorActor::spawn(CommunicationProcessorActorState::new(receiver, communication_executor_sender, egress_actor_input_sender));
 
         sender
 
