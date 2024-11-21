@@ -1,4 +1,4 @@
-mod builds;
+//mod builds;
 
 mod types;
 
@@ -12,7 +12,22 @@ use websocket_server::WebSocketServer ;
 
 mod store;
 
-pub use store::*;
+//pub use store::*;
+
+//Which store to use?
+
+cfg_if::cfg_if! 
+{
+
+    if #[cfg(feature = "namespace_aml")]
+    {
+
+        pub type Store = store::namespace::Store;
+
+    }
+
+}
+
 
 mod errors;
 
@@ -41,6 +56,10 @@ pub use communication_instance::*;
 mod command_error;
 
 pub use command_error::*;
+
+mod command_execution;
+
+pub use command_execution::*;
 
 #[tokio::main]
 async fn main()

@@ -53,12 +53,19 @@ serde_json = "1.0.1"
 
 [features]
 
+default = ["namespace_aml", "string_keys"]
+
+#string_key will be changed to arc_str_keys once implemented.
+
+
+
 #Storage Atomicity:
 
 #aml - Atomicity Level
 
-store_aml = []      
-sub_store_aml = []  #Implemented
+store_aml = []       #Concurrency is handled at the store level.
+#sub_store_aml = []  #Implemented - to be removed.
+namespace_aml = []   #Each namespace handles concurrency on its own.
 
 #features with sub_store_aml:
 
@@ -93,7 +100,7 @@ i32 = []
 i64 = []
 i128 = []
 #isize = []
-String = []
+
 u8 = []
 u16 = []
 u32 = []
@@ -101,37 +108,58 @@ u64 = []
 u128 = []
 #unit_value = []
 #usize = []
-Whatever = []
-SelectedType = []
+whatever = []
+#SelectedType = []
 #SelectedType_OI_Only = []
 #SelectedTypeIO = [] #May be re-implemented
 
 #Collections
 
-Vec_bool = []
-Vec_char = []
-Vec_f32 = []
-Vec_f64 = []
-Vec_i8 = []
-Vec_i16 = []
-Vec_i32 = []
-Vec_i64 = []
-Vec_i128 = []
+string = []
+vec_bool = []
+#vec_char = []
+vec_f32 = []
+vec_f64 = []
+vec_i8 = []
+vec_i16 = []
+vec_i32 = []
+vec_i64 = []
+vec_i128 = []
 #Vec_isize = []
-VecSelectedType = []
-VecString = []
-Vec_u8 = []
-Vec_u16 = []
-Vec_u32 = []
-Vec_u64 = []
-Vec_u128 = []
+#VecSelectedType = []
+#vec_string = []
+vec_u8 = []
+vec_u16 = []
+vec_u32 = []
+vec_u64 = []
+vec_u128 = []
 #Vec_usize = []
-VecWhatever = []
+#vec_whatever = []
 
 #Keys:
 
-all_key_types_String = []
-all_key_types_Arc_String = []
+#all_key_types_String = []
+#all_key_types_Arc_String = []
+
+string_keys = []
+arc_str_keys = []
+
+#Synchronisation Strategy
+
+#act_rs_mac_task_actor = []
+#act_rs_task_actor = []
+#act_rs_thread_actor = []
+#mutex = []
+#rw_lock = []
+
+
+#Channels...
+
+#Thread Pooling
+
+#use_tokio...
+
+
 
 #Vec<u8> keys?
 

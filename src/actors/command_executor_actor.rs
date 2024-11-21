@@ -4,6 +4,7 @@ use std::sync::Arc;
 use act_rs::{impl_default_end_async, impl_default_start_and_end_async, impl_default_start_async, impl_mac_task_actor};
 
 use corlib::text::SendableText;
+
 use libsync::crossbeam::mpmc::tokio::array_queue::{Sender, Receiver, channel};
 
 use crate::{types::json::{Command, TypeInstance}, CommandError, CommandResult, OwnedFrame, Store};
@@ -20,7 +21,9 @@ use super::{array_queue::ActorIOClient, EgressActorInput, ParsedInput};
 
 use crate::types::json::SupportedType;
 
-type ExecutionResult = Result<CommandResult, CommandError>;
+use crate::command_execution::ExecutionResult;
+
+//type ExecutionResult = Result<CommandResult, CommandError>;
 
 //Executes provided commands on the store.
 
@@ -273,7 +276,9 @@ impl CommandExecutorActorState
             "set" =>
             {
 
-                Err(CommandError::new(command.id, SendableText::Str("Not implemented")))
+                Err(CommandError::not_implemented(&command))
+
+                //Err(CommandError::new(command.id, SendableText::Str("Not implemented")))
 
                 //Err(SendableText::Str("Nothng here"))
 
@@ -281,7 +286,9 @@ impl CommandExecutorActorState
             _ =>
             {
 
-                Err(CommandError::new(command.id, SendableText::Str("Invalid command for the specified type.")))
+                Err(CommandError::invalid_command_for_the_specified_type(&command))
+
+                //Err(CommandError::new(command.id, SendableText::Str("Invalid command for the specified type.")))
 
                 //Err(SendableText::Str("Nothng here"))
 
@@ -336,9 +343,17 @@ impl CommandExecutorActorState
                 SupportedType::VecUsize => todo!(),
                 SupportedType::VecString => todo!(),
                 SupportedType::VecWhatever => todo!(),
+                _ =>
+                {
+
+                    Err(CommandError::invalid_command(&command))
+
+                }
 
             }
 
+            //Ok(())
+            
         }
         else
         {
@@ -349,26 +364,26 @@ impl CommandExecutorActorState
                 "features" =>
                 {
 
-
+                    todo!()
 
                 }
                 "ser_for" =>
                 {
 
-                    
+                    todo!()
 
                 }
                 _ =>
                 {
 
-
+                    Err(CommandError::invalid_command(&command))
 
                 }
                 
             }
 
-            Ok(())
-            
+            //Err(CommandError::command_must_have_type(&command))
+
         }
 
     }
