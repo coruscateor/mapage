@@ -1,29 +1,35 @@
+use std::{error::Error, fmt::Display};
+
 use corlib::text::SendableText;
 
 use serde::Serialize;
 
-use crate::types::json::Command;
+use crate::{types::json::Indices, Command};
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 pub struct CommandError
 {
 
     pub id: Option<u32>,
-    pub message: SendableText
+    pub message: SendableText,
+    //pub field: Option<&'static str>,
+    //pub indices: Option<Indices>
 
 }
 
 impl CommandError
 {
 
-    pub fn new(id: Option<u32>, message: SendableText) -> Self
+    pub fn new(id: Option<u32>, message: SendableText) -> Self //, field: Option<&'static str>, indices: Option<Indices>) -> Self
     {
 
         Self
         {
 
             id,
-            message
+            message,
+            //field,
+            //indices
 
         }
 
@@ -60,3 +66,44 @@ impl CommandError
     }
 
 }
+
+impl Display for CommandError
+{
+
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result
+    {
+
+        write!(f, "Message: {}, Id: {:#?}", self.message, self.id)       
+
+    }
+
+}
+
+impl Error for CommandError
+{
+
+    fn source(&self) -> Option<&(dyn Error + 'static)>
+    {
+
+        None
+
+    }
+
+    fn description(&self) -> &str
+    {
+
+        "description() is deprecated; use Display"
+
+    }
+
+    fn cause(&self) -> Option<&dyn Error>
+    {
+
+        self.source()
+
+    }
+
+    //fn provide<'a>(&'a self, request: &mut std::error::Request<'a>) {}
+}
+
+

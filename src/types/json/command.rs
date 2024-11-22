@@ -16,240 +16,13 @@ use corlib::text::SendableText;
 
 use corlib::inc_dec::{self, IncDecSelf}; //, IntIncDecSelf};
 
-use crate::types::Whatever;
+use crate::types::{SupportedType, TypeInstance, Whatever};
+
+use crate::{from_type_instance_type, Command, CommandError};
 
 use super::conversion::*;
 
 use corlib::collections::StackedVec;
-
-#[derive(Debug, Default, Clone, Copy)]
-pub enum SupportedType
-{
-
-    #[default]
-    Bool,
-    Char,
-
-    F32,
-    F64,
-    I8,
-    I16,
-    I32,
-    I64,
-
-    I128,
-    Isize,
-    U8,
-    U16,
-    U32,
-    U64,
-
-    U128,
-    Usize,
-
-    //Collections
-
-    String,
-    Whatever,
-
-    //Vecs
-
-    VecBool,
-    VecChar,
-
-    VecF32,
-    VecF64,
-    VecI8,
-    VecI16,
-    VecI32,
-    VecI64,
-
-    VecI128,
-    VecIsize,
-    VecU8,
-    VecU16,
-    VecU32,
-    VecU64,
-
-    VecU128,
-    VecUsize,
-
-    VecString,
-    VecWhatever
-
-}
-
-impl SupportedType
-{
-
-    pub fn try_parse(slice: &str) -> Result<SupportedType, SendableText> //&str>
-    {
-
-        match slice
-        {
-
-            "f32" => Ok(SupportedType::F32),
-            "f64" => Ok(SupportedType::F64),
-            "i8" => Ok(SupportedType::I8),
-            "i16" => Ok(SupportedType::I16),
-            "i32" => Ok(SupportedType::I32),
-            "i64" => Ok(SupportedType::I64),
-            "i128" => Ok(SupportedType::I128),
-            "isize" => Ok(SupportedType::Isize),
-            "u8" => Ok(SupportedType::U8),
-            "u16" => Ok(SupportedType::U16),
-            "u32" => Ok(SupportedType::U32),
-            "u64" => Ok(SupportedType::U64),
-            "u128" => Ok(SupportedType::U128),
-            "usize" => Ok(SupportedType::Usize),
-
-    //Collections
-
-            "string" => Ok(SupportedType::String),
-            "whatever" => Ok(SupportedType::Whatever),
-
-    //Vecs
-
-            "vec_bool" => Ok(SupportedType::VecBool),
-            "vec_char" => Ok(SupportedType::VecChar),
-            "vec_f32" => Ok(SupportedType::VecF32),
-            "vec_f64" => Ok(SupportedType::VecF64),
-            "vec_i8" => Ok(SupportedType::VecI8),
-            "vec_i16" => Ok(SupportedType::I16),
-            "vec_i32" => Ok(SupportedType::VecI32),
-            "vec_i64" => Ok(SupportedType::VecI64),
-            "vec_i128" => Ok(SupportedType::VecI128),
-            "vec_isize" => Ok(SupportedType::VecIsize),
-            "vec_u8" => Ok(SupportedType::U8),
-            "vec_u16" => Ok(SupportedType::U16),
-            "vec_u32" => Ok(SupportedType::U32),
-            "vec_u64" => Ok(SupportedType::U64),
-            "vec_u128" => Ok(SupportedType::U128),
-            "vec_usize" => Ok(SupportedType::VecUsize),
-            "vec_string" => Ok(SupportedType::VecString),
-            "vec_whatever" => Ok(SupportedType::VecWhatever),
-            //_ => Err("Provided type not recognised.")
-            _ => Err(SendableText::Str("Provided value is not a suipported type."))
-
-        }
-
-    }
-
-}
-
-#[derive(Debug, Serialize)]
-pub enum TypeInstance
-{
-
-    Bool(bool),
-    Char(char),
-
-    F32(f32),
-    F64(f64),
-    I8(i8),
-    I16(i16),
-    I32(i32),
-    I64(i64),
-
-    I128(i128),
-    //Isize(isize),
-    U8(u8),
-    U16(u16),
-    U32(u32),
-    U64(u64),
-
-    U128(u128),
-    //Usize(usize),
-
-    //Collections
-
-    String(String),
-
-    Whatever(Whatever),
-
-    //Vecs
-
-    VecBool(Vec<bool>),
-    VecChar(Vec<char>),
-
-    VecF32(Vec<f32>),
-    VecF64(Vec<f64>),
-    VecI8(Vec<i8>),
-    VecI16(Vec<i16>),
-    VecI32(Vec<i32>),
-    VecI64(Vec<i64>),
-
-    VecI128(Vec<i128>),
-    //VecISize(Vec<isize>),
-    VecU8(Vec<u8>),
-    VecU16(Vec<u16>),
-    VecU32(Vec<u32>),
-    VecU64(Vec<u64>),
-
-    VecU128(Vec<i128>),
-    //VecUSize(Vec<usize>),
-
-    VecString(Vec<String>),
-    VecWhatever(Vec<Whatever>),
-    //VecOptionWhatever(Vec<Option<Whatever>>),
-
-}
-
-impl TypeInstance
-{
-
-    pub fn into_whatever(self, command_id: Option<u32>, field: Option<&'static str>, indices: &Option<Indices>) -> Result<Whatever, CommandError> //, index: Option<usize>, sub_index: Option<usize>
-    {
-
-        match self
-        {
-
-            TypeInstance::Bool(val) => Ok(Whatever::Bool(val)),
-            TypeInstance::Char(val) => Ok(Whatever::Char(val)),
-            TypeInstance::F32(val)  => Ok(Whatever::F32(val)),
-            TypeInstance::F64(val) => Ok(Whatever::F64(val)),
-            TypeInstance::I8(val) => Ok(Whatever::I8(val)),
-            TypeInstance::I16(val) => Ok(Whatever::I16(val)),
-            TypeInstance::I32(val) => Ok(Whatever::I32(val)),
-            TypeInstance::I64(val) => Ok(Whatever::I64(val)),
-            TypeInstance::I128(val) => Ok(Whatever::I128(val)),
-            //TypeInstance::Isize(val) => Ok(Whatever::Isize(val)),
-            TypeInstance::U8(val) => Ok(Whatever::U8(val)),
-            TypeInstance::U16(val) => Ok(Whatever::U16(val)),
-            TypeInstance::U32(val) => Ok(Whatever::U32(val)),
-            TypeInstance::U64(val) => Ok(Whatever::U64(val)),
-            TypeInstance::U128(val) => Ok(Whatever::U128(val)),
-            //TypeInstance::Usize(val) => Ok(Whatever::USize(val)),
-            TypeInstance::String(val) => Ok(Whatever::String(val)),
-            TypeInstance::VecBool(vec) => Ok(Whatever::VecBool(vec)),
-            TypeInstance::VecChar(vec) => Ok(Whatever::VecChar(vec)),
-            TypeInstance::VecF32(vec) => Ok(Whatever::VecF32(vec)),
-            TypeInstance::VecF64(vec) => Ok(Whatever::VecF64(vec)),
-            TypeInstance::VecI8(vec) => Ok(Whatever::VecI8(vec)),
-            TypeInstance::VecI16(vec) => Ok(Whatever::VecI16(vec) ),
-            TypeInstance::VecI32(vec) => Ok(Whatever::VecI32(vec)),
-            TypeInstance::VecI64(vec) => Ok(Whatever::VecI64(vec)),
-            TypeInstance::VecI128(vec) => Ok(Whatever::VecI128(vec)),
-            //TypeInstance::VecISize(vec) => Ok(Whatever::VecISize(vec) ),
-            TypeInstance::VecU8(vec) => Ok(Whatever::VecU8(vec)),
-            TypeInstance::VecU16(vec) => Ok(Whatever::VecU16(vec)),
-            TypeInstance::VecU32(vec) => Ok(Whatever::VecU32(vec)),
-            TypeInstance::VecU64(vec) => Ok(Whatever::VecU64(vec)),
-            TypeInstance::VecU128(vec) => Ok(Whatever::VecU128(vec) ),
-            //TypeInstance::VecUSize(vec) => Ok(Whatever::VecUSize(vec)),
-            TypeInstance::VecString(vec) => Ok(Whatever::VecString(vec)),
-            _ =>
-            {
-
-                Err(CommandError::new(SendableText::Str("Conversion Error"), command_id, field, indices.clone())) //with_sub_index_opt(SendableText::Str("Conversion Error"), command_id, field, index, sub_index))
-
-            }
-
-        }
-
-    }
-
-}
 
 impl From<TypeInstance> for bool
 {
@@ -270,39 +43,6 @@ impl From<TypeInstance> for bool
             
         }
        
-    }
-
-}
-
-macro_rules! from_type_instance_type
-{
-
-    ($lc_ti_type:ident, $ti_type:ident) =>
-    {
-
-        impl From<TypeInstance> for $lc_ti_type
-        {
-            
-            fn from(value: TypeInstance) -> Self
-            {
-
-                if let TypeInstance:: $ti_type (val) = value
-                {
-
-                    val
-                    
-                }
-                else
-                {
-
-                    panic!("Error: Invalid conversion");
-                    
-                }
-            
-            }
-
-        }
-
     }
 
 }
@@ -625,6 +365,7 @@ impl TryFrom<Whatever> for TypeInstance
 
 
 
+/*
 //#[derive(Serialize, Deserialize, Debug)]
 #[derive(Debug, Default)]
 pub struct Command
@@ -637,9 +378,10 @@ pub struct Command
     pub params: Option<Vec<Option<TypeInstance>>>
     
 }
+*/
 
 #[derive(Debug)]
-pub struct CommandError
+pub struct CommandInterpretationError
 {
 
     pub id: Option<u32>,
@@ -655,7 +397,7 @@ pub struct CommandError
 
 }
 
-impl CommandError
+impl CommandInterpretationError
 {
 
     pub fn new(message: SendableText, id: Option<u32>, field: Option<&'static str>, indices: Option<Indices>) -> Self //Option<&Indices>) -> Self
@@ -829,7 +571,7 @@ impl CommandError
 
 }
 
-impl Display for CommandError
+impl Display for CommandInterpretationError
 {
 
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result
@@ -841,7 +583,7 @@ impl Display for CommandError
 
 }
 
-impl Error for CommandError
+impl Error for CommandInterpretationError
 {
 
     fn source(&self) -> Option<&(dyn Error + 'static)>
@@ -950,7 +692,7 @@ fn convert_number_from_vec(number: Number, index: usize, command: &Command, fiel
 }
 */
 
-fn convert_number(number: Number, command: &Command, field: Option<&'static str>, indices: Option<Indices>) -> Result<TypeInstance, CommandError>
+fn convert_number(number: Number, command: &Command, field: Option<&'static str>, indices: Option<Indices>) -> Result<TypeInstance, CommandInterpretationError>
 {
 
     if number.is_f64()
@@ -968,7 +710,7 @@ fn convert_number(number: Number, command: &Command, field: Option<&'static str>
             None =>
             {
 
-                Err(CommandError::new(SendableText::Str("Unexpected error converting param to f64."), command.id, field, indices))
+                Err(CommandInterpretationError::new(SendableText::Str("Unexpected error converting param to f64."), command.id, field, indices))
 
             }
 
@@ -990,7 +732,7 @@ fn convert_number(number: Number, command: &Command, field: Option<&'static str>
             None =>
             {
 
-                Err(CommandError::new(SendableText::Str("Unexpected error converting param to i64."), command.id, field, indices))
+                Err(CommandInterpretationError::new(SendableText::Str("Unexpected error converting param to i64."), command.id, field, indices))
 
             }
 
@@ -1012,7 +754,7 @@ fn convert_number(number: Number, command: &Command, field: Option<&'static str>
             None =>
             {
 
-                Err(CommandError::new(SendableText::Str("Unexpected error converting param to u64."), command.id, field, indices))
+                Err(CommandInterpretationError::new(SendableText::Str("Unexpected error converting param to u64."), command.id, field, indices))
 
             }
 
@@ -1022,7 +764,7 @@ fn convert_number(number: Number, command: &Command, field: Option<&'static str>
     else
     {
 
-        Err(CommandError::new(SendableText::Str("Internal error converting param to unknown."), command.id, field, indices))
+        Err(CommandInterpretationError::new(SendableText::Str("Internal error converting param to unknown."), command.id, field, indices))
         
     }
 
@@ -1113,7 +855,7 @@ fn convert_number_from_sub_vec(number: Number, index: usize, command: &Command, 
 
 //Process a Map as a set of parameters for a command.
 
-fn process_map(map: Map<String, Value>, command: &Command, field: Option<&'static str>, indices: &Option<Indices>, parsed_params: &mut Vec<Option<TypeInstance>>) -> Result<(), CommandError> //Result<Vec<TypeInstance>, CommandError> //index_opt: Option<usize>, 
+fn process_map(map: Map<String, Value>, command: &Command, field: Option<&'static str>, indices: &Option<Indices>, parsed_params: &mut Vec<Option<TypeInstance>>) -> Result<(), CommandInterpretationError> //Result<Vec<TypeInstance>, CommandError> //index_opt: Option<usize>, 
 {
 
     if !map.is_empty()
@@ -1364,7 +1106,7 @@ fn process_map(map: Map<String, Value>, command: &Command, field: Option<&'stati
                 _ =>
                 {
 
-                    return Err(CommandError::new(SendableText::Str("Internal error connot convert a parameter at index to unknown type."), command.id, field, indices.clone()));
+                    return Err(CommandInterpretationError::new(SendableText::Str("Internal error connot convert a parameter at index to unknown type."), command.id, field, indices.clone()));
 
                     //return Err(CommandError::with_index_opt(SendableText::Str("Internal error converting param at index to unknown."), command.id, field, index_opt));
     
@@ -1404,7 +1146,7 @@ fn process_map(map: Map<String, Value>, command: &Command, field: Option<&'stati
     else
     {
 
-        Err(CommandError::new(SendableText::Str("Empty Map not expected."), command.id, field, indices.clone()))
+        Err(CommandInterpretationError::new(SendableText::Str("Empty Map not expected."), command.id, field, indices.clone()))
         
     }
 
@@ -1418,7 +1160,7 @@ pub type Indices = StackedVec::<usize, SV_SIZE>;
 
 //Start here
 
-pub fn into_command(input: Value) -> Result<Command, CommandError>
+pub fn into_command(input: Value) -> Result<Command, CommandInterpretationError>
 {
 
     let mut indices = Indices::new(); //StackedVec::<usize, SV_SIZE>::new(); //For error reporting
@@ -1491,7 +1233,7 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
                         None =>
                         {
 
-                            return Err(CommandError::new(SendableText::Str("Integer expected in id field."), None, Some(field), None));
+                            return Err(CommandInterpretationError::new(SendableText::Str("Integer expected in id field."), None, Some(field), None));
 
                         }
 
@@ -1501,7 +1243,7 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
                 else
                 {
 
-                    return Err(CommandError::new(SendableText::Str("Integer expected in id field."), None, Some(field), None));                    
+                    return Err(CommandInterpretationError::new(SendableText::Str("Integer expected in id field."), None, Some(field), None));                    
                     
                 }
 
@@ -1528,7 +1270,7 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
                     _ =>
                     {
 
-                        return Err(CommandError::new(SendableText::Str("The command field must be a String."), command.id, Some(field), None));  
+                        return Err(CommandInterpretationError::new(SendableText::Str("The command field must be a String."), command.id, Some(field), None));  
 
                     }
                     
@@ -1552,7 +1294,7 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
             else
             {
 
-                return Err(CommandError::new(SendableText::Str("Command field not found."), command.id, Some(field), None));     
+                return Err(CommandInterpretationError::new(SendableText::Str("Command field not found."), command.id, Some(field), None));     
                 
             }
 
@@ -1589,7 +1331,7 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
                                 Err(err) =>
                                 {
 
-                                    return Err(CommandError::new(err, command.id, Some(field), None));
+                                    return Err(CommandInterpretationError::new(err, command.id, Some(field), None));
 
                                     //return Err(SendableText::Str(err)); 
 
@@ -1607,7 +1349,7 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
                         _ =>
                         {
 
-                            return Err(CommandError::new(SendableText::Str("The command field must be a String."), command.id, Some(field), None));  
+                            return Err(CommandInterpretationError::new(SendableText::Str("The command field must be a String."), command.id, Some(field), None));  
 
                         }
                         
@@ -1834,7 +1576,7 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
                                         Value::Array(_vec_val) =>
                                         {
 
-                                            return Err(CommandError::new(SendableText::Str("Processing arrays without accompanying type information is not supported."), command.id, Some(field), Some(indices)));
+                                            return Err(CommandInterpretationError::new(SendableText::Str("Processing arrays without accompanying type information is not supported."), command.id, Some(field), Some(indices)));
 
                                             //Sub array
 
@@ -1987,6 +1729,7 @@ pub fn into_command(input: Value) -> Result<Command, CommandError>
 
     //Ok(command)
 
-    Err(CommandError::new(SendableText::Str(error_message), None, None, Some(indices)))
+    Err(CommandInterpretationError::new(SendableText::Str(error_message), None, None, Some(indices)))
 
 }
+
