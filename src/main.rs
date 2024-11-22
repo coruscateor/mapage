@@ -61,6 +61,10 @@ mod command_execution;
 
 pub use command_execution::*;
 
+mod command;
+
+use command::*;
+
 #[tokio::main]
 async fn main()
 {

@@ -1,2 +1,2 @@
-//Store level atomicity
+//! Store level atomicity
 
