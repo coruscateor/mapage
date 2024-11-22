@@ -4,7 +4,7 @@ use act_rs::{impl_default_end_async, impl_default_start_and_end_async, impl_defa
 
 use libsync::crossbeam::mpmc::tokio::array_queue::{Sender, Receiver, channel};
 
-use crate::{types::json::Command, OwnedFrame};
+use crate::{Command, OwnedFrame};
 
 use paste::paste;
 

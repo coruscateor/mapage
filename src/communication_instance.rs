@@ -1,6 +1,6 @@
 use corlib::text::SendableText;
 
-use crate::{types::json::Command, CommandError, CommandResult};
+use crate::{Command, CommandError, CommandResult};
 
 
 pub enum CommunicationInstance

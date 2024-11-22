@@ -1,0 +1,34 @@
+General:
+
+
+
+Namespace:
+
+read
+try_read
+insert
+update
+upsert
+try_replace
+replace <-
+remove
+try_retrieve
+retrieve <-
+contains
+clear
+len
+clear_and_get_len => len_then_clear
+is_empty
+capacity
+get_all_keys => all_keys
+
+
+
+Store:
+
+
+
+Store-Manager:
+
+
+

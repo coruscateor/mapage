@@ -1,6 +1,6 @@
 use corlib::text::SendableText;
 
-use crate::types::json::TypeInstance;
+use crate::types::TypeInstance;
 
 use serde::Serialize;
 

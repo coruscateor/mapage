@@ -52,3 +52,11 @@ pub use whatever::*;
 
 pub mod json;
 
+mod supported_type;
+
+pub use supported_type::*;
+
+mod type_instance;
+
+pub use type_instance::*;
+
