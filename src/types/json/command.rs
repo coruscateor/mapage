@@ -1090,7 +1090,6 @@ fn process_map(map: Map<String, Value>, command: &Command, field: Option<&'stati
                     
 
                 }
-                */
                 "type_vec_string" => 
                 {
 
@@ -1103,6 +1102,7 @@ fn process_map(map: Map<String, Value>, command: &Command, field: Option<&'stati
                     parsed_params.push(Some(into_vec_whatever(value, command.id, field, indices)?));
 
                 }
+                */
                 _ =>
                 {
 

@@ -2,6 +2,7 @@ use core::str;
 
 use act_rs::{impl_default_end_async, impl_default_start_and_end_async, impl_default_start_async, impl_mac_task_actor};
 
+use corlib::text::SendableText;
 use libsync::crossbeam::mpmc::tokio::array_queue::{Sender, Receiver, channel};
 
 use crate::{Command, OwnedFrame};
@@ -26,7 +27,7 @@ pub type ParsedInput = Value;
 
 //Converts the parsed input into a command or a set of commands or something else.
 
-pub struct CommunicationProcessorActorState
+pub struct MessageProcessorActorState
 {
 
     communication_processor_reciver: Receiver<ParsedInput>,
@@ -35,7 +36,7 @@ pub struct CommunicationProcessorActorState
 
 }
 
-impl CommunicationProcessorActorState
+impl MessageProcessorActorState
 {
 
     pub fn new(communication_processor_reciver: Receiver<ParsedInput>, command_executor_sender: Sender<Command>, egress_actor_input_sender: &Sender<EgressActorInput>) -> Self
@@ -57,7 +58,7 @@ impl CommunicationProcessorActorState
 
         let (sender, receiver) = channel(50);
 
-        CommunicationProcessorActor::spawn(CommunicationProcessorActorState::new(receiver, communication_executor_sender, egress_actor_input_sender));
+        MessageProcessorActor::spawn(MessageProcessorActorState::new(receiver, communication_executor_sender, egress_actor_input_sender));
 
         sender
 
@@ -115,8 +116,15 @@ impl CommunicationProcessorActorState
                                         }
                                         Err(err) =>
                                         {
+                                            
+                                            let error = EgressActorInput::Error(SendableText::String(err.to_string()));
+
+                                            if let Err(_err) = self.egress_actor_input_sender.send(error).await
+                                            {
                         
-                                            //To EgressActor
+                                                return false;
+                        
+                                            }
                         
                                         }
                         
@@ -126,7 +134,15 @@ impl CommunicationProcessorActorState
                                 _ =>
                                 {
     
-                                    //Error
+                                    let error = EgressActorInput::Error(SendableText::Str("Message type not recognised."));
+
+                                    if let Err(_err) = self.egress_actor_input_sender.send(error).await
+                                    {
+                        
+                                        return false;
+                        
+                                    }
+                        
     
                                 }
                             
@@ -142,7 +158,14 @@ impl CommunicationProcessorActorState
                 _ => 
                 {
 
-                    //Error
+                    let error = EgressActorInput::Error(SendableText::Str("Object provided must be a map."));
+
+                    if let Err(_err) = self.egress_actor_input_sender.send(error).await
+                    {
+
+                        return false;
+
+                    }
 
                 }
                 
@@ -162,5 +185,5 @@ impl CommunicationProcessorActorState
 
 }
 
-impl_mac_task_actor!(CommunicationProcessorActor);
+impl_mac_task_actor!(MessageProcessorActor);
 

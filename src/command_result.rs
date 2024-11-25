@@ -9,7 +9,7 @@ pub struct CommandResult
 {
 
     pub id: Option<u32>,
-    pub result: TypeInstance,
+    pub result: Option<TypeInstance>,
     pub message: Option<SendableText>,
     pub done: bool
 
