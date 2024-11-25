@@ -49,9 +49,9 @@ mod command_result;
 
 pub use command_result::*;
 
-mod communication_instance;
+mod message_instance;
 
-pub use communication_instance::*;
+pub use message_instance::*;
 
 mod command_error;
 

@@ -34,7 +34,7 @@ pub enum Whatever
     //Vecs
 
     VecBool(Vec<bool>),
-    VecChar(Vec<char>),
+    //VecChar(Vec<char>),
 
     VecF32(Vec<f32>),
     VecF64(Vec<f64>),

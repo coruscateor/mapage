@@ -3,7 +3,7 @@ use corlib::text::SendableText;
 use crate::{Command, CommandError, CommandResult};
 
 
-pub enum CommunicationInstance
+pub enum MessageInstance
 {
 
     Command(Command),

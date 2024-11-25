@@ -2,9 +2,9 @@ use std::sync::Arc;
 
 use corlib::text::SendableText;
 
-use crate::{Command, types::TypeInstance, CommandError, CommandResult, Store};
+use crate::{types::{SupportedType, TypeInstance}, Command, CommandError, CommandResult, Store};
 
-use super::{get_key_param, ExecutionResult};
+use super::{get_key_param, get_must_have_value_param, ExecutionResult};
 
 
 
@@ -31,7 +31,7 @@ pub async fn execute_bool_command(store: &Arc<Store>, command: Command) -> Execu
                     {
 
                         id: command.id,
-                        result: TypeInstance::Bool(val),
+                        result: Some(TypeInstance::Bool(val)),
                         message: None,
                         done: true
 
@@ -53,13 +53,73 @@ pub async fn execute_bool_command(store: &Arc<Store>, command: Command) -> Execu
         "try_read" =>
         {
 
+            let key = get_key_param(&command).await?;
+
+            let result;
+
+            if let Some(val) = store.bool_namespace().try_read(key).await
+            {
+
+                result = Some(TypeInstance::Bool(val));
+
+            }
+            else
+            {
+
+                result = None;
+                
+            }
+
+            let res = CommandResult
+            {
+
+                id: command.id,
+                result,
+                message: None,
+                done: true
+
+            };
+            
+            Ok(res)
 
 
         }
         "insert" =>
         {
 
+            let key = get_key_param(&command).await?;
 
+            let value = get_must_have_value_param(&command, SupportedType::Bool).await?;
+
+            let res = store.bool_namespace().insert(key).await;
+
+            match res
+            {
+
+                Ok(val) =>
+                {
+
+                    let res = CommandResult
+                    {
+
+                        id: command.id,
+                        result: Some(TypeInstance::Bool(val)),
+                        message: None,
+                        done: true
+
+                    };
+                    
+                    Ok(res)
+
+                }
+                Err(err) =>
+                {
+
+                    Err(CommandError::new(command.id, SendableText::String(err.to_string())))
+
+                }
+
+            }
 
         }
         "update" =>

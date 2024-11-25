@@ -859,9 +859,9 @@ into_type_instance_vec_type!(u64, VecU64);
 
 into_type_instance_vec_type!(u128, VecU128);
 
-into_type_instance_vec_type!(string, VecString);
+//into_type_instance_vec_type!(string, VecString);
 
-into_type_instance_vec_type!(whatever, VecWhatever);
+//into_type_instance_vec_type!(whatever, VecWhatever);
 
 
 

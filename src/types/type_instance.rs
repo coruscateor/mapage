@@ -2,9 +2,62 @@ use corlib::text::SendableText;
 
 use serde::Serialize;
 
-use crate::CommandError;
+use crate::CommandError; //{impl_is_type_method, impl_is_type_methods, CommandError};
 
 use super::{json::{CommandInterpretationError, Indices}, Whatever};
+
+use paste::paste;
+
+//#[macro_export]
+macro_rules! impl_is_type_method
+{
+
+    ($object_type:ty, $value_fn_name:ty, $enum_value_type:ty) =>
+    {
+
+        paste!
+        {
+
+            pub fn [<is_ $value_fn_name>](&self) -> bool
+            {
+    
+                if let $object_type::$enum_value_type(_) = self
+                {
+        
+                    true
+                    
+                }
+                else
+                {
+        
+                    false
+                    
+                }
+               
+            }
+
+        }
+
+    }
+
+}
+
+//#[macro_export]
+macro_rules! impl_is_type_methods
+{
+
+    ($object_type:ty, $(($value_fn_name:ty, $enum_value_type:ty)),+) =>
+    {
+
+        $(
+
+            impl_is_type_method!($object_type, $value_fn_name, $enum_value_type);
+
+        )*
+
+    }
+
+}
 
 #[derive(Debug, Serialize)]
 pub enum TypeInstance
@@ -39,7 +92,7 @@ pub enum TypeInstance
     //Vecs
 
     VecBool(Vec<bool>),
-    VecChar(Vec<char>),
+    //VecChar(Vec<char>),
 
     VecF32(Vec<f32>),
     VecF64(Vec<f64>),
@@ -58,14 +111,67 @@ pub enum TypeInstance
     VecU128(Vec<i128>),
     //VecUSize(Vec<usize>),
 
-    VecString(Vec<String>),
-    VecWhatever(Vec<Whatever>),
+    //VecString(Vec<String>),
+    //VecWhatever(Vec<Whatever>),
     //VecOptionWhatever(Vec<Option<Whatever>>),
 
 }
 
 impl TypeInstance
 {
+
+    pub fn is_bool(&self) -> bool
+    {
+
+        if let TypeInstance::Bool(_) = self
+        {
+
+            true
+            
+        }
+        else
+        {
+
+            false
+            
+        }
+
+    }
+
+    //impl_is_type_method!(TypeInstance, char, Char);
+
+    //impl_is_type_method!(TypeInstance, f32, F32);
+
+    //impl_is_type_method!(TypeInstance, f64, F64);
+
+    impl_is_type_methods!(TypeInstance, (char, Char),
+    (f32, F32),
+    (f64, F64),
+    (i8, I8),
+    (i16, I16),
+    (i32, I32),
+    (i64, I64),
+    (i128, I128),
+    (u8, U8),
+    (u16, U16),
+    (u32, U32),
+    (u64, U64),
+    (u128, U128),
+    (string, String),
+    (vec_bool, VecBool),
+    (vec_f32, VecF32),
+    (vec_f64, VecF64),
+    (vec_i8, VecI8),
+    (vec_i16, VecI16),
+    (vec_i32, VecI32),
+    (vec_i64, VecI64),
+    (vec_i128, VecI128),
+    (vec_u8, VecU8),
+    (vec_u16, VecU16),
+    (vec_u32, VecU32),
+    (vec_u64, VecU64),
+    (vec_u128, VecU128)
+    );
 
     pub fn into_whatever(self, command_id: Option<u32>, field: Option<&'static str>, indices: &Option<Indices>) -> Result<Whatever, CommandInterpretationError> //, index: Option<usize>, sub_index: Option<usize>
     {
@@ -91,7 +197,7 @@ impl TypeInstance
             //TypeInstance::Usize(val) => Ok(Whatever::USize(val)),
             TypeInstance::String(val) => Ok(Whatever::String(val)),
             TypeInstance::VecBool(vec) => Ok(Whatever::VecBool(vec)),
-            TypeInstance::VecChar(vec) => Ok(Whatever::VecChar(vec)),
+            //TypeInstance::VecChar(vec) => Ok(Whatever::VecChar(vec)),
             TypeInstance::VecF32(vec) => Ok(Whatever::VecF32(vec)),
             TypeInstance::VecF64(vec) => Ok(Whatever::VecF64(vec)),
             TypeInstance::VecI8(vec) => Ok(Whatever::VecI8(vec)),
@@ -106,7 +212,7 @@ impl TypeInstance
             TypeInstance::VecU64(vec) => Ok(Whatever::VecU64(vec)),
             TypeInstance::VecU128(vec) => Ok(Whatever::VecU128(vec) ),
             //TypeInstance::VecUSize(vec) => Ok(Whatever::VecUSize(vec)),
-            TypeInstance::VecString(vec) => Ok(Whatever::VecString(vec)),
+            //TypeInstance::VecString(vec) => Ok(Whatever::VecString(vec)),
             _ =>
             {
 
