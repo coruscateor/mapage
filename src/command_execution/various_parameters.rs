@@ -2,7 +2,7 @@
 
 use corlib::text::SendableText;
 
-use crate::{types::{SupportedType, TypeInstance}, Command, CommandError};
+use crate::{types::{SupportedType, TypeInstance, TypeInstanceConversionError}, Command, CommandError};
 
 use paste::paste;
 
@@ -30,7 +30,7 @@ pub async fn get_key_param(command: &Command) -> Result<&String, CommandError> /
                     _ =>
                     {
 
-                        Err(CommandError::new(command.id, SendableText::Str("The provided key parameter is the wrong type.")))
+                        Err(CommandError::new(command, SendableText::Str("The provided key parameter is the wrong type.")))
 
                         //Err(SendableText::Str("The provided key parameter is the wrong type."))
 
@@ -42,7 +42,7 @@ pub async fn get_key_param(command: &Command) -> Result<&String, CommandError> /
             else
             {
 
-                Err(CommandError::new(command.id, SendableText::Str("Key not provided.")))
+                Err(CommandError::new(command, SendableText::Str("Key not provided.")))
 
                 //Err(SendableText::Str("Key not provided."))
 
@@ -54,7 +54,7 @@ pub async fn get_key_param(command: &Command) -> Result<&String, CommandError> /
 
             //Error: parameter list empty.
             
-            Err(CommandError::new(command.id, SendableText::Str("Provided parameter list empty.")))
+            Err(CommandError::new(command, SendableText::Str("Provided parameter list empty.")))
 
             //Err(SendableText::Str("Provided parameter list empty."))
 
@@ -64,7 +64,7 @@ pub async fn get_key_param(command: &Command) -> Result<&String, CommandError> /
     else
     {
 
-        Err(CommandError::new(command.id, SendableText::Str("No parameter list list provided.")))
+        Err(CommandError::new(command, SendableText::Str("No parameter list list provided.")))
 
         //Err(SendableText::Str("No parameter list list provided."))
         
@@ -72,7 +72,8 @@ pub async fn get_key_param(command: &Command) -> Result<&String, CommandError> /
 
 }
 
-macro_rules! impl_is_type_method
+/*
+macro_rules! is_type_or_error
 {
 
     ($ti_value:ident, $command:ident, $type_fn_name:ty) =>
@@ -99,17 +100,18 @@ macro_rules! impl_is_type_method
     }
 
 }
+*/
 
-pub async fn get_must_have_value_param(command: &Command, of_type: SupportedType) -> Result<&TypeInstance, CommandError>
+pub async fn get_must_have_value_param<T>(command: &mut Command, of_type: SupportedType) -> Result<T, CommandError> //Result<&TypeInstance, CommandError>
 {
 
     if let Some(params) = &command.params
     {
 
-        if let Some(opt_value) = params.get(1)
+        if let Some(opt_value) = params.get_mut(1)
         {
 
-            if let Some(ti_value) = opt_value
+            if let Some(ti_value) = opt_value.take()
             {
 
                 match of_type
@@ -118,7 +120,17 @@ pub async fn get_must_have_value_param(command: &Command, of_type: SupportedType
                     SupportedType::Bool =>
                     {
 
-                        impl_is_type_method!(ti_value, command, bool)
+                        let try_res: Result<T, TypeInstanceConversionError> = ti_value.try_into();
+
+                        match try_res
+                        {
+                            Ok(res) => Ok(res),
+                            Err(_) => todo!(),
+                        }
+
+                        //Ok(res)
+
+                        //is_type_or_error!(ti_value, command, bool)
 
                         /*
                         if ti_value.is_bool()
@@ -139,93 +151,93 @@ pub async fn get_must_have_value_param(command: &Command, of_type: SupportedType
                     SupportedType::Char =>
                     {
 
-                        impl_is_type_method!(ti_value, command, char)
+                        is_type_or_error!(ti_value, command, char)
 
                     }
                     SupportedType::F32 =>
                     {
 
-                        impl_is_type_method!(ti_value, command, f32)
+                        is_type_or_error!(ti_value, command, f32)
 
                     }
                     SupportedType::F64 =>
                     {
 
-                        impl_is_type_method!(ti_value, command, f64)
+                        is_type_or_error!(ti_value, command, f64)
 
                     }
                     SupportedType::I8 =>
                     {
 
-                        impl_is_type_method!(ti_value, command, i8)
+                        is_type_or_error!(ti_value, command, i8)
 
                     }
                     SupportedType::I16 =>
                     {
 
-                        impl_is_type_method!(ti_value, command, i16)
+                        is_type_or_error!(ti_value, command, i16)
 
                     }
                     SupportedType::I32 =>
                     {
 
-                        impl_is_type_method!(ti_value, command, i32)
+                        is_type_or_error!(ti_value, command, i32)
 
                     }
                     SupportedType::I64 =>
                     {
 
-                        impl_is_type_method!(ti_value, command, i64)
+                        is_type_or_error!(ti_value, command, i64)
 
                     }
                     SupportedType::I128 =>
                     {
 
-                        impl_is_type_method!(ti_value, command, i128)
+                        is_type_or_error!(ti_value, command, i128)
 
                     }
                     //SupportedType::Isize => todo!(),
                     SupportedType::U8 =>
                     {
 
-                        impl_is_type_method!(ti_value, command, u8)
+                        is_type_or_error!(ti_value, command, u8)
 
                     }
                     SupportedType::U16 =>
                     {
 
-                        impl_is_type_method!(ti_value, command, i16)
+                        is_type_or_error!(ti_value, command, i16)
 
                     }
                     SupportedType::U32 =>
                     {
 
-                        impl_is_type_method!(ti_value, command, i32)
+                        is_type_or_error!(ti_value, command, i32)
 
                     }
                     SupportedType::U64 =>
                     {
 
-                        impl_is_type_method!(ti_value, command, i64)
+                        is_type_or_error!(ti_value, command, i64)
 
                     }
                     SupportedType::U128 =>
                     {
 
-                        impl_is_type_method!(ti_value, command, i128)
+                        is_type_or_error!(ti_value, command, i128)
 
                     }
                     //SupportedType::Usize => todo!(),
                     SupportedType::String =>
                     {
 
-                        impl_is_type_method!(ti_value, command, string)
+                        is_type_or_error!(ti_value, command, string)
 
                     }
                     SupportedType::Whatever =>
                     {
 
-                        //impl_is_type_method!(ti_value, command, whatever)
+                        //is_type_or_error!(ti_value, command, whatever)
 
                         Ok(ti_value)
 
@@ -233,81 +245,81 @@ pub async fn get_must_have_value_param(command: &Command, of_type: SupportedType
                     SupportedType::VecBool =>
                     {
 
-                        impl_is_type_method!(ti_value, command, vec_bool)
+                        is_type_or_error!(ti_value, command, vec_bool)
 
                     }
                     //SupportedType::VecChar => todo!(),
                     SupportedType::VecF32 =>
                     {
 
-                        impl_is_type_method!(ti_value, command, vec_f32)
+                        is_type_or_error!(ti_value, command, vec_f32)
 
                     }
                     SupportedType::VecF64 =>
                     {
 
-                        impl_is_type_method!(ti_value, command, vec_f64)
+                        is_type_or_error!(ti_value, command, vec_f64)
 
                     }
                     SupportedType::VecI8 =>
                     {
 
-                        impl_is_type_method!(ti_value, command, vec_i8)
+                        is_type_or_error!(ti_value, command, vec_i8)
 
                     }
                     SupportedType::VecI16 =>
                     {
 
-                        impl_is_type_method!(ti_value, command, vec_i16)
+                        is_type_or_error!(ti_value, command, vec_i16)
 
                     }
                     SupportedType::VecI32 =>
                     {
 
-                        impl_is_type_method!(ti_value, command, vec_i32)
+                        is_type_or_error!(ti_value, command, vec_i32)
 
                     }
                     SupportedType::VecI64 =>
                     {
 
-                        impl_is_type_method!(ti_value, command, vec_i64)
+                        is_type_or_error!(ti_value, command, vec_i64)
 
                     }
                     SupportedType::VecI128 =>
                     {
 
-                        impl_is_type_method!(ti_value, command, vec_i128)
+                        is_type_or_error!(ti_value, command, vec_i128)
 
                     }
                     //SupportedType::VecIsize => todo!(),
                     SupportedType::VecU8 =>
                     {
 
-                        impl_is_type_method!(ti_value, command, vec_u8)
+                        is_type_or_error!(ti_value, command, vec_u8)
 
                     }
                     SupportedType::VecU16 =>
                     {
 
-                        impl_is_type_method!(ti_value, command, vec_u16)
+                        is_type_or_error!(ti_value, command, vec_u16)
 
                     }
                     SupportedType::VecU32 =>
                     {
 
-                        impl_is_type_method!(ti_value, command, vec_u32)
+                        is_type_or_error!(ti_value, command, vec_u32)
 
                     }
                     SupportedType::VecU64 =>
                     {
 
-                        impl_is_type_method!(ti_value, command, vec_u64)
+                        is_type_or_error!(ti_value, command, vec_u64)
 
                     }
                     SupportedType::VecU128 =>
                     {
 
-                        impl_is_type_method!(ti_value, command, vec_u128)
+                        is_type_or_error!(ti_value, command, vec_u128)
 
                     }
                     //SupportedType::VecUsize => todo!(),
@@ -345,6 +357,15 @@ pub async fn get_must_have_value_param(command: &Command, of_type: SupportedType
     }
 
 }
+
+/*
+pub async fn get_must_have_value_param<bool>(command: &mut Command, of_type: SupportedType) -> Result<bool, CommandError>
+{
+
+    Ok(true)
+
+}
+*/
 
 fn wrong_type_error<T>(command: &Command) -> Result<T, CommandError>
 {

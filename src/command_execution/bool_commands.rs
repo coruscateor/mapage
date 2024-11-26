@@ -43,7 +43,7 @@ pub async fn execute_bool_command(store: &Arc<Store>, command: Command) -> Execu
                 Err(err) =>
                 {
 
-                    Err(CommandError::new(command.id, SendableText::String(err.to_string())))
+                    Err(CommandError::new(&command, SendableText::String(err.to_string())))
 
                 }
 

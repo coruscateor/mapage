@@ -12,6 +12,7 @@ pub struct CommandError
 
     pub id: Option<u32>,
     pub message: SendableText,
+    pub index: Option<usize>
     //pub field: Option<&'static str>,
     //pub indices: Option<Indices>
 
@@ -20,16 +21,31 @@ pub struct CommandError
 impl CommandError
 {
 
-    pub fn new(id: Option<u32>, message: SendableText) -> Self //, field: Option<&'static str>, indices: Option<Indices>) -> Self
+    pub fn new(command: &Command, message: SendableText) -> Self //id: Option<u32>, //, field: Option<&'static str>, indices: Option<Indices>) -> Self
     {
 
         Self
         {
 
-            id,
+            id: command.id,
             message,
+            index: None
             //field,
             //indices
+
+        }
+
+    }
+
+    pub fn at_index(command: &Command, message: SendableText, index: usize) -> Self //id: Option<u32>, 
+    {
+
+        Self
+        {
+
+            id: command.id,
+            message,
+            index:Some(index)
 
         }
 
@@ -38,7 +54,7 @@ impl CommandError
     pub fn invalid_command(command: &Command) -> Self
     {
 
-        CommandError::new(command.id, SendableText::Str("Invalid command provided."))
+        CommandError::new(command, SendableText::Str("Invalid command provided.")) //command.id,
 
     }
 
@@ -54,14 +70,14 @@ impl CommandError
     pub fn not_implemented(command: &Command) -> Self
     {
 
-        CommandError::new(command.id, SendableText::Str("Not implemented"))
+        CommandError::new(command, SendableText::Str("Not implemented"))
 
     }
 
     pub fn invalid_command_for_the_specified_type(command: &Command) -> Self
     {
 
-        CommandError::new(command.id, SendableText::Str("Invalid command for the specified type."))
+        CommandError::new(command, SendableText::Str("Invalid command for the specified type."))
 
     }
 
