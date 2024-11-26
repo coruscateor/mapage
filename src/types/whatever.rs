@@ -44,15 +44,15 @@ pub enum Whatever
     VecI64(Vec<i64>),
 
     VecI128(Vec<i128>),
-    VecISize(Vec<isize>),
+    //VecISize(Vec<isize>),
     VecU8(Vec<u8>),
     VecU16(Vec<u16>),
     VecU32(Vec<u32>),
     VecU64(Vec<u64>),
 
-    VecU128(Vec<i128>),
-    VecUSize(Vec<usize>),
+    VecU128(Vec<u128>),
+    //VecUSize(Vec<usize>),
 
-    VecString(Vec<String>)
+    //VecString(Vec<String>)
 
 }

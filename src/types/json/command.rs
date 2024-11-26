@@ -18,97 +18,11 @@ use corlib::inc_dec::{self, IncDecSelf}; //, IntIncDecSelf};
 
 use crate::types::{SupportedType, TypeInstance, Whatever};
 
-use crate::{from_type_instance_type, Command, CommandError};
+use crate::{Command, CommandError};
 
 use super::conversion::*;
 
 use corlib::collections::StackedVec;
-
-impl From<TypeInstance> for bool
-{
-    
-    fn from(value: TypeInstance) -> Self
-    {
-
-        if let TypeInstance::Bool(val) = value
-        {
-
-            val
-            
-        }
-        else
-        {
-
-            panic!("Error: Invalid conversion");
-            
-        }
-       
-    }
-
-}
-
-from_type_instance_type!(char, Char);
-
-from_type_instance_type!(f32, F32);
-
-from_type_instance_type!(f64, F64);
-
-from_type_instance_type!(i8, I8);
-
-from_type_instance_type!(i16, I16);
-
-from_type_instance_type!(i32, I32);
-
-from_type_instance_type!(i64, I64);
-
-from_type_instance_type!(i128, I128);
-
-from_type_instance_type!(u8, U8);
-
-from_type_instance_type!(u16, U16);
-
-from_type_instance_type!(u32, U32);
-
-from_type_instance_type!(u64, U64);
-
-from_type_instance_type!(u128, U128);
-
-macro_rules! from_type_instance_type_uc
-{
-
-    ($ti_type:ident) =>
-    {
-
-        impl From<TypeInstance> for $ti_type
-        {
-            
-            fn from(value: TypeInstance) -> Self
-            {
-
-                if let TypeInstance:: $ti_type (val) = value
-                {
-
-                    val
-                    
-                }
-                else
-                {
-
-                    panic!("Error: Invalid conversion");
-                    
-                }
-            
-            }
-
-        }
-
-    }
-
-}
-
-from_type_instance_type_uc!(String);
-
-from_type_instance_type_uc!(Whatever);
 
 /*
 impl From<bool> for TypeInstance
