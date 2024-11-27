@@ -290,7 +290,7 @@ impl TypeInstance
     (vec_u128, VecU128)
     );
 
-    pub fn take_bool(self) -> Result<bool, TypeInstanceConversionError>
+    pub fn take_bool(self) -> Result<bool, ()> //TypeInstanceConversionError>
     {
 
         if let TypeInstance::Bool(val) = self
@@ -302,7 +302,9 @@ impl TypeInstance
         else
         {
 
-            Err(TypeInstanceConversionError::default())
+            Err(())
+
+            //Err(TypeInstanceConversionError::default())
             
         }
 
@@ -324,7 +326,7 @@ impl TypeInstance
     (u128, U128));
 
     impl_take_type_return_type_methods!((string, String, String),
-    (whatever, Whatever, Whatever),
+    //(whatever, Whatever, Whatever),
     (vec_bool, VecBool, Vec<bool>),
     (vec_f32, VecF32, Vec<f32>), //VecF32),
     (vec_f64, VecF64, Vec<f64>), //VecF64),
@@ -339,7 +341,7 @@ impl TypeInstance
     (vec_u64, VecU64, Vec<u64>), //VecU64),
     (vec_u128, VecU128, Vec<u128>));  //VecU128));
 
-    pub fn into_whatever(self, command_id: Option<u32>, field: Option<&'static str>, indices: &Option<Indices>) -> Result<Whatever, CommandInterpretationError> //, index: Option<usize>, sub_index: Option<usize>
+    pub fn into_whatever(self) -> Result<Whatever, ()> //command_id: Option<u32>, field: Option<&'static str>, indices: &Option<Indices>) -> Result<Whatever, CommandInterpretationError> //, index: Option<usize>, sub_index: Option<usize>
     {
 
         match self
@@ -383,7 +385,9 @@ impl TypeInstance
             _ =>
             {
 
-                Err(CommandInterpretationError::new(SendableText::Str("Conversion Error"), command_id, field, indices.clone())) //with_sub_index_opt(SendableText::Str("Conversion Error"), command_id, field, index, sub_index))
+                Err(())
+
+                //Err(CommandInterpretationError::new(SendableText::Str("Conversion Error"), command_id, field, indices.clone())) //with_sub_index_opt(SendableText::Str("Conversion Error"), command_id, field, index, sub_index))
 
             }
 
@@ -391,7 +395,106 @@ impl TypeInstance
 
     }
 
+    pub fn get_sendable_type_name(&self) -> SendableText
+    {
+
+        match self
+        {
+
+            TypeInstance::Bool(_) => SendableText::Str("bool"),
+            TypeInstance::Char(_) => SendableText::Str("char"),
+            TypeInstance::F32(_) => SendableText::Str("f32"),
+            TypeInstance::F64(_) => SendableText::Str("f64"),
+            TypeInstance::I8(_) => SendableText::Str("i8"),
+            TypeInstance::I16(_) => SendableText::Str("i16"),
+            TypeInstance::I32(_) => SendableText::Str("i32"),
+            TypeInstance::I64(_) => SendableText::Str("i64"),
+            TypeInstance::I128(_) => SendableText::Str("i128"),
+            TypeInstance::U8(_) => SendableText::Str("u8"),
+            TypeInstance::U16(_) => SendableText::Str("u16"),
+            TypeInstance::U32(_) => SendableText::Str("u32"),
+            TypeInstance::U64(_) => SendableText::Str("u64"),
+            TypeInstance::U128(_) => SendableText::Str("u128"),
+            TypeInstance::String(_) => SendableText::Str("string"),
+            TypeInstance::Whatever(_whatever) => SendableText::Str("whatever"),
+            TypeInstance::VecBool(_vec) => SendableText::Str("vec_bool"),
+            TypeInstance::VecF32(_vec) => SendableText::Str("vec_f32"),
+            TypeInstance::VecF64(_vec) => SendableText::Str("vec_f64"),
+            TypeInstance::VecI8(_vec) => SendableText::Str("vec_i8"),
+            TypeInstance::VecI16(_vec) => SendableText::Str("vec_i16"),
+            TypeInstance::VecI32(_vec) => SendableText::Str("vec_i32"),
+            TypeInstance::VecI64(_vec) => SendableText::Str("vec_i64"),
+            TypeInstance::VecI128(_vec) => SendableText::Str("vec_i128"),
+            TypeInstance::VecU8(_vec) => SendableText::Str("vec_u8"),
+            TypeInstance::VecU16(_vec) => SendableText::Str("vec_u16"),
+            TypeInstance::VecU32(_vec) => SendableText::Str("vec_u32"),
+            TypeInstance::VecU64(_vec) => SendableText::Str("vec_u64"),
+            TypeInstance::VecU128(_vec) => SendableText::Str("vec_u128")
+
+        }
+
+    }
+
 }
+
+impl From<TypeInstance> for bool
+{
+
+    fn from(value: TypeInstance) -> Self
+    {
+
+        if let TypeInstance::Bool(val) = value
+        {
+
+            val
+
+        }
+        else
+        {
+
+            panic!("Error: Can't do it.")
+            
+        }
+        
+    }
+
+}
+
+/*
+impl From<Option<TypeInstance>> for Option<bool>
+{
+
+    fn from(value: Option<TypeInstance>) -> Self
+    {
+
+        if let Some(ti) = value
+        {
+
+            if let TypeInstance::Bool(val) = ti //.expect("Error: Value has no value.")
+            {
+    
+                Some(val)
+    
+            }
+            else
+            {
+    
+                panic!("Error: Can't do it.")
+                
+            }
+
+        }
+        else
+        {
+
+            None
+            
+        }
+        
+    }
+
+}
+*/
 
 /*
 #[macro_export]

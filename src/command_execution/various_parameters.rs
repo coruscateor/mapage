@@ -6,16 +6,18 @@ use crate::{types::{SupportedType, TypeInstance, TypeInstanceConversionError}, C
 
 use paste::paste;
 
-pub async fn get_key_param(command: &Command) -> Result<&String, CommandError> //SendableText>
+//Get vale at index 0.
+
+pub async fn get_key_param(command: &mut Command) -> Result<String, CommandError> //SendableText>
 {
 
-    if let Some(params) = &command.params
+    if let Some(params) = &mut command.params
     {
 
-        if let Some(opt_key) = params.first()
+        if let Some(opt_key) = params.first_mut()
         {
 
-            if let Some(ti_key) = opt_key
+            if let Some(ti_key) = opt_key.take()
             {
 
                 match ti_key
@@ -102,7 +104,30 @@ macro_rules! is_type_or_error
 }
 */
 
+pub async fn take_at<T>(command: &mut Command, index: usize) -> Option<TypeInstance>
+{
+
+    if let Some(params) = &mut command.params
+    {
+
+        if let Some(opt_value) = params.get_mut(index)
+        {
+
+            return opt_value.take();
+
+        }
+
+    }
+
+    None
+
+}
+
+
+
+/*
 pub async fn get_must_have_value_param<T>(command: &mut Command, of_type: SupportedType) -> Result<T, CommandError> //Result<&TypeInstance, CommandError>
+    where T: From<bool>
 {
 
     if let Some(params) = &command.params
@@ -120,11 +145,11 @@ pub async fn get_must_have_value_param<T>(command: &mut Command, of_type: Suppor
                     SupportedType::Bool =>
                     {
 
-                        let try_res: Result<T, TypeInstanceConversionError> = ti_value.try_into();
+                        let try_res = ti_value.take_bool(); //: Result<T, TypeInstanceConversionError> //.try_into();
 
                         match try_res
                         {
-                            Ok(res) => Ok(res),
+                            Ok(res) => Ok(res.into()),
                             Err(_) => todo!(),
                         }
 
@@ -357,6 +382,7 @@ pub async fn get_must_have_value_param<T>(command: &mut Command, of_type: Suppor
     }
 
 }
+*/
 
 /*
 pub async fn get_must_have_value_param<bool>(command: &mut Command, of_type: SupportedType) -> Result<bool, CommandError>
@@ -370,6 +396,6 @@ pub async fn get_must_have_value_param<bool>(command: &mut Command, of_type: Sup
 fn wrong_type_error<T>(command: &Command) -> Result<T, CommandError>
 {
 
-    Err(CommandError::new(command.id, SendableText::Str("The provided value parameter is the wrong type.")))
+    Err(CommandError::new(command, SendableText::Str("The provided value parameter is the wrong type.")))
 
 }

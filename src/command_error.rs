@@ -12,9 +12,10 @@ pub struct CommandError
 
     pub id: Option<u32>,
     pub message: SendableText,
-    pub index: Option<usize>
+    pub index: Option<usize>,
     //pub field: Option<&'static str>,
     //pub indices: Option<Indices>
+    pub found_type: Option<SendableText>
 
 }
 
@@ -29,9 +30,10 @@ impl CommandError
 
             id: command.id,
             message,
-            index: None
+            index: None,
             //field,
             //indices
+            found_type: None
 
         }
 
@@ -45,11 +47,59 @@ impl CommandError
 
             id: command.id,
             message,
-            index:Some(index)
+            index:Some(index),
+            found_type: None
 
         }
 
     }
+
+    pub fn at_index_with_found_type(command: &Command, message: SendableText, index: usize, found_type: SendableText) -> Self
+    {
+
+        Self
+        {
+
+            id: command.id,
+            message,
+            index: Some(index),
+            found_type: Some(found_type)
+
+        }
+
+    }
+    
+    /*
+    pub fn with_id(id: Option<u32>, message: SendableText) -> Self
+    {
+
+        Self
+        {
+
+            id,
+            message,
+            index: None,
+            value: None
+
+        }
+
+    }
+
+    pub fn with_id_at_index(id: Option<u32>, message: SendableText, index: usize) -> Self
+    {
+
+        Self
+        {
+
+            id,
+            message,
+            index:Some(index),
+            value: None
+
+        }
+
+    }
+    */
 
     pub fn invalid_command(command: &Command) -> Self
     {
