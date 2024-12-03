@@ -1,7 +1,9 @@
+use serde::{Deserialize, Serialize};
+
 use crate::types::{SupportedType, TypeInstance};
 
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Serialize, Deserialize)]
 pub struct Command
 {
 

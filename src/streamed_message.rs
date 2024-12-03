@@ -1,9 +1,12 @@
 use corlib::text::SendableText;
 
+use serde::{Serialize, Deserialize};
+
 use crate::{Command, CommandError, CommandResult};
 
 
-pub enum MessageInstance
+#[derive(Debug, Serialize, Deserialize)]
+pub enum StreamedMessage
 {
 
     Command(Command),

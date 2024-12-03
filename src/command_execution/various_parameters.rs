@@ -104,7 +104,7 @@ macro_rules! is_type_or_error
 }
 */
 
-pub async fn take_at<T>(command: &mut Command, index: usize) -> Option<TypeInstance>
+pub async fn take_at(command: &mut Command, index: usize) -> Option<TypeInstance>
 {
 
     if let Some(params) = &mut command.params

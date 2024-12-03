@@ -13,8 +13,8 @@ pub mod char_namespace;
 #[cfg(any(feature = "all_types", feature = "string"))]
 pub mod string_namespace;
 
-//#[cfg(any(feature = "all_types", feature = "Whatever"))]
-//pub mod whatever_namespace;
+#[cfg(any(feature = "all_types", feature = "whatever"))]
+pub mod whatever_namespace;
 
 //#[cfg(any(feature = "all_types", feature = "SelectedType"))] //, feature = "SelectedTypeIO"))]
 //pub mod selected_type_namespace;

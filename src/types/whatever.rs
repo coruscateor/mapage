@@ -1,9 +1,9 @@
 
 //Primitive and standard types only.
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum Whatever
 {
 
@@ -56,3 +56,16 @@ pub enum Whatever
     //VecString(Vec<String>)
 
 }
+
+impl Default for Whatever
+{
+
+    fn default() -> Self
+    {
+        
+        Self::Bool(bool::default())
+
+    }
+
+}
+

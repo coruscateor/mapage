@@ -2,7 +2,7 @@ use scc::HashMap;
 
 use std::{hash::Hash, collections::HashSet};
 
-use crate::{errors::invalid_operation};
+use crate::errors::{invalid_operation, key_not_found};
 
 //use crate::types::{get_ok_value_str};
 
@@ -38,7 +38,7 @@ impl<K, V> HashMapNamespace<K, V>
 
     }
 
-    pub async fn insert(&self, key: K, value: V) -> Result<&'static str>
+    pub async fn insert(&self, key: K, value: V) -> Result<()>
     {
         
         let res = self.map.insert_async(key, value);
@@ -50,11 +50,11 @@ impl<K, V> HashMapNamespace<K, V>
 
         }
 
-        Ok(get_ok_value_str())
+        Ok(())
 
     }
 
-    pub async fn update(&self, key: &K, value: V) -> Result<&'static str>
+    pub async fn update(&self, key: &K, value: V) -> Result<()>
     {
 
         let res = self.map.update_async(key, |_, v| { *v = value; });
@@ -66,7 +66,32 @@ impl<K, V> HashMapNamespace<K, V>
 
         }
 
-        Ok(get_ok_value_str())
+        Ok(())
+
+    }
+
+    pub async fn replace(&self, key: &K, value: V) -> Result<()>
+    {
+
+        let res = self.try_replace(key, value);
+
+        match res.await
+        {
+
+            Some(_val) =>
+            {
+
+                Ok(())
+
+            }
+            None =>
+            {
+
+                key_not_found()
+
+            }
+
+        }
 
     }
 
@@ -87,7 +112,7 @@ impl<K, V> HashMapNamespace<K, V>
 
     //updater must return Result<R>
 
-    pub async fn update_fn<R, FN>(&self, key: &K, mut updater: FN) -> Result<R>
+    pub async fn update_fn<R, FN>(&self, key: &K, updater: FN) -> Result<R>
         where FN: FnOnce(&mut V) -> Result<R>
     {
 
@@ -104,7 +129,7 @@ impl<K, V> HashMapNamespace<K, V>
 
     }
 
-    pub async fn update_kv_fn<R, FN>(&self, key: &K, mut updater: FN) -> Result<R>
+    pub async fn update_kv_fn<R, FN>(&self, key: &K, updater: FN) -> Result<R>
         where FN: FnOnce(&K, &mut V) -> Result<R>
     {
 
@@ -120,7 +145,7 @@ impl<K, V> HashMapNamespace<K, V>
 
     }
 
-    pub async fn remove(&self, key: &K) -> Result<&'static str>
+    pub async fn remove(&self, key: &K) -> Result<()>
     {
 
         let res = self.map.remove_async(key);
@@ -132,7 +157,32 @@ impl<K, V> HashMapNamespace<K, V>
 
         }
 
-        Ok(get_ok_value_str())
+        Ok(())
+
+    }
+    
+    pub async fn retrieve(&self, key: &K) -> Result<V>
+    {
+
+        let res = self.map.remove_async(key);
+
+        match res.await
+        {
+
+            Some(val) =>
+            {
+
+                Ok(val.1)
+
+            }
+            None =>
+            {
+
+                key_not_found()
+
+            }
+
+        }
 
     }
 
@@ -197,16 +247,14 @@ impl<K, V> HashMapNamespace<K, V>
 
     }
 
-    pub async fn clear(&self) -> &'static str
+    pub async fn clear(&self)
     {
 
         self.map.clear_async().await;
 
-        get_ok_value_str()
-
     }
 
-    pub async fn clear_and_get_len(&self) -> usize
+    pub async fn len_then_clear(&self) -> usize
     {
 
         let len = self.map.len();
@@ -240,14 +288,14 @@ impl<K, V> HashMapNamespace<K, V>
 
     //
 
-    pub async fn upsert(&self, key: K, value: V) -> Result<&'static str>
+    pub async fn upsert(&self, key: K, value: V) -> Result<()>
     {
 
         let value_ref = &value; 
 
         self.map.entry(key).and_modify(|v| { *v = value_ref.clone(); }).or_insert(value);
 
-        Ok(get_ok_value_str())
+        Ok(())
 
     }
 
@@ -274,7 +322,7 @@ impl<K, V> HashMapNamespace<K, V>
 
     }
 
-    pub async fn get_all_keys(&self) -> HashSet<K>
+    pub async fn all_keys(&self) -> HashSet<K>
     {
 
         let mut keys = HashSet::with_capacity(self.map.len());
@@ -307,14 +355,14 @@ impl<K, V> HashMapNamespace<K, V>
           V: 'static + Sync + Default + Copy + Clone
 {
 
-    pub async fn upsert_copy(&self, key: K, value: V) -> Result<&'static str>
+    pub async fn upsert_copy(&self, key: K, value: V) -> Result<()>
     {
 
         let value_ref = &value; 
 
         self.map.entry(key).and_modify(|v| { *v = *value_ref; }).or_insert(value);
 
-        Ok(get_ok_value_str())
+        Ok(())
 
     }
 
@@ -350,14 +398,14 @@ impl<K, V> HashMapNamespace<K, V>
           V: 'static + Sync + Default + Clone
 {
 
-    pub async fn upsert_clone(&self, key: K, value: V) -> Result<&'static str>
+    pub async fn upsert_clone(&self, key: K, value: V) -> Result<()>
     {
 
         let value_ref = &value; 
 
         self.map.entry(key).and_modify(|v| { *v = value_ref.clone(); }).or_insert(value);
 
-        Ok(get_ok_value_str())
+        Ok(())
 
     }
 
@@ -425,7 +473,7 @@ impl<K, V> HashMapNamespace<K, V>
           V: 'static + Sync + Default + Clone
 {
 
-    pub async fn get_all_keys_clone(&self) -> HashSet<K>
+    pub async fn all_keys_clone(&self) -> HashSet<K>
     {
 
         let mut keys = HashSet::with_capacity(self.map.len());

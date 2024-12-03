@@ -149,4 +149,13 @@ pub fn provided_value_is_zero<T>() -> Result<T>
 
 }
 
+static KEY_NOT_FOUND: &str = "Key not found";
+
+pub fn key_not_found<T>() -> Result<T>
+{
+
+    Err(Error::msg(PROVIDED_VALUE_IS_ZERO))
+
+}
+
 

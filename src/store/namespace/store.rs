@@ -20,8 +20,8 @@ use super::numeric_namespace::NumericNamespace;
 #[cfg(any(feature = "all_types", feature = "string"))]
 use super::string_namespace::StringNamespace;
 
-//#[cfg(any(feature = "all_types", feature = "Whatever"))]
-//use super::whatever_namespace::WhateverNamespace;
+#[cfg(any(feature = "all_types", feature = "whatever"))]
+use super::whatever_namespace::WhateverNamespace;
 
 //#[cfg(any(feature = "all_types", feature = "SelectedType"))]
 //use super::selected_type_namespace::SelectedTypeNamespace;
@@ -168,8 +168,8 @@ pub struct Store
 
     //misc
 
-    //#[cfg(any(feature = "all_types", feature = "Whatever"))]
-    //whatever_namespace: WhateverNamespace,
+    #[cfg(any(feature = "all_types", feature = "whatever"))]
+    whatever_namespace: WhateverNamespace,
 
     //#[cfg(any(feature = "all_types", feature = "SelectedType"))]
     //selected_type_namespace: SelectedTypeNamespace,
@@ -309,8 +309,8 @@ impl Store
 
             //misc
 
-            //#[cfg(any(feature = "all_types", feature = "Whatever"))]
-            //whatever_namespace: WhateverNamespace::new(),
+            #[cfg(any(feature = "all_types", feature = "whatever"))]
+            whatever_namespace: WhateverNamespace::new(),
 
             //#[cfg(any(feature = "all_types", feature = "SelectedType"))]
             //selected_type_namespace: SelectedTypeNamespace::new(),
@@ -441,8 +441,8 @@ impl Store
     #[cfg(any(feature = "all_types", feature = "string"))]
     impl_get_ref!(string_namespace, StringNamespace);
 
-    //#[cfg(any(feature = "all_types", feature = "Whatever"))]
-    //impl_get_ref!(whatever_namespace, WhateverNamespace);
+    #[cfg(any(feature = "all_types", feature = "whatever"))]
+    impl_get_ref!(whatever_namespace, WhateverNamespace);
 
     //#[cfg(any(feature = "all_types", feature = "SelectedType"))]
     //impl_get_ref!(selected_type_namespace, SelectedTypeNamespace);

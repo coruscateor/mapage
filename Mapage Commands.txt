@@ -9,18 +9,18 @@ try_read
 insert
 update
 upsert
-try_replace
 replace <-
+try_replace
 remove
-try_retrieve
 retrieve <-
+try_retrieve
 contains
 clear
 len
 clear_and_get_len => len_then_clear
 is_empty
 capacity
-get_all_keys => all_keys
+get_all_keys => all_keys //May get deprecated
 
 
 

@@ -2,9 +2,9 @@ use corlib::text::SendableText;
 
 use crate::{types::TypeInstance, Command};
 
-use serde::Serialize;
+use serde::{Serialize, Deserialize};
 
-#[derive(Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct CommandResult
 {
 

@@ -2,11 +2,11 @@ use std::{error::Error, fmt::Display};
 
 use corlib::text::SendableText;
 
-use serde::Serialize;
+use serde::{Serialize, Deserialize};
 
 use crate::{types::json::Indices, Command};
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct CommandError
 {
 

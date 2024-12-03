@@ -47,9 +47,11 @@ impl StringNamespace
     delegate! {
         to self.namespace {
 
-            pub async fn insert(&self, key: KeyType, value: String) -> Result<&'static str>;
+            pub async fn insert(&self, key: KeyType, value: String) -> Result<()>;
 
-            pub async fn update(&self, key: &KeyType, value: String) -> Result<&'static str>;
+            pub async fn update(&self, key: &KeyType, value: String) -> Result<()>;
+
+            pub async fn replace(&self, key: &KeyType, value: String) -> Result<()>;
 
             pub async fn try_replace(&self, key: &KeyType, value: String) -> Option<String>;
 
@@ -57,7 +59,9 @@ impl StringNamespace
             
             pub async fn update_kv_fn<R, FN: FnOnce(&KeyType, &mut String) -> Result<R>>(&self, key: &KeyType, updater: FN) -> Result<R>;
 
-            pub async fn remove(&self, key: &KeyType) -> Result<&'static str>;
+            pub async fn remove(&self, key: &KeyType) -> Result<()>;
+
+            pub async fn retrieve(&self, key: &KeyType) -> Result<String>;
 
             pub async fn try_retrieve(&self, key: &KeyType) -> Option<String>;
 
@@ -67,9 +71,9 @@ impl StringNamespace
 
             pub async fn contains(&self, key: &KeyType) -> bool;
 
-            pub async fn clear(&self) -> &'static str;
+            pub async fn clear(&self) -> ();
 
-            pub async fn clear_and_get_len(&self) -> usize;
+            pub async fn len_then_clear(&self) -> usize;
 
             pub async fn len(&self) -> usize;
 
@@ -80,7 +84,7 @@ impl StringNamespace
         }
     }
 
-    pub async fn upsert(&self, key: KeyType, value: String) -> Result<&'static str>
+    pub async fn upsert(&self, key: KeyType, value: String) -> Result<()>
     {
 
         self.namespace.upsert_clone(key, value).await
@@ -104,7 +108,7 @@ impl StringNamespace
     pub async fn get_all_keys(&self) -> HashSet<KeyType>
     {
 
-        self.namespace.get_all_keys_clone().await
+        self.namespace.all_keys_clone().await
 
     }
 

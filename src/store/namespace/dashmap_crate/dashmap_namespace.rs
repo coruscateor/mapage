@@ -2,7 +2,7 @@ use dashmap::DashMap;
 
 use std::{hash::Hash, collections::HashSet};
 
-use crate::errors::invalid_operation; //types::{get_ok_value_str}, 
+use crate::errors::{invalid_operation, key_not_found}; //types::{get_ok_value_str}, 
 
 use std::mem::replace;
 
@@ -34,16 +34,16 @@ impl<K, V> DashMapNamespace<K, V>
 
     }
 
-    pub async fn insert(&self, key: K, value: V) -> Result<&'static str>
+    pub async fn insert(&self, key: K, value: V) -> Result<()>
     {
         
         let _res = self.map.insert(key, value);
 
-        Ok(get_ok_value_str())
+        Ok(())
 
     }
 
-    pub async fn update(&self, key: &K, value: V) -> Result<&'static str>
+    pub async fn update(&self, key: &K, value: V) -> Result<()>
     {
 
         let res = self.map.get_mut(&key);
@@ -53,11 +53,27 @@ impl<K, V> DashMapNamespace<K, V>
 
             *val = value;
 
-            return Ok(get_ok_value_str());
+            return Ok(());
 
         }
 
         invalid_operation()
+
+    }
+    
+    pub async fn replace(&self, key: &K, value: V) -> Result<V>
+    {
+
+        let res = self.map.get_mut(&key);
+        
+        if let Some(mut val) = res
+        { 
+        
+            return Ok(replace(val.value_mut(), value));
+        
+        }
+
+        key_not_found()
 
     }
 
@@ -81,7 +97,7 @@ impl<K, V> DashMapNamespace<K, V>
 
     //updater must return Result<R>
 
-    pub async fn update_fn<R, FN>(&self, key: &K, mut updater: FN) -> Result<R>
+    pub async fn update_fn<R, FN>(&self, key: &K, updater: FN) -> Result<R>
         where FN: FnOnce(&mut V) -> Result<R>
     {
 
@@ -98,7 +114,7 @@ impl<K, V> DashMapNamespace<K, V>
 
     }
     
-    pub async fn update_kv_fn<R, FN>(&self, key: &K, mut updater: FN) -> Result<R>
+    pub async fn update_kv_fn<R, FN>(&self, key: &K, updater: FN) -> Result<R>
         where FN: FnOnce(&K, &mut V) -> Result<R>
     {
 
@@ -115,7 +131,7 @@ impl<K, V> DashMapNamespace<K, V>
 
     }
 
-    pub async fn upsert(&self, key: K, value: V) -> Result<&'static str>
+    pub async fn upsert(&self, key: K, value: V) -> Result<()>
     {
         
         let res = self.map.get_mut(&key);
@@ -133,13 +149,13 @@ impl<K, V> DashMapNamespace<K, V>
 
         }
         
-        Ok(get_ok_value_str())
+        Ok(())
 
     }
 
     //
 
-    pub async fn remove(&self, key: &K) -> Result<&'static str>
+    pub async fn remove(&self, key: &K) -> Result<()>
     {
 
         let res = self.map.remove(key);
@@ -147,11 +163,36 @@ impl<K, V> DashMapNamespace<K, V>
         if let Some(_) = res
         {
 
-            return Ok(get_ok_value_str());
+            return Ok(());
 
         }
 
         invalid_operation()
+
+    }
+
+    pub async fn retrieve(&self, key: &K) -> Result<V>
+    {
+
+        let res = self.try_retrieve(key);
+
+        match res.await
+        {
+
+            Some(val) =>
+            {
+
+                Ok(val)
+
+            }
+            None =>
+            {
+
+                key_not_found()
+
+            }
+
+        }
 
     }
 
@@ -218,16 +259,14 @@ impl<K, V> DashMapNamespace<K, V>
 
     }
 
-    pub async fn clear(&self) -> &'static str
+    pub async fn clear(&self)
     {
 
         self.map.clear();
 
-        get_ok_value_str()
-
     }
 
-    pub async fn clear_and_get_len(&self) -> usize
+    pub async fn len_then_clear(&self) -> usize
     {
 
         let len = self.map.len();
@@ -293,8 +332,8 @@ impl<K, V> DashMapNamespace<K, V>
         None
 
     }
-
-    pub async fn get_all_keys(&self) -> HashSet<K>
+    
+    pub async fn all_keys(&self) -> HashSet<K>
     {
 
         let mut keys = HashSet::with_capacity(self.map.len());
@@ -330,7 +369,7 @@ impl<K, V> DashMapNamespace<K, V>
           V: 'static + Sync + Default + Copy + Clone
 {
 
-    pub async fn upsert_copy(&self, key: K, value: V) -> Result<&'static str>
+    pub async fn upsert_copy(&self, key: K, value: V) -> Result<()>
     {
 
         self.upsert(key, value).await
@@ -378,7 +417,7 @@ impl<K, V> DashMapNamespace<K, V>
           V: 'static + Sync + Default + Clone
 {
 
-    pub async fn upsert_clone(&self, key: K, value: V) -> Result<&'static str>
+    pub async fn upsert_clone(&self, key: K, value: V) -> Result<()>
     {
 
         self.upsert(key, value).await

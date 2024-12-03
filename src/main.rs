@@ -49,9 +49,9 @@ mod command_result;
 
 pub use command_result::*;
 
-mod message_instance;
+mod streamed_message;
 
-pub use message_instance::*;
+pub use streamed_message::*;
 
 mod command_error;
 

@@ -24,7 +24,7 @@ pub fn opt_bool_to_opt_ti(item: Option<bool>) -> Option<TypeInstance>
 
 }
 
-pub async fn execute_bool_command(store: &Arc<Store>, command: Command) -> ExecutionResult
+pub async fn execute_bool_command(store: &Arc<Store>, mut command: Command) -> ExecutionResult
 {
 
     match command.command.as_str()
@@ -158,7 +158,7 @@ pub async fn execute_bool_command(store: &Arc<Store>, command: Command) -> Execu
                     match res
                     {
         
-                        Ok(val) =>
+                        Ok(_val) =>
                         {
         
                             let res = CommandResult::done(&command, None);
@@ -212,7 +212,7 @@ pub async fn execute_bool_command(store: &Arc<Store>, command: Command) -> Execu
                     match res
                     {
         
-                        Ok(val) =>
+                        Ok(_val) =>
                         {
         
                             let res = CommandResult::done(&command, None);
@@ -228,6 +228,64 @@ pub async fn execute_bool_command(store: &Arc<Store>, command: Command) -> Execu
                         }
         
                     }
+
+                }
+                else
+                {
+
+                    Err(CommandError::at_index_with_found_type(&command, SendableText::Str("Bool Expected"), index, ti_value.get_sendable_type_name()))
+
+                }
+
+            }
+            else
+            {
+
+                Err(CommandError::at_index(&command, SendableText::Str("Parameter not found at index"), index))
+                
+            }
+
+        }
+        "replace" =>
+        {
+
+            let key = get_key_param(&mut command).await?;
+
+            //Get the value to update
+
+            let index = 1;
+
+            if let Some(ti_value) = take_at(&mut command, index).await
+            {
+
+                if let TypeInstance::Bool(value) = ti_value
+                {
+
+                    let res = store.bool_namespace().replace(&key, value).await;
+
+                    match res
+                    {
+
+                        Ok(_val) =>
+                        {
+
+                            Ok(CommandResult::done(&command, None))
+
+                        }
+                        Err(err) =>
+                        {
+
+                            Err(CommandError::new(&command, err.to_string().into()))
+
+                        }
+
+                    }
+
+                    //let ti_opt = opt_bool_to_opt_ti(res_opt);
+
+                    //let res = CommandResult::done(&command, ti_opt);
+                    
+                    //Ok(res)
 
                 }
                 else
@@ -301,46 +359,6 @@ pub async fn execute_bool_command(store: &Arc<Store>, command: Command) -> Execu
             }
 
         }
-        "replace" =>
-        {
-
-            let key = get_key_param(&mut command).await?;
-
-            //Get the value to update
-
-            let index = 1;
-
-            if let Some(ti_value) = take_at(&mut command, index).await
-            {
-
-                if let TypeInstance::Bool(value) = ti_value
-                {
-
-                    let res_opt = store.bool_namespace().replace(&key, value).await;
-
-                    let ti_opt = opt_bool_to_opt_ti(res_opt);
-
-                    let res = CommandResult::done(&command, ti_opt);
-                    
-                    Ok(res)
-
-                }
-                else
-                {
-
-                    Err(CommandError::at_index_with_found_type(&command, SendableText::Str("Bool Expected"), index, ti_value.get_sendable_type_name()))
-
-                }
-
-            }
-            else
-            {
-
-                Err(CommandError::at_index(&command, SendableText::Str("Parameter not found at index"), index))
-                
-            }
-
-        }
         "remove" =>
         {
 
@@ -372,39 +390,13 @@ pub async fn execute_bool_command(store: &Arc<Store>, command: Command) -> Execu
 
             let key = get_key_param(&mut command).await?;
 
-            //Get the value to update
+            let res_opt = store.bool_namespace().try_retrieve(&key).await;
 
-            let index = 1;
+            let ti_opt = opt_bool_to_opt_ti(res_opt);
 
-            if let Some(ti_value) = take_at(&mut command, index).await
-            {
-
-                if let TypeInstance::Bool(value) = ti_value
-                {
-
-                    let res_opt = store.bool_namespace().try_retrieve(&key).await;
-
-                    let ti_opt = opt_bool_to_opt_ti(res_opt);
-
-                    let res = CommandResult::done(&command, ti_opt);
-                    
-                    Ok(res)
-
-                }
-                else
-                {
-
-                    Err(CommandError::at_index_with_found_type(&command, SendableText::Str("Bool Expected"), index, ti_value.get_sendable_type_name()))
-
-                }
-
-            }
-            else
-            {
-
-                Err(CommandError::at_index(&command, SendableText::Str("Parameter not found at index"), index))
-                
-            }
+            let res = CommandResult::done(&command, ti_opt);
+            
+            Ok(res)
 
         }
         "retrieve" =>
@@ -414,36 +406,24 @@ pub async fn execute_bool_command(store: &Arc<Store>, command: Command) -> Execu
 
             //Get the value to update
 
-            let index = 1;
+            let res = store.bool_namespace().retrieve(&key).await;
 
-            if let Some(ti_value) = take_at(&mut command, index).await
+            match res
             {
 
-                if let TypeInstance::Bool(value) = ti_value
+                Ok(_val) =>
                 {
 
-                    let res_opt = store.bool_namespace().retrieve(&key).await;
-
-                    let ti_opt = opt_bool_to_opt_ti(res_opt);
-
-                    let res = CommandResult::done(&command, ti_opt);
-                    
-                    Ok(res)
+                    Ok(CommandResult::done(&command, None))
 
                 }
-                else
+                Err(err) =>
                 {
 
-                    Err(CommandError::at_index_with_found_type(&command, SendableText::Str("Bool Expected"), index, ti_value.get_sendable_type_name()))
+                    Err(CommandError::new(&command, err.to_string().into()))
 
                 }
 
-            }
-            else
-            {
-
-                Err(CommandError::at_index(&command, SendableText::Str("Parameter not found at index"), index))
-                
             }
 
         }

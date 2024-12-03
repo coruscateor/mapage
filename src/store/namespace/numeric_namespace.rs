@@ -53,9 +53,11 @@ impl<K, T> NumericNamespace<K, T>
     delegate! {
         to self.namespace {
 
-            pub async fn insert(&self, key: K, value: T) -> Result<&'static str>;
+            pub async fn insert(&self, key: K, value: T) -> Result<()>;
 
-            pub async fn update(&self, key: &K, value: T) -> Result<&'static str>;
+            pub async fn update(&self, key: &K, value: T) -> Result<()>;
+
+            pub async fn replace(&self, key: &K, value: T) -> Result<()>;
 
             pub async fn try_replace(&self, key: &K, value: T) -> Option<T>;
 
@@ -63,7 +65,9 @@ impl<K, T> NumericNamespace<K, T>
 
             pub async fn update_kv_fn<R, FN: FnOnce(&K, &mut T) -> Result<R>>(&self, key: &K, updater: FN) -> Result<R>;
 
-            pub async fn remove(&self, key: &K) -> Result<&'static str>;
+            pub async fn remove(&self, key: &K) -> Result<()>;
+
+            pub async fn retrieve(&self, key: &K) -> Result<T>;
 
             pub async fn try_retrieve(&self, key: &K) -> Option<T>;
 
@@ -73,9 +77,9 @@ impl<K, T> NumericNamespace<K, T>
 
             pub async fn contains(&self, key: &K) -> bool;
 
-            pub async fn clear(&self) -> &'static str;
+            pub async fn clear(&self) -> ();
 
-            pub async fn clear_and_get_len(&self) -> usize;
+            pub async fn len_then_clear(&self) -> usize;
 
             pub async fn len(&self) -> usize;
 
@@ -86,7 +90,7 @@ impl<K, T> NumericNamespace<K, T>
         }
     }
 
-    pub async fn upsert(&self, key: K, value: T) -> Result<&'static str>
+    pub async fn upsert(&self, key: K, value: T) -> Result<()>
     {
 
         self.namespace.upsert_copy(key, value).await
@@ -107,10 +111,10 @@ impl<K, T> NumericNamespace<K, T>
 
     }
 
-    pub async fn get_all_keys(&self) -> HashSet<K>
+    pub async fn all_keys(&self) -> HashSet<K>
     {
 
-        self.namespace.get_all_keys_clone().await
+        self.namespace.all_keys_clone().await
 
     }
 

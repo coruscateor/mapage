@@ -1,7 +1,9 @@
 use corlib::text::SendableText;
 
+use serde::{Serialize, Deserialize};
 
-#[derive(Debug, Default, Clone, Copy)]
+
+#[derive(Debug, Default, Clone, Copy, Serialize, Deserialize)]
 pub enum SupportedType
 {
 

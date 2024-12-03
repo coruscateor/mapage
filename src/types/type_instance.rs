@@ -2,7 +2,7 @@
 
 use corlib::text::SendableText;
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::CommandError; //{impl_is_type_method, impl_is_type_methods, CommandError};
 
@@ -171,7 +171,7 @@ macro_rules! impl_take_type_return_type_methods
 
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub enum TypeInstance
 {
 
