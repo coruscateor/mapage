@@ -4,7 +4,7 @@ use core::mem::size_of;
 
 use anyhow::{Result, Error};
 
-use crate::types::get_ok_value_str;
+//use crate::types::get_ok_value_str;
 
 //https://doc.rust-lang.org/std/vec/struct.Vec.html
 
@@ -71,7 +71,7 @@ pub fn get_vec_capacity_fn<T>() -> impl FnOnce(&Vec<T>) -> Result<usize>
 
 }
 
-fn will_go_over_capacity<T>(col: &Vec<T>, additional: usize) -> Option<Result<&'static str>>
+fn will_go_over_capacity<T>(col: &Vec<T>, additional: usize) -> Option<Result<()>>
 {
 
     //Should be in Corlib
@@ -286,7 +286,7 @@ fn is_out_of_index_only<T, R>(col: &Vec<T>, index: usize) -> Option<Result<R>>
 
 }
 
-fn is_out_of_index_must_have_len<T>(col: &Vec<T>, index: usize) -> Option<Result<&'static str>>
+fn is_out_of_index_must_have_len<T>(col: &Vec<T>, index: usize) -> Option<Result<()>>
 {
 
     let len = col.len();
@@ -339,14 +339,14 @@ pub fn get_vec_index_fn<T>(index: usize) -> impl FnOnce(&Vec<T>) -> Result<T>
 
 //index_mut - set_at_index
 
-pub fn get_vec_index_mut_fn<T>(index: usize, value: T) -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
+pub fn get_vec_index_mut_fn<T>(index: usize, value: T) -> impl FnOnce(&mut Vec<T>) -> Result<()>
     where T : Clone
 {
     
     move |col: &mut Vec<T>|
     {
 
-        if let Some(val) = is_out_of_index::<T, &'static str>(col, index)
+        if let Some(val) = is_out_of_index::<T, ()>(col, index)
         {
 
             return val;
@@ -355,7 +355,7 @@ pub fn get_vec_index_mut_fn<T>(index: usize, value: T) -> impl FnOnce(&mut Vec<T
 
         col[index] = value;
 
-        Result::Ok(get_ok_value_str())
+        Result::Ok(())
 
     }
 
@@ -363,7 +363,7 @@ pub fn get_vec_index_mut_fn<T>(index: usize, value: T) -> impl FnOnce(&mut Vec<T
 
 //reserve
 
-pub fn get_vec_reserve_fn<T>(additional: usize) -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
+pub fn get_vec_reserve_fn<T>(additional: usize) -> impl FnOnce(&mut Vec<T>) -> Result<()>
 {
 
     move |col: &mut Vec<T>|
@@ -378,7 +378,7 @@ pub fn get_vec_reserve_fn<T>(additional: usize) -> impl FnOnce(&mut Vec<T>) -> R
 
         col.reserve(additional);
 
-        Result::Ok(get_ok_value_str())
+        Result::Ok(())
 
     }
 
@@ -388,7 +388,7 @@ pub fn get_vec_reserve_fn<T>(additional: usize) -> impl FnOnce(&mut Vec<T>) -> R
 
 //reserve_exact
 
-pub fn get_vec_reserve_exact_fn<T>(additional: usize) -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
+pub fn get_vec_reserve_exact_fn<T>(additional: usize) -> impl FnOnce(&mut Vec<T>) -> Result<()>
 {
 
     move |col: &mut Vec<T>|
@@ -403,7 +403,7 @@ pub fn get_vec_reserve_exact_fn<T>(additional: usize) -> impl FnOnce(&mut Vec<T>
 
         col.reserve_exact(additional);
 
-        Result::Ok(get_ok_value_str())
+        Result::Ok(())
 
     }
 
@@ -413,7 +413,7 @@ pub fn get_vec_reserve_exact_fn<T>(additional: usize) -> impl FnOnce(&mut Vec<T>
 
 //try_reserve
 
-pub fn get_vec_try_reserve_fn<T>(additional: usize) -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
+pub fn get_vec_try_reserve_fn<T>(additional: usize) -> impl FnOnce(&mut Vec<T>) -> Result<()>
 {
 
     move |col: &mut Vec<T>|
@@ -426,7 +426,7 @@ pub fn get_vec_try_reserve_fn<T>(additional: usize) -> impl FnOnce(&mut Vec<T>) 
 
         }
 
-        Result::Ok(get_ok_value_str())
+        Result::Ok(())
 
     }
 
@@ -434,7 +434,7 @@ pub fn get_vec_try_reserve_fn<T>(additional: usize) -> impl FnOnce(&mut Vec<T>) 
 
 //try_reserve_exact
 
-pub fn get_vec_try_reserve_exact_fn<T>(additional: usize) -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
+pub fn get_vec_try_reserve_exact_fn<T>(additional: usize) -> impl FnOnce(&mut Vec<T>) -> Result<()>
 {
 
     move |col: &mut Vec<T>|
@@ -447,7 +447,7 @@ pub fn get_vec_try_reserve_exact_fn<T>(additional: usize) -> impl FnOnce(&mut Ve
 
         }
         
-        Result::Ok(get_ok_value_str())
+        Result::Ok(())
 
     }
 
@@ -455,7 +455,7 @@ pub fn get_vec_try_reserve_exact_fn<T>(additional: usize) -> impl FnOnce(&mut Ve
 
 //shrink_to_fit
 
-pub fn get_vec_shrink_to_fit_fn<T>() -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
+pub fn get_vec_shrink_to_fit_fn<T>() -> impl FnOnce(&mut Vec<T>) -> Result<()>
 {
 
     move |col: &mut Vec<T>|
@@ -463,7 +463,7 @@ pub fn get_vec_shrink_to_fit_fn<T>() -> impl FnOnce(&mut Vec<T>) -> Result<&'sta
 
         col.shrink_to_fit();
 
-        Result::Ok(get_ok_value_str())
+        Result::Ok(())
 
     }
 
@@ -471,7 +471,7 @@ pub fn get_vec_shrink_to_fit_fn<T>() -> impl FnOnce(&mut Vec<T>) -> Result<&'sta
 
 //shrink_to
 
-pub fn get_vec_shrink_to_fn<T>(min_capacity: usize) -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
+pub fn get_vec_shrink_to_fn<T>(min_capacity: usize) -> impl FnOnce(&mut Vec<T>) -> Result<()>
 {
 
     move |col: &mut Vec<T>|
@@ -479,7 +479,7 @@ pub fn get_vec_shrink_to_fn<T>(min_capacity: usize) -> impl FnOnce(&mut Vec<T>) 
 
         col.shrink_to(min_capacity);
 
-        Result::Ok(get_ok_value_str())
+        Result::Ok(())
 
     }
 
@@ -487,7 +487,7 @@ pub fn get_vec_shrink_to_fn<T>(min_capacity: usize) -> impl FnOnce(&mut Vec<T>) 
 
 //truncate
 
-pub fn get_vec_truncate_fn<T>(len: usize) -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
+pub fn get_vec_truncate_fn<T>(len: usize) -> impl FnOnce(&mut Vec<T>) -> Result<()>
 {
 
     move |col: &mut Vec<T>|
@@ -495,7 +495,7 @@ pub fn get_vec_truncate_fn<T>(len: usize) -> impl FnOnce(&mut Vec<T>) -> Result<
 
         col.truncate(len);
 
-        Result::Ok(get_ok_value_str())
+        Result::Ok(())
 
     }
 
@@ -507,7 +507,7 @@ pub fn get_vec_truncate_fn<T>(len: usize) -> impl FnOnce(&mut Vec<T>) -> Result<
 
 //insert
 
-pub fn get_vec_insert_fn<T>(index: usize, element: T) -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
+pub fn get_vec_insert_fn<T>(index: usize, element: T) -> impl FnOnce(&mut Vec<T>) -> Result<()>
 {
 
     //let mut my_index = Some(index);
@@ -530,7 +530,7 @@ pub fn get_vec_insert_fn<T>(index: usize, element: T) -> impl FnOnce(&mut Vec<T>
 
         col.insert(index, element);
 
-        Result::Ok(get_ok_value_str())
+        Result::Ok(())
 
     }
 
@@ -541,7 +541,7 @@ pub fn get_vec_insert_fn<T>(index: usize, element: T) -> impl FnOnce(&mut Vec<T>
 
 //push
 
-pub fn get_vec_push_fn<T>(value: T) -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
+pub fn get_vec_push_fn<T>(value: T) -> impl FnOnce(&mut Vec<T>) -> Result<()>
 {
 
     let mut my_value = Some(value);
@@ -560,7 +560,7 @@ pub fn get_vec_push_fn<T>(value: T) -> impl FnOnce(&mut Vec<T>) -> Result<&'stat
 
         col.push(value_to_push);
 
-        Result::Ok(get_ok_value_str())
+        Result::Ok(())
 
     }
 
@@ -615,7 +615,7 @@ pub fn get_vec_append_fn<'a, T>(other: &'a mut Vec<T>) -> impl FnOnce(&'a mut Ve
 }
 */
 
-pub fn get_vec_append_fn<T>(mut other: Vec<T>) -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
+pub fn get_vec_append_fn<T>(mut other: Vec<T>) -> impl FnOnce(&mut Vec<T>) -> Result<()>
 {
     
     move |col: &mut Vec<T>|
@@ -630,7 +630,7 @@ pub fn get_vec_append_fn<T>(mut other: Vec<T>) -> impl FnOnce(&mut Vec<T>) -> Re
 
         col.append(&mut other);
 
-        Result::Ok(get_ok_value_str())
+        Result::Ok(())
 
         //(Result::Ok(get_ok_value_str()), other)
 
@@ -644,7 +644,7 @@ pub fn get_vec_append_fn<T>(mut other: Vec<T>) -> impl FnOnce(&mut Vec<T>) -> Re
 
 //clear
 
-pub fn get_vec_clear_fn<T>() -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
+pub fn get_vec_clear_fn<T>() -> impl FnOnce(&mut Vec<T>) -> Result<()>
 {
     
     move |col: &mut Vec<T>|
@@ -652,7 +652,7 @@ pub fn get_vec_clear_fn<T>() -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
 
         col.clear();
 
-        Result::Ok(get_ok_value_str())
+        Result::Ok(())
 
     }
 
@@ -681,7 +681,7 @@ pub fn get_vec_split_off_fn<T>(at: usize) -> impl FnOnce(&mut Vec<T>) -> Result<
 
 //resize
 
-pub fn get_vec_resize_fn<T>(new_len: usize, value: T) -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
+pub fn get_vec_resize_fn<T>(new_len: usize, value: T) -> impl FnOnce(&mut Vec<T>) -> Result<()>
     where T : Clone
 {
 
@@ -694,7 +694,7 @@ pub fn get_vec_resize_fn<T>(new_len: usize, value: T) -> impl FnOnce(&mut Vec<T>
 
         col.resize(new_len, value);
 
-        Result::Ok(get_ok_value_str())
+        Result::Ok(())
 
     }
 
@@ -702,7 +702,7 @@ pub fn get_vec_resize_fn<T>(new_len: usize, value: T) -> impl FnOnce(&mut Vec<T>
 
 //dedup
 
-pub fn get_vec_dedup_fn<T>() -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
+pub fn get_vec_dedup_fn<T>() -> impl FnOnce(&mut Vec<T>) -> Result<()>
     where T : PartialEq
 {
     
@@ -711,7 +711,7 @@ pub fn get_vec_dedup_fn<T>() -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
 
         col.dedup();
 
-        Result::Ok(get_ok_value_str())
+        Result::Ok(())
 
     }
 
@@ -719,7 +719,7 @@ pub fn get_vec_dedup_fn<T>() -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
 
 //sort_unstable
 
-pub fn get_vec_sort_unstable_fn<T>() -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
+pub fn get_vec_sort_unstable_fn<T>() -> impl FnOnce(&mut Vec<T>) -> Result<()>
     where T : Ord
 {
     
@@ -728,7 +728,7 @@ pub fn get_vec_sort_unstable_fn<T>() -> impl FnOnce(&mut Vec<T>) -> Result<&'sta
 
         col.sort_unstable();
 
-        Result::Ok(get_ok_value_str())
+        Result::Ok(())
 
     }
 
@@ -736,7 +736,7 @@ pub fn get_vec_sort_unstable_fn<T>() -> impl FnOnce(&mut Vec<T>) -> Result<&'sta
 
 //rotate_left
 
-pub fn get_vec_rotate_left_fn<T>(mid: usize) -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
+pub fn get_vec_rotate_left_fn<T>(mid: usize) -> impl FnOnce(&mut Vec<T>) -> Result<()>
     where T : Ord
 {
 
@@ -756,7 +756,7 @@ pub fn get_vec_rotate_left_fn<T>(mid: usize) -> impl FnOnce(&mut Vec<T>) -> Resu
 
         col.rotate_left(mid);
 
-        Result::Ok(get_ok_value_str())
+        Result::Ok(())
 
     }
 
@@ -766,7 +766,7 @@ pub fn get_vec_rotate_left_fn<T>(mid: usize) -> impl FnOnce(&mut Vec<T>) -> Resu
 
 //rotate_right
 
-pub fn get_vec_rotate_right_fn<T>(mid: usize) -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
+pub fn get_vec_rotate_right_fn<T>(mid: usize) -> impl FnOnce(&mut Vec<T>) -> Result<()>
     where T : Ord
 {
 
@@ -786,7 +786,7 @@ pub fn get_vec_rotate_right_fn<T>(mid: usize) -> impl FnOnce(&mut Vec<T>) -> Res
 
         col.rotate_right(mid);
 
-        Result::Ok(get_ok_value_str())
+        Result::Ok(())
 
     }
 
@@ -796,7 +796,7 @@ pub fn get_vec_rotate_right_fn<T>(mid: usize) -> impl FnOnce(&mut Vec<T>) -> Res
 
 //fill
 
-pub fn get_vec_fill_fn<T>(value: T) -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
+pub fn get_vec_fill_fn<T>(value: T) -> impl FnOnce(&mut Vec<T>) -> Result<()>
     where T : Clone
 {
 
@@ -809,7 +809,7 @@ pub fn get_vec_fill_fn<T>(value: T) -> impl FnOnce(&mut Vec<T>) -> Result<&'stat
 
         col.fill(value);
 
-        Result::Ok(get_ok_value_str())
+        Result::Ok(())
 
     }
 
@@ -817,7 +817,7 @@ pub fn get_vec_fill_fn<T>(value: T) -> impl FnOnce(&mut Vec<T>) -> Result<&'stat
 
 //sort
 
-pub fn get_vec_sort_fn<T>() -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
+pub fn get_vec_sort_fn<T>() -> impl FnOnce(&mut Vec<T>) -> Result<()>
     where T : Ord
 {
     
@@ -826,7 +826,7 @@ pub fn get_vec_sort_fn<T>() -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
 
         col.sort();
 
-        Result::Ok(get_ok_value_str())
+        Result::Ok(())
 
     }
 
@@ -834,7 +834,7 @@ pub fn get_vec_sort_fn<T>() -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
 
 //swap
 
-pub fn get_vec_swap_fn<T>(a: usize, b: usize) -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
+pub fn get_vec_swap_fn<T>(a: usize, b: usize) -> impl FnOnce(&mut Vec<T>) -> Result<()>
     where T : Ord
 {
 
@@ -859,7 +859,7 @@ pub fn get_vec_swap_fn<T>(a: usize, b: usize) -> impl FnOnce(&mut Vec<T>) -> Res
 
         col.swap(a, b);
 
-        Result::Ok(get_ok_value_str())
+        Result::Ok(())
 
     }
 
@@ -869,7 +869,7 @@ pub fn get_vec_swap_fn<T>(a: usize, b: usize) -> impl FnOnce(&mut Vec<T>) -> Res
 
 //reverse
 
-pub fn get_vec_reverse_fn<T>() -> impl FnOnce(&mut Vec<T>) -> Result<&'static str>
+pub fn get_vec_reverse_fn<T>() -> impl FnOnce(&mut Vec<T>) -> Result<()>
 {
     
     move |col: &mut Vec<T>|
@@ -877,7 +877,7 @@ pub fn get_vec_reverse_fn<T>() -> impl FnOnce(&mut Vec<T>) -> Result<&'static st
 
         col.reverse();
 
-        Result::Ok(get_ok_value_str())
+        Result::Ok(())
 
     }
 

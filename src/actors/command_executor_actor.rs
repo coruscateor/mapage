@@ -17,7 +17,7 @@ use fastwebsockets::OpCode;
 
 use serde_json::{from_str, json, Value};
 
-use super::{array_queue::ActorIOClient, EgressActorInput, ParsedInput};
+use super::{array_queue::ActorIOClient, EgressActorInput}; //, ParsedInput};
 
 use crate::types::SupportedType;
 
@@ -78,7 +78,25 @@ impl CommandExecutorActorState
         if let Some(command) = self.command_exector_reciver.recv().await
         {
 
-            self.command_executor.execute_command(command).await;
+            let execution_result = self.command_executor.execute_command(command).await;
+
+            match execution_result
+            {
+
+                Ok(res) =>
+                {
+
+                    let _ = self.egress_actor_input_sender.send(EgressActorInput::CommandResult(res));
+
+                }
+                Err(err) =>
+                {
+
+                    let _ = self.egress_actor_input_sender.send(EgressActorInput::CommandError(err));
+
+                }
+
+            }
 
             true
 

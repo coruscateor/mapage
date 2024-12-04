@@ -99,6 +99,8 @@ impl CommandExecutor
         else
         {
 
+            //Non-namespaced commands
+
             match command.command.as_str()
             {
 

@@ -29,7 +29,7 @@ macro_rules! impl_vec_insert_new
 
         //[<$type_name _vec_new>]
 
-        pub async fn insert_new(&self, key: $key_type) -> Result<&'static str>
+        pub async fn insert_new(&self, key: $key_type) -> Result<()>
         {
 
             let my_vec = vec_new();
@@ -49,7 +49,7 @@ macro_rules! impl_vec_insert_with_capacity
     ($key_type:ty) =>
     {
 
-        pub async fn insert_with_capacity(&self, key: $key_type, capacity: usize) -> Result<&'static str>
+        pub async fn insert_with_capacity(&self, key: $key_type, capacity: usize) -> Result<()>
         {
 
             let my_vec = vec_with_capacity(capacity);
@@ -69,7 +69,7 @@ macro_rules! impl_vec_insert_with_no_capacity
     ($key_type:ty) =>
     {
 
-        pub async fn insert_with_no_capacity(&self, key: $key_type) -> Result<&'static str>
+        pub async fn insert_with_no_capacity(&self, key: $key_type) -> Result<()>
         {
 
             let my_vec = vec_with_no_capacity();
@@ -237,7 +237,7 @@ macro_rules! impl_vec_update_index_mut
     ($key_type:ty, $value_type:ty) =>
     {
 
-        pub async fn update_index_mut(&self, key: &$key_type, index: usize, value: $value_type) -> Result<&'static str>
+        pub async fn update_index_mut(&self, key: &$key_type, index: usize, value: $value_type) -> Result<()>
         {
 
             let my_fn = get_vec_index_mut_fn::<$value_type>(index, value);
@@ -259,7 +259,7 @@ macro_rules! impl_vec_update_reserve
     ($key_type:ty) =>
     {
 
-        pub async fn update_reserve(&self, key: &$key_type, additional: usize) -> Result<&'static str>
+        pub async fn update_reserve(&self, key: &$key_type, additional: usize) -> Result<()>
         {
 
             let my_fn = get_vec_reserve_fn(additional);
@@ -281,7 +281,7 @@ macro_rules! impl_vec_update_reserve_exact
     ($key_type:ty) =>
     {
 
-        pub async fn update_reserve_exact(&self, key: &$key_type, additional: usize) -> Result<&'static str>
+        pub async fn update_reserve_exact(&self, key: &$key_type, additional: usize) -> Result<()>
         {
 
             let my_fn = get_vec_reserve_exact_fn(additional);
@@ -303,7 +303,7 @@ macro_rules! impl_vec_update_try_reserve
     ($key_type:ty) =>
     {
 
-        pub async fn update_try_reserve(&self, key: &$key_type, additional: usize) -> Result<&'static str>
+        pub async fn update_try_reserve(&self, key: &$key_type, additional: usize) -> Result<()>
         {
 
             let my_fn = get_vec_try_reserve_fn(additional);
@@ -325,7 +325,7 @@ macro_rules! impl_vec_update_try_reserve_exact
     ($key_type:ty) =>
     {
 
-        pub async fn update_try_reserve_exact(&self, key: &$key_type, additional: usize) -> Result<&'static str>
+        pub async fn update_try_reserve_exact(&self, key: &$key_type, additional: usize) -> Result<()>
         {
 
             let my_fn = get_vec_try_reserve_exact_fn(additional);
@@ -347,7 +347,7 @@ macro_rules! impl_vec_update_shrink_to_fit
     ($key_type:ty) =>
     {
 
-        pub async fn update_shrink_to_fit(&self, key: &$key_type) -> Result<&'static str>
+        pub async fn update_shrink_to_fit(&self, key: &$key_type) -> Result<()>
         {
 
             let my_fn = get_vec_shrink_to_fit_fn();
@@ -369,7 +369,7 @@ macro_rules! impl_vec_update_shrink_to
     ($key_type:ty) =>
     {
 
-        pub async fn update_shrink_to(&self, key: &$key_type, min_capacity: usize) -> Result<&'static str>
+        pub async fn update_shrink_to(&self, key: &$key_type, min_capacity: usize) -> Result<()>
         {
 
             let my_fn = get_vec_shrink_to_fn(min_capacity);
@@ -391,7 +391,7 @@ macro_rules! impl_vec_update_truncate
     ($key_type:ty) =>
     {
 
-        pub async fn update_truncate(&self, key: &$key_type, len: usize) -> Result<&'static str>
+        pub async fn update_truncate(&self, key: &$key_type, len: usize) -> Result<()>
         {
 
             let my_fn = get_vec_truncate_fn(len);
@@ -413,7 +413,7 @@ macro_rules! impl_vec_update_insert
     ($key_type:ty, $value_type:ty) =>
     {
 
-        pub async fn update_insert(&self, key: &$key_type, index: usize, element: $value_type) -> Result<&'static str>
+        pub async fn update_insert(&self, key: &$key_type, index: usize, element: $value_type) -> Result<()>
         {
 
             let my_fn = get_vec_insert_fn(index, element);
@@ -437,7 +437,7 @@ macro_rules! impl_vec_update_push
     ($key_type:ty, $value_type:ty) =>
     {
 
-        pub async fn update_push(&self, key: &$key_type, value: $value_type) -> Result<&'static str>
+        pub async fn update_push(&self, key: &$key_type, value: $value_type) -> Result<()>
         {
 
             let my_fn = get_vec_push_fn(value);
@@ -525,7 +525,7 @@ macro_rules! impl_vec_update_append
     ($key_type:ty, $value_type:ty) =>
     {
 
-        pub async fn update_append(&self, key: &$key_type, value: Vec<$value_type>) -> Result<&'static str>
+        pub async fn update_append(&self, key: &$key_type, value: Vec<$value_type>) -> Result<()>
         {
 
             let my_fn = get_vec_append_fn(value);
@@ -571,7 +571,7 @@ macro_rules! impl_vec_update_clear
     ($key_type:ty, $value_type:ty) =>
     {
 
-        pub async fn update_clear(&self, key: &$key_type) -> Result<&'static str>
+        pub async fn update_clear(&self, key: &$key_type) -> Result<()>
         {
 
             let my_fn = get_vec_clear_fn();
@@ -615,7 +615,7 @@ macro_rules! impl_vec_update_resize
     ($key_type:ty, $value_type:ty) =>
     {
 
-        pub async fn update_resize(&self, key: &$key_type, new_len: usize, value: $value_type) -> Result<&'static str>
+        pub async fn update_resize(&self, key: &$key_type, new_len: usize, value: $value_type) -> Result<()>
         {
 
             let my_fn = get_vec_resize_fn(new_len, value);
@@ -641,7 +641,7 @@ macro_rules! impl_vec_update_dedup
     ($key_type:ty) =>
     {
 
-        pub async fn update_dedup(&self, key: &$key_type) -> Result<&'static str>
+        pub async fn update_dedup(&self, key: &$key_type) -> Result<()>
         {
 
             let my_fn = get_vec_dedup_fn();
@@ -665,7 +665,7 @@ macro_rules! impl_vec_update_sort_unstable
     ($key_type:ty) =>
     {
 
-        pub async fn update_sort_unstable(&self, key: &$key_type) -> Result<&'static str>
+        pub async fn update_sort_unstable(&self, key: &$key_type) -> Result<()>
         {
 
             let my_fn = get_vec_sort_unstable_fn();
@@ -689,7 +689,7 @@ macro_rules! impl_vec_update_rotate_left
     ($key_type:ty) =>
     {
 
-        pub async fn update_rotate_left(&self, key: &$key_type, mid: usize) -> Result<&'static str>
+        pub async fn update_rotate_left(&self, key: &$key_type, mid: usize) -> Result<()>
         {
 
             let my_fn = get_vec_rotate_left_fn(mid);
@@ -713,7 +713,7 @@ macro_rules! impl_vec_update_rotate_right
     ($key_type:ty) =>
     {
 
-        pub async fn update_rotate_right(&self, key: &$key_type, mid: usize) -> Result<&'static str>
+        pub async fn update_rotate_right(&self, key: &$key_type, mid: usize) -> Result<()>
         {
 
             let my_fn = get_vec_rotate_right_fn(mid);
@@ -735,7 +735,7 @@ macro_rules! impl_vec_update_fill
     ($key_type:ty, $value_type:ty) =>
     {
 
-        pub async fn update_fill(&self, key: &$key_type, value: $value_type) -> Result<&'static str>
+        pub async fn update_fill(&self, key: &$key_type, value: $value_type) -> Result<()>
         {
 
             let my_fn = get_vec_fill_fn(value);
@@ -759,7 +759,7 @@ macro_rules! impl_vec_update_sort
     ($key_type:ty) =>
     {
 
-        pub async fn update_sort(&self, key: &$key_type) -> Result<&'static str>
+        pub async fn update_sort(&self, key: &$key_type) -> Result<()>
         {
 
             let my_fn = get_vec_sort_fn();
@@ -783,7 +783,7 @@ macro_rules! impl_vec_update_swap
     ($key_type:ty) =>
     {
 
-        pub async fn update_swap(&self, key: &$key_type, a: usize, b: usize) -> Result<&'static str>
+        pub async fn update_swap(&self, key: &$key_type, a: usize, b: usize) -> Result<()>
         {
 
             let my_fn = get_vec_swap_fn(a, b);

@@ -4,7 +4,7 @@ use corlib::text::SendableText;
 
 use serde::{Serialize, Deserialize};
 
-use crate::{types::json::Indices, Command};
+use crate::Command; //types::json::Indices,
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct CommandError

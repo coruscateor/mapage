@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::CommandError; //{impl_is_type_method, impl_is_type_methods, CommandError};
 
-use super::{json::{CommandInterpretationError, Indices}, Whatever};
+//use super::{json::{CommandInterpretationError, Indices}, Whatever};
 
 use paste::paste;
 
@@ -15,6 +15,8 @@ use std::{any::TypeId, convert::{From, TryFrom}, fmt::Debug}; //, path::Display}
 use std::error::Error;
 
 use std::fmt::Display;
+
+use super::Whatever;
 
 //#[macro_export]
 macro_rules! impl_is_type_method
